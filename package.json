@@ -48,6 +48,10 @@
       "svelte": "./src/utils/component.js",
       "default": "./src/utils/component.js"
     },
+    "./utils/text": {
+      "svelte": "./src/utils/text.js",
+      "default": "./src/utils/text.js"
+    },
     "./variables": {
       "svelte": "./src/variables.js",
       "default": "./src/variables.js"
