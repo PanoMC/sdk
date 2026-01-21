@@ -78,6 +78,11 @@ export class RouteMatcher {
             params[paramName] = pathSegment;
             return true;
         }
+        if (patternSegment.startsWith(':')) {
+            const paramName = patternSegment.slice(1);
+            params[paramName] = pathSegment;
+            return true;
+        }
         return patternSegment === pathSegment;
     }
 }

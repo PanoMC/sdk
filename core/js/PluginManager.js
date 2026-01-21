@@ -421,6 +421,10 @@ async function loadPlugins(siteInfo) {
 
     instance.pano = browser ? panoApiClient : panoApiServer;
 
-    instance.onLoad();
+    try {
+      await instance.onLoad();
+    } catch (e) {
+      console.error(`[PluginManager] Failed to load plugin ${pluginId}:`, e);
+    }
   }
 }
