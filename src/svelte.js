@@ -1,6 +1,6 @@
-import { getPanoContext } from './internal/index.js';
+import { getPanoContext } from "./internal/index.js";
 
 const panoContext = getPanoContext();
-const { page, base, navigating, browser, goto, invalidate, invalidateAll, error } = panoContext.context;
+const { page, base, navigating, browser, goto, invalidate, invalidateAll, error, redirect } = panoContext.context;
 
-export { page, base, navigating, browser, goto, invalidate, invalidateAll, error };
+export { page, base, navigating, browser, goto, invalidate, invalidateAll, error, redirect };
