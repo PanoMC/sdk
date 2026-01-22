@@ -1,4 +1,4 @@
-import { getPanoContext } from '../internal/index.js';
+import { getPanoContext } from "../internal/index.js";
 
 const panoContext = getPanoContext();
 const components = panoContext.context.components;
@@ -19,3 +19,4 @@ export const Date = components.Date;
 export const NoContent = components.NoContent;
 export const Editor = components.Editor;
 export const DragAndDropZone = components.DragAndDropZone;
+export const PageTitle = components.PageTitle;
