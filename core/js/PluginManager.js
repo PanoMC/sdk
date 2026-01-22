@@ -312,12 +312,12 @@ export async function preparePlugins(siteInfo) {
 
   await verifyPlugins(pluginsInFolder, siteInfo);
 
-  const newSiteInfoPlugins = {}
-  Object.keys(get(plugins)).forEach(pluginId => {
-    const plugin = get(plugins)[pluginId]
+  const newSiteInfoPlugins = {};
+  Object.keys(get(plugins)).forEach((pluginId) => {
+    const plugin = get(plugins)[pluginId];
     const { version, uiHash } = plugin.version;
-    newSiteInfoPlugins[pluginId] = { version, uiHash }
-  })
+    newSiteInfoPlugins[pluginId] = { version, uiHash };
+  });
   siteInfo.plugins = newSiteInfoPlugins;
 }
 
@@ -329,7 +329,7 @@ export async function initializePlugins(siteInfo) {
   if (browser) {
     const pluginsInfo = siteInfo.plugins;
 
-    plugins.set(pluginsInfo)
+    plugins.set(pluginsInfo);
   }
 
   await loadPlugins(siteInfo);
@@ -347,10 +347,10 @@ async function loadPlugins(siteInfo) {
           /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs`
         );
       } catch (e) {
-        plugins.update(p => {
-          delete p[pluginId]
+        plugins.update((p) => {
+          delete p[pluginId];
           return p;
-        })
+        });
       }
     } else {
       const pluginFolder = path.join(pluginsFolder, pluginId);
@@ -384,7 +384,7 @@ async function loadPlugins(siteInfo) {
         try {
           module = await import(
             /* @vite-ignore */ 'file://' +
-            path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
+              path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
           );
         } catch (e) {
           error(`${pluginId} could not run! Error:`);

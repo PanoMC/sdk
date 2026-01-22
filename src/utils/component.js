@@ -1,4 +1,4 @@
-import { hydrate, mount, unmount } from "svelte";
+import { hydrate, mount, unmount } from 'svelte';
 
 /**
  * Wraps a dynamic component import to include the correct Svelte runtime mount/unmount methods.

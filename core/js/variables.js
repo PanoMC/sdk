@@ -14,7 +14,7 @@ export const JWT_COOKIE_NAME = 'auth_token';
 export const CSRF_HEADER = 'X-CSRF-Token';
 
 export function checkDomainRedirection() {
-  if (typeof window === "undefined" || !API_URL || API_URL.startsWith("/")) return;
+  if (typeof window === 'undefined' || !API_URL || API_URL.startsWith('/')) return;
 
   try {
     const apiUrl = new URL(API_URL);
@@ -28,11 +28,11 @@ export function checkDomainRedirection() {
         currentUrl.port !== apiUrl.port ||
         currentUrl.protocol !== apiUrl.protocol
       ) {
-        const basePath = UI_URL || PANEL_URL || SETUP_URL || "/";
+        const basePath = UI_URL || PANEL_URL || SETUP_URL || '/';
         let pathname = currentUrl.pathname;
 
-        if (basePath !== "/" && !pathname.startsWith(basePath)) {
-          pathname = basePath + (pathname === "/" ? "" : pathname);
+        if (basePath !== '/' && !pathname.startsWith(basePath)) {
+          pathname = basePath + (pathname === '/' ? '' : pathname);
         }
 
         const targetUrl = new URL(pathname + currentUrl.search + currentUrl.hash, apiUrl.origin);
@@ -46,7 +46,7 @@ export function checkDomainRedirection() {
       }
     }
   } catch (e) {
-    console.error("Failed to check domain redirection:", e);
+    console.error('Failed to check domain redirection:', e);
   }
 }
 
