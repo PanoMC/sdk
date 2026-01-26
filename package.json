@@ -16,9 +16,13 @@
       "svelte": "./src/index.js",
       "default": "./src/index.js"
     },
-    "./components": {
-      "svelte": "./src/components/index.js",
-      "default": "./src/components/index.js"
+    "./components/panel": {
+      "svelte": "./src/components/panel.js",
+      "default": "./src/components/panel.js"
+    },
+    "./components/theme": {
+      "svelte": "./src/components/theme.js",
+      "default": "./src/components/theme.js"
     },
     "./internal": {
       "svelte": "./src/internal/index.js",
