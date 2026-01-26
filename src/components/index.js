@@ -20,3 +20,4 @@ export const NoContent = components.NoContent;
 export const Editor = components.Editor;
 export const DragAndDropZone = components.DragAndDropZone;
 export const PageTitle = components.PageTitle;
+export const PlayerHead = components.PlayerHead;
