@@ -1,4 +1,4 @@
-import { getPanoContext } from "../internal/index.js";
+import { getPanoContext } from '../internal/index.js';
 
 const panoContext = getPanoContext();
 const components = panoContext.context.components;
@@ -19,5 +19,3 @@ export const Pagination = components.Pagination;
 export const CardFilters = components.CardFilters;
 export const CardFiltersItem = components.CardFiltersItem;
 export const CardHeader = components.CardHeader;
-export const CardMenu = components.CardMenu;
-export const CardMenuItem = components.CardMenuItem;
