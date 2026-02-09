@@ -1,4 +1,4 @@
-export { getPanoContext } from './internal';
+export { getPanoContext } from "./internal/index.js";
 
 export * from './api/plugin.js';
 
