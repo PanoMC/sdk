@@ -76,7 +76,7 @@ const ApiUtil = {
     // Retrieve CSRF token if not provided
     if (!csrfToken) {
       let session;
-      if (request) {
+      if (request && typeof request.parent === "function") {
         const parentData = await request.parent();
         session = parentData.session;
       } else if (browser && get(page).data) {

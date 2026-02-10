@@ -17,7 +17,9 @@ let path, url, admZip;
 
 let serverSidePrepared = false;
 let serverSideInitialized = false;
-let lastSiteInfoHash = null;
+let lastProcessedBackendHash = null;
+let lastProcessedFrontendHash = null;
+
 
 
 if (!browser) {
@@ -311,39 +313,41 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
 }
 
 export async function preparePlugins(siteInfo) {
-  if (!browser && !siteInfo.developmentMode) {
-    const currentHash = JSON.stringify(siteInfo.plugins);
-    if (serverSidePrepared && lastSiteInfoHash === currentHash) {
-      return;
+  const currentBackendHash = JSON.stringify(siteInfo.plugins);
+  const isCacheHit = !browser && !siteInfo.developmentMode && serverSidePrepared && lastProcessedBackendHash === currentBackendHash;
+
+  if (!isCacheHit) {
+    createPluginsFolder();
+
+    const pluginsInFolder = readPluginsFromFolder(siteInfo);
+
+    await verifyPlugins(pluginsInFolder, siteInfo);
+
+    if (!browser) {
+      serverSidePrepared = true;
+      lastProcessedBackendHash = currentBackendHash;
     }
   }
 
-  createPluginsFolder();
-
-  const pluginsInFolder = readPluginsFromFolder(siteInfo);
-
-  await verifyPlugins(pluginsInFolder, siteInfo);
-
   const newSiteInfoPlugins = {};
-  Object.keys(get(plugins)).forEach((pluginId) => {
-    const plugin = get(plugins)[pluginId];
-    const { version, uiHash } = plugin.version;
+  const loadedPlugins = get(plugins);
+  Object.keys(loadedPlugins).forEach((pluginId) => {
+    const plugin = loadedPlugins[pluginId];
+    // In some versions version is an object containing metadata, in others it's directly on the plugin.
+    const vObj = plugin.version;
+    const { version, uiHash } = (vObj && typeof vObj === 'object') ? vObj : plugin;
     newSiteInfoPlugins[pluginId] = { version, uiHash };
   });
   siteInfo.plugins = newSiteInfoPlugins;
-
-  if (!browser) {
-    serverSidePrepared = true;
-    lastSiteInfoHash = JSON.stringify(siteInfo.plugins);
-  }
 }
 
+
 export async function initializePlugins(siteInfo) {
-  if (!browser && !siteInfo.developmentMode && serverSideInitialized) {
-    if (lastSiteInfoHash === JSON.stringify(siteInfo.plugins)) {
-      return;
-    }
+  const currentFrontendHash = JSON.stringify(siteInfo.plugins);
+  if (!browser && !siteInfo.developmentMode && serverSideInitialized && lastProcessedFrontendHash === currentFrontendHash) {
+    return;
   }
+
 
   registeredPages = {};
 
@@ -359,8 +363,10 @@ export async function initializePlugins(siteInfo) {
 
   if (!browser) {
     serverSideInitialized = true;
+    lastProcessedFrontendHash = currentFrontendHash;
   }
 }
+
 
 const moduleCache = new Map();
 
