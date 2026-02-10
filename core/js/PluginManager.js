@@ -15,6 +15,11 @@ export { findMatch };
 
 let path, url, admZip;
 
+let serverSidePrepared = false;
+let serverSideInitialized = false;
+let lastSiteInfoHash = null;
+
+
 if (!browser) {
   const pathStuff = await import('path');
   const urlStuff = await import('url');
@@ -306,6 +311,13 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
 }
 
 export async function preparePlugins(siteInfo) {
+  if (!browser && !siteInfo.developmentMode) {
+    const currentHash = JSON.stringify(siteInfo.plugins);
+    if (serverSidePrepared && lastSiteInfoHash === currentHash) {
+      return;
+    }
+  }
+
   createPluginsFolder();
 
   const pluginsInFolder = readPluginsFromFolder(siteInfo);
@@ -319,9 +331,20 @@ export async function preparePlugins(siteInfo) {
     newSiteInfoPlugins[pluginId] = { version, uiHash };
   });
   siteInfo.plugins = newSiteInfoPlugins;
+
+  if (!browser) {
+    serverSidePrepared = true;
+    lastSiteInfoHash = JSON.stringify(siteInfo.plugins);
+  }
 }
 
 export async function initializePlugins(siteInfo) {
+  if (!browser && !siteInfo.developmentMode && serverSideInitialized) {
+    if (lastSiteInfoHash === JSON.stringify(siteInfo.plugins)) {
+      return;
+    }
+  }
+
   registeredPages = {};
 
   await initPluginAPI();
@@ -333,6 +356,10 @@ export async function initializePlugins(siteInfo) {
   }
 
   await loadPlugins(siteInfo);
+
+  if (!browser) {
+    serverSideInitialized = true;
+  }
 }
 
 const moduleCache = new Map();
@@ -384,7 +411,7 @@ async function loadPlugins(siteInfo) {
         try {
           module = await import(
             /* @vite-ignore */ 'file://' +
-              path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
+            path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
           );
         } catch (e) {
           error(`${pluginId} could not run! Error:`);
