@@ -150,7 +150,9 @@ const ApiUtil = {
         .then(jsonParseHandler)
         .then(async (parsedJson) => {
           if (parsedJson?.error === 'DISABLED_FOR_DEMO') {
-            show('components.toasts.demo-mode-restricted');
+            if (browser) {
+              await show("components.toasts.demo-mode-restricted");
+            }
             return;
           }
           return handler ? await handler(parsedJson, reject) : parsedJson;
