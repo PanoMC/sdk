@@ -3,6 +3,7 @@ import { get } from 'svelte/store';
 import { page } from '$app/stores';
 import { browser } from '$app/environment';
 import { initialized } from '$lib/Store.js';
+import { show } from '$lib/component/ToastContainer.svelte';
 
 // Constants for network error handling
 export const NETWORK_ERROR = 'NETWORK_ERROR';
@@ -147,7 +148,13 @@ const ApiUtil = {
       return fetchMethod
         .then(bodyHandler)
         .then(jsonParseHandler)
-        .then(async (parsedJson) => (handler ? await handler(parsedJson, reject) : parsedJson))
+        .then(async (parsedJson) => {
+          if (parsedJson?.error === 'DISABLED_FOR_DEMO') {
+            show('components.toasts.demo-mode-restricted');
+            return;
+          }
+          return handler ? await handler(parsedJson, reject) : parsedJson;
+        })
         .catch(reject);
     };
 
