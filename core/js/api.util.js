@@ -110,10 +110,21 @@ const ApiUtil = {
 
     if ((request && !get(initialized)) || !browser || API_URL.includes('.panomc.com')) {
       // Determine API URL
-      const apiUrl =
-        !API_URL.includes('.panomc.com') && import.meta.env.PROD && browser && get(initialized)
-          ? '/api'
-          : API_URL;
+      let apiUrl = API_URL;
+
+      if (
+        !API_URL.includes(".panomc.com") &&
+        import.meta.env.PROD &&
+        browser &&
+        get(initialized)
+      ) {
+        apiUrl = "/api"
+      }
+
+      if (browser && (API_URL.includes("0.0.0.0") || API_URL.includes("127.0.0.1"))) {
+        apiUrl = "/api"
+      }
+
       path = `${apiUrl}/${path.replace('/api/', '')}`;
     }
 
