@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import { page } from '$app/stores';
 import { browser } from '$app/environment';
 import { initialized } from '$lib/Store.js';
-import { show } from '$lib/component/ToastContainer.svelte';
+import { show } from '$lib/components/ToastContainer.svelte';
 
 // Constants for network error handling
 export const NETWORK_ERROR = 'NETWORK_ERROR';
