@@ -32,7 +32,7 @@ if (!browser) {
   admZip = admZipStuff.default;
 }
 
-const plugins = writable({});
+export const plugins = writable({});
 
 const pluginsFolder = 'plugins';
 const manifestFileName = 'manifest.json';
