@@ -34,7 +34,7 @@ const ApiUtil = {
   },
 
   // POST request
-  async post({ path, request, body, headers, csrfToken, token, blob, handler }) {
+  async post({ path, request, body, headers, csrfToken, token, blob, handler, onUploadProgress }) {
     return this.customRequest({
       path,
       data: { method: 'POST', credentials: 'include', body, headers },
@@ -43,11 +43,12 @@ const ApiUtil = {
       token,
       blob,
       handler,
+      onUploadProgress,
     });
   },
 
   // PUT request
-  async put({ path, request, body, headers, csrfToken, token, blob, handler }) {
+  async put({ path, request, body, headers, csrfToken, token, blob, handler, onUploadProgress }) {
     return this.customRequest({
       path,
       data: { method: 'PUT', credentials: 'include', body, headers },
@@ -56,6 +57,7 @@ const ApiUtil = {
       token,
       blob,
       handler,
+      onUploadProgress,
     });
   },
 
@@ -73,7 +75,7 @@ const ApiUtil = {
   },
 
   // Custom request handler
-  async customRequest({ path, data = {}, request, csrfToken, token, blob, handler }) {
+  async customRequest({ path, data = {}, request, csrfToken, token, blob, handler, onUploadProgress }) {
     // Retrieve CSRF token if not provided
     if (!csrfToken) {
       let session;
@@ -138,10 +140,6 @@ const ApiUtil = {
     };
 
     const requestCall = (rejectHandler) => {
-      // Perform fetch request
-      const fetchMethod =
-        request && request.fetch ? request.fetch(path, options) : fetch(path, options);
-
       const reject = async (err) => {
         console.log(err);
         if (rejectHandler) {
@@ -154,6 +152,62 @@ const ApiUtil = {
 
         this.interceptors.errorHandler(requestCall);
       };
+
+      if (onUploadProgress && browser && data.body instanceof FormData) {
+        return new Promise((resolve, rejectFn) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open(data.method, path);
+
+          if (options.credentials === 'include') {
+            xhr.withCredentials = true;
+          }
+
+          const headersToSet = { ...options.headers };
+          delete headersToSet['Content-Type'];
+
+          Object.keys(headersToSet).forEach((key) => {
+            xhr.setRequestHeader(key, headersToSet[key]);
+          });
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              onUploadProgress(event.loaded / event.total);
+            }
+          };
+
+          xhr.onload = async () => {
+            try {
+              let parsedJson;
+              try {
+                parsedJson = JSON.parse(xhr.responseText);
+              } catch (err) {
+                parsedJson = xhr.responseText;
+              }
+
+              if (parsedJson?.error === 'DISABLED_FOR_DEMO') {
+                if (browser) {
+                  await show("components.toasts.demo-mode-restricted");
+                }
+                resolve();
+                return;
+              }
+
+              const finalData = handler ? await handler(parsedJson, rejectFn) : parsedJson;
+              resolve(finalData);
+            } catch (err) {
+              rejectFn(err);
+            }
+          };
+
+          xhr.onerror = () => rejectFn('NETWORK_ERROR');
+
+          xhr.send(data.body);
+        }).catch(reject);
+      }
+
+      // Perform fetch request
+      const fetchMethod =
+        request && request.fetch ? request.fetch(path, options) : fetch(path, options);
 
       // Handle response
       return fetchMethod
