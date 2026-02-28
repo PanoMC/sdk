@@ -1,4 +1,5 @@
-$fa-font-path: '/assets/webfonts';
+$pano-asset-path: '/assets/' !default;
+$fa-font-path: '#{$pano-asset-path}webfonts';
 
 @import 'custom-bootstrap';
 @import '../../../../node_modules/bootstrap/scss/bootstrap';
@@ -12,17 +13,11 @@ $fa-font-path: '/assets/webfonts';
 
 $all-colors: map-merge-multiple($primaries);
 
-$utilities: map-merge(
-  $utilities,
-  (
-    'color': map-merge(
-        map-get($utilities, 'color'),
-        (
-          values: map-merge(map-get(map-get($utilities, 'color'), 'values'), ($all-colors)),
-        )
-      ),
-  )
-);
+$utilities: map-merge($utilities,
+    ('color': map-merge(map-get($utilities, 'color'),
+        (values: map-merge(map-get(map-get($utilities, 'color'), 'values'), ($all-colors)),
+        )),
+    ));
 
 @import '../../../../node_modules/bootstrap/scss/utilities/api';
 
@@ -32,19 +27,25 @@ $utilities: map-merge(
 
 #sidebar {
   --bs-offcanvas-width: 256px;
-} /* mobile offcanvas width */
+}
+
+/* mobile offcanvas width */
 
 /* Desktop horizontal */
 @media (min-width: 992px) {
+
   /* Make Sidebar visible, sticky and fixed width */
   .offcanvas-lg {
     position: sticky;
     transform: none !important;
     visibility: visible !important;
-    z-index: auto !important; /* prevent content override */
-    flex: 0 0 256px; /* fix 256px */
+    z-index: auto !important;
+    /* prevent content override */
+    flex: 0 0 256px;
+    /* fix 256px */
     max-width: 256px;
   }
+
   .offcanvas-backdrop {
     display: none !important;
   }
@@ -55,8 +56,9 @@ $utilities: map-merge(
     bottom right,
     bottom left,
     bottom left;
-  background-image:
-    url('/assets/img/red.svg'), url('/assets/img/yellow.svg'), url('/assets/img/green.svg');
+  background-image: url('#{$pano-asset-path}img/red.svg'),
+  url('#{$pano-asset-path}img/yellow.svg'),
+  url('#{$pano-asset-path}img/green.svg');
   background-repeat: no-repeat;
   background-size:
     64px 64px,
