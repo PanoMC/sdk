@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { browser } from '$app/environment';
+import { browser, dev } from '$app/environment';
 import { writable, get } from 'svelte/store';
 import ApiUtil from '$lib/api.util.js';
 import { base } from '$app/paths';
@@ -39,15 +39,15 @@ const manifestFileName = 'manifest.json';
 const pluginUiZipFileName = 'plugin-ui.zip';
 
 function log(message) {
-  console.log(`[Plugin Manager] ${message}`);
+  if (dev) console.log(`[Plugin Manager] ${message}`);
 }
 
 function error(message) {
-  console.error(`[Plugin Manager] ${message}`);
+  if (dev) console.error(`[Plugin Manager] ${message}`);
 }
 
 function debug(message) {
-  console.debug(`[Plugin Manager] ${message}`);
+  if (dev) console.debug(`[Plugin Manager] ${message}`);
 }
 
 function createPluginsFolder() {
@@ -457,7 +457,7 @@ async function loadPlugins(siteInfo) {
     try {
       await instance.onLoad();
     } catch (e) {
-      console.error(`[PluginManager] Failed to load plugin ${pluginId}:`, e);
+      if (dev) console.error(`[PluginManager] Failed to load plugin ${pluginId}:`, e);
     }
   }
 }
