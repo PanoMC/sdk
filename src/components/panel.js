@@ -19,3 +19,4 @@ export const Pagination = components.Pagination;
 export const CardFilters = components.CardFilters;
 export const CardFiltersItem = components.CardFiltersItem;
 export const CardHeader = components.CardHeader;
+export const SearchInput = components.SearchInput;
