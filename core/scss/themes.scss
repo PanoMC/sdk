@@ -2,6 +2,22 @@
 
 [data-bs-theme='dark'] {
   --bs-body-bg: #0a1931;
+  --bs-body-bg-rgb: #{to-rgb(#0a1931)};
+
+  --bs-secondary-bg: #112240;
+  --bs-secondary-bg-rgb: #{to-rgb(#112240)};
+
+  --bs-tertiary-bg: #162b4e;
+  --bs-tertiary-bg-rgb: #{to-rgb(#162b4e)};
+
+  --bs-emphasis-color: #{$white};
+  --bs-emphasis-color-rgb: #{to-rgb($white)};
+
+  --bs-secondary-color: rgba(204, 209, 217, 0.75);
+  --bs-tertiary-color: rgba(204, 209, 217, 0.5);
+
+  --bs-border-color: rgba(255, 255, 255, 0.1);
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
 }
 
 [data-bs-theme='copper'] {
@@ -9,6 +25,18 @@
 
   $primary: #b87333;
   $secondary: #44ffd2;
+
+  $body-bg: shade-color($primary, 90%);
+  --bs-body-bg: #{$body-bg};
+  --bs-body-bg-rgb: #{to-rgb($body-bg)};
+
+  $secondary-bg: shade-color($primary, 85%);
+  --bs-secondary-bg: #{$secondary-bg};
+  --bs-secondary-bg-rgb: #{to-rgb($secondary-bg)};
+
+  $tertiary-bg: shade-color($primary, 82%);
+  --bs-tertiary-bg: #{$tertiary-bg};
+  --bs-tertiary-bg-rgb: #{to-rgb($tertiary-bg)};
 
   --bs-primary: #{$primary};
   --bs-primary-rgb: #{to-rgb($primary)};

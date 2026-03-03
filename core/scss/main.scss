@@ -11,11 +11,15 @@ $fa-font-path: '#{$pano-asset-path}webfonts';
 @import '../../../../node_modules/bootstrap/scss/utilities';
 @import 'themes';
 
-$all-colors: map-merge-multiple($primaries);
+$all-colors: map-merge-multiple($primaries, $secondaries);
 
-$utilities: map-merge($utilities,
-    ('color': map-merge(map-get($utilities, 'color'),
-        (values: map-merge(map-get(map-get($utilities, 'color'), 'values'), ($all-colors)),
+$utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color"), (values: map-merge(map-get(map-get($utilities, "color"), "values"), ($all-colors)),
+        )),
+      "background-color": map-merge(map-get($utilities, "background-color"), (values: map-merge(map-get(map-get($utilities, "background-color"), "values"), ($all-colors)),
+        )),
+      "subtle-background-color": map-merge(map-get($utilities, "subtle-background-color"), (values: map-merge(map-get(map-get($utilities, "subtle-background-color"), "values"), ($all-colors)),
+        )),
+      "text-bg-color": map-merge(map-get($utilities, "text-bg-color"), (values: map-merge(map-get(map-get($utilities, "text-bg-color"), "values"), ($all-colors)),
         )),
     ));
 

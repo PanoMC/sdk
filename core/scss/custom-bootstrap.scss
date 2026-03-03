@@ -42,7 +42,7 @@ $primaries: (
   "primary-700": #2136a1,
   "primary-800": #14267f,
   "primary-900": #0a185d,
-) !default;
+  ) !default;
 
 $secondaries: (
   "secondary-100": #dbffdd,
@@ -54,11 +54,12 @@ $secondaries: (
   "secondary-700": #48864c,
   "secondary-800": #366939,
   "secondary-900": #254b27,
-) !default;
+  ) !default;
 
 // SETTINGS
 
 $enable-shadows: true;
+$enable-gradients: true;
 
 // GLOBAL TOKENS
 
@@ -72,7 +73,8 @@ $border-radius-sm: 9.6px;
 $border-radius-lg: 9.6px;
 
 $box-shadow-inset: 0;
-$box-shadow-sm: 0 1.5px 0 rgba($dark, 0.1);
+$box-shadow-sm: 0 1.5px 0 rgba($dark, 0.1
+);
 $box-shadow: 0 1.5px 0 rgba($dark, 0.1);
 $box-shadow-lg: 0 4px 0 rgba($dark, 0.1);
 
@@ -110,8 +112,42 @@ $link-hover-decoration: underline;
 
 // Dropdowns
 
-$dropdown-link-hover-bg: rgba(
-  $color: $primary,
-  $alpha: 0.25,
-);
+$dropdown-link-hover-bg: rgba($color: $primary,
+    $alpha: 0.25,
+  );
 $dropdown-item-padding-y: 0.4rem;
+
+// Subtle & Emphasis Colors Utilities
+@each $color, $value in $theme-colors {
+
+  // Emphasis Text
+  .text-#{$color}-emphasis {
+    color: shade-color($value, 20%) !important;
+  }
+
+  // Subtle Backgrounds
+  .bg-#{$color}-subtle {
+    background-color: rgba($value, 0.12) !important;
+    color: $value !important; // Some BS versions use emphasis color here, keeping it base color for Pano
+    border: 1px solid rgba($value, 0.2) !important;
+  }
+
+  // Aliases for 'subtile' if used by mistake
+  .bg-#{$color}-subtile {
+    @extend .bg-#{$color}-subtle;
+  }
+}
+
+// Background Gradients
+@if $enable-gradients {
+  .bg-gradient {
+    background-image: var(--bs-gradient) !important;
+  }
+}
+
+// Background Opacity
+@each $opacity in 10, 25, 50, 75 {
+  .bg-opacity-#{$opacity} {
+    --bs-bg-opacity: #{$opacity * 0.01} !important;
+  }
+}
