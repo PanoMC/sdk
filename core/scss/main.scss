@@ -2,13 +2,13 @@ $pano-asset-path: '/assets/' !default;
 $fa-font-path: '#{$pano-asset-path}webfonts';
 
 @import 'custom-bootstrap';
-@import '../../../../node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap/scss/bootstrap';
 @import 'fonts';
 
-@import '../../../../node_modules/bootstrap/scss/functions';
-@import '../../../../node_modules/bootstrap/scss/variables';
-@import '../../../../node_modules/bootstrap/scss/mixins';
-@import '../../../../node_modules/bootstrap/scss/utilities';
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
+@import 'node_modules/bootstrap/scss/utilities';
 @import 'themes';
 
 $all-colors: map-merge-multiple($primaries, $secondaries);
@@ -19,11 +19,10 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
         )),
       "subtle-background-color": map-merge(map-get($utilities, "subtle-background-color"), (values: map-merge(map-get(map-get($utilities, "subtle-background-color"), "values"), ($all-colors)),
         )),
-      "text-bg-color": map-merge(map-get($utilities, "text-bg-color"), (values: map-merge(map-get(map-get($utilities, "text-bg-color"), "values"), ($all-colors)),
-        )),
+
     ));
 
-@import '../../../../node_modules/bootstrap/scss/utilities/api';
+@import 'node_modules/bootstrap/scss/utilities/api';
 
 //        Common styles
 
