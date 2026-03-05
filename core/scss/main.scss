@@ -49,7 +49,7 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
     max-width: 256px;
   }
 
-  .offcanvas-backdrop {
+  #sidebar+.offcanvas-backdrop {
     display: none !important;
   }
 }
