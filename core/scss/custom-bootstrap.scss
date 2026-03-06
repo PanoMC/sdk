@@ -13,6 +13,7 @@ $gray: #ccd1d9;
 $light: #f5f7fa;
 $white: #fff;
 $black: #000;
+$purple: #6f42c1;
 $transparent: transparent;
 
 $theme-colors: (
@@ -26,6 +27,7 @@ $theme-colors: (
   "light": $light,
   "dark": $dark,
   "gray": $gray,
+  "purple": $purple,
   "white": $white,
   "black": $black,
 );
@@ -135,6 +137,17 @@ $dropdown-item-padding-y: 0.4rem;
   // Aliases for 'subtile' if used by mistake
   .bg-#{$color}-subtile {
     @extend .bg-#{$color}-subtle;
+  }
+
+  // Badge Theming (Solid & High Contrast)
+  .badge {
+
+    &.text-bg-#{$color},
+    &.text-bg-#{$color}-subtle {
+      background-color: $value !important;
+      color: color-contrast($value) !important;
+      border: 1px solid rgba($black, 0.1) !important;
+    }
   }
 }
 
