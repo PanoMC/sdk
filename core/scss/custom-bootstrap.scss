@@ -119,11 +119,6 @@ $link-hover-decoration: underline;
 
 // Dropdowns
 
-$dropdown-link-hover-bg: rgba($color: $primary,
-    $alpha: 0.25,
-  );
-$dropdown-item-padding-y: 0.4rem;
-
 // Subtle & Emphasis Colors Utilities
 @each $color, $value in $theme-colors {
 
