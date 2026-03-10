@@ -107,6 +107,11 @@ $modal-backdrop-opacity: 0.35;
 
 $alert-border-width: 0;
 
+// Focus Ring
+
+$focus-ring-opacity: .8;
+$focus-ring-color: rgba($primary, $focus-ring-opacity);
+
 // Lines
 
 $link-decoration: none;
