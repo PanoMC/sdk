@@ -19,6 +19,7 @@ export default function tooltip(element, properties) {
 
   if (value) {
     if (typeof options === 'undefined') options = {};
+    if (typeof options.placement === 'undefined') options.placement = 'bottom';
 
     setTooltip(element, [value, options]);
 
@@ -46,6 +47,7 @@ export default function tooltip(element, properties) {
       }
 
       if (typeof options === 'undefined') options = {};
+      if (typeof options.placement === 'undefined') options.placement = 'bottom';
 
       setTooltip(element, [value, options]);
     },
