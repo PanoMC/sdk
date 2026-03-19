@@ -1,13 +1,13 @@
-import fs from 'fs';
+import fs from "fs";
 
-import { browser, dev } from '$app/environment';
-import { writable, get } from 'svelte/store';
-import ApiUtil from '$lib/api.util.js';
-import { base } from '$app/paths';
+import { browser, dev } from "$app/environment";
+import { get, writable } from "svelte/store";
+import ApiUtil from "$lib/api.util.js";
+import { base } from "$app/paths";
 
-import { init as initPluginAPI, panoApiClient, panoApiServer } from '$lib/PluginAPI.js';
-import { PanoPlugin } from '@panomc/sdk';
-import { findMatch } from './RouteMatcher.js';
+import { init as initPluginAPI, panoApiClient, panoApiServer } from "$lib/PluginAPI.js";
+import { PanoPlugin } from "@panomc/sdk";
+import { findMatch } from "./RouteMatcher.js";
 
 export let registeredPages = {};
 
@@ -19,6 +19,8 @@ let serverSidePrepared = false;
 let serverSideInitialized = false;
 let lastProcessedBackendHash = null;
 let lastProcessedFrontendHash = null;
+let clientSideInitialized = false;
+let clientSidePluginHash = null;
 
 
 
@@ -342,12 +344,28 @@ export async function preparePlugins(siteInfo) {
 }
 
 
+function generateStablePluginHash(siteInfoPlugins) {
+  const stableData = {};
+  for (const [id, plugin] of Object.entries(siteInfoPlugins || {})) {
+    const vObj = plugin.version;
+    const { version, uiHash } = (vObj && typeof vObj === "object") ? vObj : plugin;
+    stableData[id] = { version, uiHash };
+  }
+  return JSON.stringify(stableData);
+}
+
 export async function initializePlugins(siteInfo) {
-  const currentFrontendHash = JSON.stringify(siteInfo.plugins);
+  const currentFrontendHash = generateStablePluginHash(siteInfo.plugins);
+
+  // SSR cache: skip if already initialized with the same plugin set
   if (!browser && !siteInfo.developmentMode && serverSideInitialized && lastProcessedFrontendHash === currentFrontendHash) {
     return;
   }
 
+  // Client-side cache: skip if already initialized with the same plugin set
+  if (browser && clientSideInitialized && clientSidePluginHash === currentFrontendHash) {
+    return;
+  }
 
   registeredPages = {};
 
@@ -364,6 +382,9 @@ export async function initializePlugins(siteInfo) {
   if (!browser) {
     serverSideInitialized = true;
     lastProcessedFrontendHash = currentFrontendHash;
+  } else {
+    clientSideInitialized = true;
+    clientSidePluginHash = currentFrontendHash;
   }
 }
 
