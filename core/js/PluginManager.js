@@ -392,73 +392,79 @@ export async function initializePlugins(siteInfo) {
 const moduleCache = new Map();
 
 async function loadPlugins(siteInfo) {
-  for (const pluginId of Object.keys(get(plugins))) {
-    const plugin = get(plugins)[pluginId];
+  // Phase 1: Import all plugin modules in parallel for faster loading
+  const pluginIds = Object.keys(get(plugins));
 
-    if (browser) {
-      try {
-        plugin.module = await import(
-          /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs`
-        );
-      } catch (e) {
-        plugins.update((p) => {
-          delete p[pluginId];
-          return p;
-        });
-      }
-    } else {
-      const pluginFolder = path.join(pluginsFolder, pluginId);
-      const pluginManifest = plugin;
-      const pluginHash = pluginManifest.uiHash || 'no-hash';
-      const cacheKey = `${pluginId}-${pluginHash}`;
+  await Promise.all(
+    pluginIds.map(async (pluginId) => {
+      const plugin = get(plugins)[pluginId];
+      if (!plugin) return;
 
-      if (moduleCache.has(cacheKey) && !siteInfo.developmentMode) {
-        plugin.module = moduleCache.get(cacheKey);
-        continue;
-      }
-
-      const timestamp = siteInfo.developmentMode ? `?${Date.now()}` : '';
-      const mainPath = path.join(pluginFolder, 'server', 'server.mjs') + timestamp;
-
-      const __filename = url.fileURLToPath(import.meta.url);
-
-      const currentDir = path.dirname(__filename); // Directory of the current file
-      const targetFile = path.resolve(currentDir, process.cwd()); // Absolute path of the target file
-
-      const relativePath = path.relative(currentDir, targetFile);
-      const levels = relativePath.split(path.sep).length;
-
-      const upDirs = `..${path.sep}`.repeat(levels); // Repeating '../' based on the number of levels
-
-      let module;
-
-      try {
-        module = await import(/* @vite-ignore */ upDirs + mainPath);
-      } catch {
+      if (browser) {
         try {
-          module = await import(
-            /* @vite-ignore */ 'file://' +
-            path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
-          );
+          plugin.module = await import(
+            /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs`
+            );
         } catch (e) {
-          error(`${pluginId} could not run! Error:`);
-          error(e);
-
           plugins.update((p) => {
             delete p[pluginId];
             return p;
           });
+        }
+      } else {
+        const pluginFolder = path.join(pluginsFolder, pluginId);
+        const pluginManifest = plugin;
+        const pluginHash = pluginManifest.uiHash || "no-hash";
+        const cacheKey = `${pluginId}-${pluginHash}`;
 
-          continue;
+        if (moduleCache.has(cacheKey) && !siteInfo.developmentMode) {
+          plugin.module = moduleCache.get(cacheKey);
+          return;
+        }
+
+        const timestamp = siteInfo.developmentMode ? `?${Date.now()}` : "";
+        const mainPath = path.join(pluginFolder, "server", "server.mjs") + timestamp;
+
+        const __filename = url.fileURLToPath(import.meta.url);
+
+        const currentDir = path.dirname(__filename); // Directory of the current file
+        const targetFile = path.resolve(currentDir, process.cwd()); // Absolute path of the target file
+
+        const relativePath = path.relative(currentDir, targetFile);
+        const levels = relativePath.split(path.sep).length;
+
+        const upDirs = `..${path.sep}`.repeat(levels); // Repeating '../' based on the number of levels
+
+        let module;
+
+        try {
+          module = await import(/* @vite-ignore */ upDirs + mainPath);
+        } catch {
+          try {
+            module = await import(
+              /* @vite-ignore */ "file://" +
+            path.join(path.resolve(upDirs + mainPath, process.cwd(), mainPath))
+              );
+          } catch (e) {
+            error(`${pluginId} could not run! Error:`);
+            error(e);
+
+            plugins.update((p) => {
+              delete p[pluginId];
+              return p;
+            });
+
+            return;
+          }
+        }
+
+        plugin.module = module;
+        if (!siteInfo.developmentMode) {
+          moduleCache.set(cacheKey, module);
         }
       }
-
-      plugin.module = module;
-      if (!siteInfo.developmentMode) {
-        moduleCache.set(cacheKey, module);
-      }
-    }
-  }
+    })
+  );
 
   for (const pluginId of Object.keys(get(plugins))) {
     const plugin = get(plugins)[pluginId];
