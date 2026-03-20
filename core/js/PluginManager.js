@@ -338,7 +338,8 @@ export async function preparePlugins(siteInfo) {
     // In some versions version is an object containing metadata, in others it's directly on the plugin.
     const vObj = plugin.version;
     const { version, uiHash } = (vObj && typeof vObj === 'object') ? vObj : plugin;
-    newSiteInfoPlugins[pluginId] = { version, uiHash };
+    const deps = plugin.dependencies;
+    newSiteInfoPlugins[pluginId] = { version, uiHash, ...(deps ? { dependencies: deps } : {}) };
   });
   siteInfo.plugins = newSiteInfoPlugins;
 }
@@ -390,6 +391,63 @@ export async function initializePlugins(siteInfo) {
 
 
 const moduleCache = new Map();
+
+function buildPluginDependencyGraph(loadedPlugins) {
+  const pluginIds = new Set(Object.keys(loadedPlugins));
+  const graph = {};
+  for (const pluginId of pluginIds) {
+    const plugin = loadedPlugins[pluginId];
+    // Only include dependencies that are actually loaded
+    const deps = (plugin.dependencies || []).filter(dep => pluginIds.has(dep));
+    graph[pluginId] = deps;
+  }
+  return graph;
+}
+
+function topologicalSortPlugins(graph) {
+  const inDegree = {};
+  const adj = {};
+
+  for (const node of Object.keys(graph)) {
+    if (!(node in inDegree)) inDegree[node] = 0;
+    if (!(node in adj)) adj[node] = [];
+  }
+
+  for (const [node, deps] of Object.entries(graph)) {
+    for (const dep of deps) {
+      if (!(dep in adj)) {
+        adj[dep] = [];
+      }
+      if (!(dep in inDegree)) inDegree[dep] = 0;
+      adj[dep].push(node);
+      inDegree[node] = (inDegree[node] || 0) + 1;
+    }
+  }
+
+  const levels = [];
+  let queue = Object.keys(inDegree).filter(n => inDegree[n] === 0);
+
+  while (queue.length > 0) {
+    levels.push([...queue]);
+    const nextQueue = [];
+    for (const node of queue) {
+      for (const neighbor of (adj[node] || [])) {
+        inDegree[neighbor]--;
+        if (inDegree[neighbor] === 0) nextQueue.push(neighbor);
+      }
+    }
+    queue = nextQueue;
+  }
+
+  // Fallback: if circular deps prevent resolution, run remaining plugins
+  const resolved = new Set(levels.flat());
+  const unresolved = Object.keys(graph).filter(n => !resolved.has(n));
+  if (unresolved.length > 0) {
+    levels.push(unresolved);
+  }
+
+  return levels;
+}
 
 async function loadPlugins(siteInfo) {
   // Phase 1: Import all plugin modules in parallel for faster loading
@@ -466,25 +524,33 @@ async function loadPlugins(siteInfo) {
     })
   );
 
-  for (const pluginId of Object.keys(get(plugins))) {
-    const plugin = get(plugins)[pluginId];
+  // Phase 2: Initialize plugins with dependency-aware batching (topological sort)
+  // Plugins at the same dependency level run in parallel; levels execute sequentially
+  const pluginDepGraph = buildPluginDependencyGraph(get(plugins));
+  const loadLevels = topologicalSortPlugins(pluginDepGraph);
 
-    if (!plugin.module || !plugin.module.default) continue;
+  for (const level of loadLevels) {
+    await Promise.all(
+      level.map(async (pluginId) => {
+        const plugin = get(plugins)[pluginId];
+        if (!plugin?.module?.default) return;
 
-    const PluginClass = plugin.module.default;
+        const PluginClass = plugin.module.default;
 
-    if (PluginClass instanceof PanoPlugin) {
-      throw new Error('Plugin must extend PanoPlugin');
-    }
+        if (PluginClass instanceof PanoPlugin) {
+          throw new Error("Plugin must extend PanoPlugin");
+        }
 
-    const instance = new PluginClass({ pluginId });
+        const instance = new PluginClass({ pluginId });
 
-    instance.pano = browser ? panoApiClient : panoApiServer;
+        instance.pano = browser ? panoApiClient : panoApiServer;
 
-    try {
-      await instance.onLoad();
-    } catch (e) {
-      if (dev) console.error(`[PluginManager] Failed to load plugin ${pluginId}:`, e);
-    }
+        try {
+          await instance.onLoad();
+        } catch (e) {
+          if (dev) console.error(`[PluginManager] Failed to load plugin ${pluginId}:`, e);
+        }
+      })
+    );
   }
 }
