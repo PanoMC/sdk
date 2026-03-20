@@ -1,9 +1,9 @@
-import { API_URL, CSRF_HEADER } from '$lib/variables.js';
-import { get } from 'svelte/store';
-import { page } from '$app/stores';
-import { browser } from '$app/environment';
-import { initialized } from '$lib/Store.js';
-import { show } from '$lib/components/ToastContainer.svelte';
+import { API_URL, CSRF_HEADER } from "$lib/variables.js";
+import { get } from "svelte/store";
+import { page } from "$app/stores";
+import { browser } from "$app/environment";
+import { initialized } from "$lib/Store.js";
+import { show } from "$lib/components/ToastContainer.svelte";
 
 // Constants for network error handling
 export const NETWORK_ERROR = 'NETWORK_ERROR';
@@ -110,8 +110,24 @@ const ApiUtil = {
       options['credentials'] = 'include';
     }
 
-    if ((request && !get(initialized)) || !browser || API_URL.includes('.panomc.com')) {
-      // Determine API URL
+    // When the app runs behind the Pano backend's reverse proxy, SvelteKit load
+    // functions must use relative paths so SSR and CSR fetch URLs match.
+    // SvelteKit deduplicates event.fetch calls by URL — if SSR uses an absolute URL
+    // (e.g. http://0.0.0.0:8088/api/...) but CSR uses relative (/api/...), the client
+    // will re-fetch instead of using the serialized SSR response.
+    //
+    // For the Pano website (api.panomc.com on Cloudflare Pages), both SSR and CSR
+    // already use the same absolute URL, so dedup works naturally — no change needed.
+    const hasEventFetch = request && request.fetch;
+    const isReverseProxied = !API_URL.includes(".panomc.com");
+
+    if (hasEventFetch && isReverseProxied) {
+      // Reverse proxy scenario: use relative path for consistent SSR↔CSR dedup.
+      // handleFetch in hooks.server.js will rewrite this to the backend URL during SSR.
+      if (!path.startsWith("/api/")) {
+        path = `/api/${path.replace("/api/", "")}`;
+      }
+    } else if ((request && !get(initialized)) || !browser || API_URL.includes(".panomc.com")) {
       let apiUrl = API_URL;
 
       if (
@@ -123,7 +139,7 @@ const ApiUtil = {
         apiUrl = "/api"
       }
 
-      if (browser && (API_URL.includes("0.0.0.0") || API_URL.includes("127.0.0.1"))) {
+      if (browser && (API_URL.includes("0.0.0.0") || API_URL.includes("127.0.0.1") || API_URL.includes("localhost"))) {
         apiUrl = "/api"
       }
 
