@@ -99,6 +99,10 @@ $btn-active-bg-tint-amount: 0%;
 $btn-box-shadow: $box-shadow-sm;
 $btn-active-box-shadow: 0;
 
+.btn:not(.btn-link) {
+  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+}
+
 // Modals
 
 $modal-backdrop-opacity: 0.35;

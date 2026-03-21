@@ -20,110 +20,78 @@
   --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
 }
 
-[data-bs-theme='copper'] {
-  @extend [data-bs-theme='dark'];
+@mixin define-theme($name, $primary, $secondary) {
+  [data-bs-theme='#{$name}'] {
+    @extend [data-bs-theme='dark'];
 
-  $primary: #b87333;
-  $secondary: #44ffd2;
+    $body-bg: shade-color($primary, 90%);
+    --bs-body-bg: #{$body-bg};
+    --bs-body-bg-rgb: #{to-rgb($body-bg)};
 
-  $body-bg: shade-color($primary, 90%);
-  --bs-body-bg: #{$body-bg};
-  --bs-body-bg-rgb: #{to-rgb($body-bg)};
+    $secondary-bg: shade-color($primary, 85%);
+    --bs-secondary-bg: #{$secondary-bg};
+    --bs-secondary-bg-rgb: #{to-rgb($secondary-bg)};
 
-  $secondary-bg: shade-color($primary, 85%);
-  --bs-secondary-bg: #{$secondary-bg};
-  --bs-secondary-bg-rgb: #{to-rgb($secondary-bg)};
+    $tertiary-bg: shade-color($primary, 82%);
+    --bs-tertiary-bg: #{$tertiary-bg};
+    --bs-tertiary-bg-rgb: #{to-rgb($tertiary-bg)};
 
-  $tertiary-bg: shade-color($primary, 82%);
-  --bs-tertiary-bg: #{$tertiary-bg};
-  --bs-tertiary-bg-rgb: #{to-rgb($tertiary-bg)};
+    --bs-primary: #{$primary};
+    --bs-primary-rgb: #{to-rgb($primary)};
 
-  --bs-primary: #{$primary};
-  --bs-primary-rgb: #{to-rgb($primary)};
+    --bs-secondary: #{$secondary};
+    --bs-secondary-rgb: #{to-rgb($secondary)};
 
-  --bs-secondary: #{$secondary};
-  --bs-secondary-rgb: #{to-rgb($secondary)};
+    // Links
+    --bs-link-color: #{$primary};
+    --bs-link-color-rgb: #{to-rgb($primary)};
 
-  // Links
-  --bs-link-color: #{$primary};
-  --bs-link-color-rgb: #{to-rgb($primary)};
+    // Hover dark tones
+    $primary-hover: shade-color($primary, 15%);
+    $secondary-hover: shade-color($secondary, 15%);
+    --bs-link-hover-color: #{$primary-hover};
+    --bs-link-hover-color-rgb: #{to-rgb($primary-hover)};
 
-  // Hover dark tones
-  $primary-hover: shade-color($primary, 15%);
-  $secondary-hover: shade-color($secondary, 15%);
-  --bs-link-hover-color: #{$primary-hover};
-  --bs-link-hover-color-rgb: #{to-rgb($primary-hover)};
+    --bs-primary-text-emphasis: #{tint-color($primary, 40%)};
+    --bs-primary-bg-subtle: rgba($primary, 0.12);
+    --bs-primary-border-subtle: #{shade-color($primary, 25%)};
 
-  --bs-primary-text-emphasis: #{tint-color($primary, 40%)};
-  --bs-primary-bg-subtle: rgba($primary, 0.12);
-  --bs-primary-border-subtle: #{shade-color($primary, 25%)};
+    --bs-secondary-text-emphasis: #{tint-color($secondary, 40%)};
+    --bs-secondary-bg-subtle: rgba($secondary, 0.12);
+    --bs-secondary-border-subtle: #{shade-color($secondary, 25%)};
 
-  --bs-secondary-text-emphasis: #{tint-color($secondary, 40%)};
-  --bs-secondary-bg-subtle: rgba($secondary, 0.12);
-  --bs-secondary-border-subtle: #{shade-color($secondary, 25%)};
+    .btn-primary {
+      --bs-btn-color: #000;
+      --bs-btn-bg: #{$primary};
+      --bs-btn-border-color: #{$primary};
+      --bs-btn-hover-color: #000;
+      --bs-btn-hover-bg: #{$primary-hover};
+      --bs-btn-hover-border-color: #{$primary-hover};
+      --bs-btn-active-color: #000;
+      --bs-btn-active-bg: #{$primary};
+      --bs-btn-active-border-color: #{$primary};
+    }
 
-  .btn-primary {
-    --bs-btn-color: #000;
-    --bs-btn-bg: rgb(184, 115, 51);
-    --bs-btn-border-color: #{$primary};
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-bg: rgb(184, 115, 51);
-    --bs-btn-hover-border-color: rgb(184, 115, 51);
-    --bs-btn-focus-shadow-rgb: 217, 171, 60;
-    --bs-btn-active-color: #000;
-    --bs-btn-active-bg: #{$primary};
-    --bs-btn-active-border-color: rgb(184, 115, 51);
-    --bs-btn-disabled-color: #000;
-    --bs-btn-disabled-bg: #{$primary};
-    --bs-btn-disabled-border-color: #{$primary};
-  }
+    .btn-secondary {
+      --bs-btn-color: #000;
+      --bs-btn-bg: #{$secondary};
+      --bs-btn-border-color: #{$secondary};
+      --bs-btn-hover-color: #000;
+      --bs-btn-hover-bg: #{$secondary-hover};
+      --bs-btn-hover-border-color: #{$secondary-hover};
+      --bs-btn-active-color: #000;
+      --bs-btn-active-bg: #{$secondary};
+      --bs-btn-active-border-color: #{$secondary};
+    }
 
-  .btn-outline-primary {
-    --bs-btn-color: #{$primary};
-    --bs-btn-border-color: #{$primary};
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-bg: #{$primary-hover};
-    --bs-btn-hover-border-color: #{$primary-hover};
-    --bs-btn-active-color: #000;
-    --bs-btn-active-bg: #{$primary};
-    --bs-btn-active-border-color: #{$primary};
-    --bs-btn-disabled-color: #000;
-    --bs-btn-disabled-bg: #{$primary};
-    --bs-btn-disabled-border-color: #{$primary};
-  }
-
-  .btn-outline-secondary {
-    --bs-btn-color: #{$secondary};
-    --bs-btn-border-color: #{$secondary};
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-bg: #{$secondary-hover};
-    --bs-btn-hover-border-color: #{$secondary-hover};
-    --bs-btn-active-color: #000;
-    --bs-btn-active-bg: #{$secondary};
-    --bs-btn-active-border-color: #{$secondary};
-    --bs-btn-disabled-color: #000;
-    --bs-btn-disabled-bg: #{$secondary};
-    --bs-btn-disabled-border-color: #{$secondary};
-  }
-
-  .btn-secondary {
-    --bs-btn-color: #000;
-    --bs-btn-bg: rgb(68, 255, 210);
-    --bs-btn-border-color: #{$secondary};
-    --bs-btn-hover-color: #000;
-    --bs-btn-hover-bg: #{$secondary-hover};
-    --bs-btn-hover-border-color: #{$secondary-hover};
-    --bs-btn-focus-shadow-rgb: 217, 171, 60;
-    --bs-btn-active-color: #000;
-    --bs-btn-active-bg: #{$secondary};
-    --bs-btn-active-border-color: #{$secondary-hover};
-    --bs-btn-active-shadow: 0;
-    --bs-btn-disabled-color: #000;
-    --bs-btn-disabled-bg: #{$secondary};
-    --bs-btn-disabled-border-color: #{$secondary};
-  }
-
-  .nav-pills {
-    --bs-nav-pills-link-active-bg: #{$primary};
+    .nav-pills {
+      --bs-nav-pills-link-active-bg: #{$primary};
+    }
   }
 }
+
+// Themes
+@include define-theme('copper', #b87333, #44ffd2);
+@include define-theme('emerald', #10b981, #60a5fa);
+@include define-theme('midnight', #8b5cf6, #ec4899);
+@include define-theme('crimson', #ef4444, #f59e0b);
