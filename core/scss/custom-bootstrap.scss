@@ -109,7 +109,15 @@ $modal-backdrop-opacity: 0.35;
 
 // Alerts
 
-$alert-border-width: 0;
+$alert-padding-y: 1rem;
+$alert-padding-x: 1.25rem;
+$alert-margin-bottom: 1rem;
+$alert-border-radius: $border-radius;
+$alert-border-width: $border-width;
+$alert-bg-scale: -92%;
+$alert-border-scale: -80%;
+$alert-color-scale: 30%;
+$alert-dismissible-padding-r: 3rem;
 
 // Focus Ring
 
@@ -135,6 +143,19 @@ $link-hover-decoration: underline;
     background-color: rgba($value, 0.12) !important;
     color: $value !important; // Some BS versions use emphasis color here, keeping it base color for Pano
     border: 1px solid rgba($value, 0.2) !important;
+  }
+
+  // Alerts
+  .alert-#{$color} {
+    background-color: rgba($value, 0.12) !important;
+    color: shade-color($value, 15%) !important;
+    border: $border-width solid rgba($value, 0.25) !important;
+    border-radius: $border-radius !important;
+
+    .alert-link {
+      color: shade-color($value, 30%) !important;
+      font-weight: $font-weight-bold;
+    }
   }
 
   // Aliases for 'subtile' if used by mistake
