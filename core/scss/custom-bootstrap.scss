@@ -147,7 +147,6 @@ $link-hover-decoration: underline;
 
   // Alerts
   .alert-#{$color} {
-    background-color: rgba($value, 0.12) !important;
     color: shade-color($value, 15%) !important;
     border: $border-width solid rgba($value, 0.25) !important;
     border-radius: $border-radius !important;
