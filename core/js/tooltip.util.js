@@ -1,4 +1,5 @@
 import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 import { page } from '$app/stores';
 
 function setTooltip(element, [value, options]) {
@@ -9,56 +10,50 @@ function setTooltip(element, [value, options]) {
 }
 
 export default function tooltip(element, properties) {
-  if (!properties) {
-    return;
-  }
-
-  let [value, options] = properties;
-
   let unsubscribePage;
+  let instance;
 
-  if (value) {
-    if (typeof options === 'undefined') options = {};
-    if (typeof options.placement === 'undefined') options.placement = 'bottom';
+  const init = (props) => {
+    if (!props) return;
+    
+    let [value, options] = props;
+    if (!value) {
+       if (instance) instance.destroy();
+       instance = null;
+       return;
+    }
 
-    setTooltip(element, [value, options]);
+    if (!instance) {
+      instance = tippy(element);
+    }
 
-    unsubscribePage = page.subscribe(() => {
-      const instance = typeof element._tippy === 'undefined' ? tippy(element) : element._tippy;
+    const mergedOptions = {
+      content: value,
+      placement: 'bottom',
+      interactive: true,
+      animation: 'fade',
+      ...options
+    };
 
-      instance.hide();
-    });
-  }
+    instance.setProps(mergedOptions);
+
+    if (!unsubscribePage) {
+      unsubscribePage = page.subscribe(() => {
+        if (instance) instance.hide();
+      });
+    }
+  };
+
+  init(properties);
 
   return {
-    update(updatedValue) {
-      if (!updatedValue) {
-        return;
-      }
-
-      let [value, options] = updatedValue;
-
-      if (!value) {
-        const instance = typeof element._tippy === 'undefined' ? tippy(element) : element._tippy;
-
-        instance.destroy();
-
-        return;
-      }
-
-      if (typeof options === 'undefined') options = {};
-      if (typeof options.placement === 'undefined') options.placement = 'bottom';
-
-      setTooltip(element, [value, options]);
+    update(updatedProperties) {
+      init(updatedProperties);
     },
 
-    onDestroy() {
-      const instance = typeof element._tippy === 'undefined' ? tippy(element) : element._tippy;
-
-      instance.destroy();
-      if (unsubscribePage) {
-        unsubscribePage();
-      }
+    destroy() {
+      if (instance) instance.destroy();
+      if (unsubscribePage) unsubscribePage();
     },
   };
 }
