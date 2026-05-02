@@ -49,11 +49,7 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
     max-width: 256px;
   }
 
-  /* Backdrop is appended to #sidebar's parent, not as #sidebar's adjacent sibling — hide on desktop only */
-  .offcanvas-backdrop {
-    display: none !important;
-    pointer-events: none !important;
-  }
+  /* Panel #sidebar uses data-bs-backdrop="false" so no global backdrop hiding — cart offcanvas keeps dimmed backdrop */
 }
 
 .blocks {
