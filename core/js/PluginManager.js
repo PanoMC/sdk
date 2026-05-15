@@ -22,6 +22,11 @@ let lastProcessedFrontendHash = null;
 let clientSideInitialized = false;
 let clientSidePluginHash = null;
 
+// In-flight preparePlugins promise. Filesystem mutations in verifyPlugins are not safe to
+// interleave between concurrent SSR requests; concurrent runs were producing partial states
+// where some files were being deleted while others were being read.
+let preparePluginsInflight = null;
+
 
 
 if (!browser) {
@@ -242,27 +247,30 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
   await Promise.all(
     notInstalledPlugins.map(async (pluginId) => {
       const pluginFolder = path.join(pluginsFolder, pluginId);
-      const manifestFilePath = path.join(pluginFolder, manifestFileName);
       const pluginManifest = pluginsInfo[pluginId];
 
       log(`Installing plugin '${pluginId}'...`);
+      log(`Downloading '${pluginId}'...`);
 
-      if (!fs.existsSync(pluginFolder)) {
-        fs.mkdirSync(pluginFolder, { recursive: true });
+      const file = await downloadPluginUiZip(pluginId);
+
+      // Stage extraction in a sibling temp dir, then atomically rename into place.
+      // This keeps requests from observing a half-populated pluginFolder.
+      const tmpDir = path.join(pluginsFolder, `.${pluginId}.install.${process.pid}.${Date.now()}`);
+      await downloadAndExtractZip(file, tmpDir);
+      fs.writeFileSync(path.join(tmpDir, manifestFileName), JSON.stringify(pluginManifest, null, 2));
+
+      if (fs.existsSync(pluginFolder)) {
+        // A concurrent path created it first; discard our temp.
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      } else {
+        fs.renameSync(tmpDir, pluginFolder);
       }
 
       plugins.update((p) => {
         p[pluginId] = structuredClone(pluginManifest);
         return p;
       });
-
-      log(`Downloading '${pluginId}'...`);
-
-      const file = await downloadPluginUiZip(pluginId);
-
-      await downloadAndExtractZip(file, pluginFolder);
-
-      fs.writeFileSync(manifestFilePath, JSON.stringify(pluginManifest, null, 2));
 
       log(`'${pluginId}' successfully installed.`);
     }),
@@ -283,31 +291,47 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
         pluginManifest.version !== pluginInfoManifest.version ||
         pluginManifest.uiHash !== pluginInfoManifest.uiHash
       ) {
-        const manifestFilePath = path.join(pluginFolder, manifestFileName);
-
         log(`Updating plugin '${pluginId}'.`);
+        log(`Downloading '${pluginId}'...`);
 
+        const file = await downloadPluginUiZip(pluginId);
+
+        // Stage in temp dir so download time doesn't leave pluginFolder mid-mutation.
+        const tmpDir = path.join(pluginsFolder, `.${pluginId}.update.${process.pid}.${Date.now()}`);
+        await downloadAndExtractZip(file, tmpDir);
+
+        // Atomic-ish swap of server/ and client/: rename old aside (constant-time),
+        // rename new into place. The window where a subdir is absent is now microseconds
+        // rather than seconds.
+        const oldServer = path.join(pluginFolder, '.server.old');
+        const oldClient = path.join(pluginFolder, '.client.old');
+
+        if (fs.existsSync(path.join(pluginFolder, 'server'))) {
+          fs.renameSync(path.join(pluginFolder, 'server'), oldServer);
+        }
+        if (fs.existsSync(path.join(tmpDir, 'server'))) {
+          fs.renameSync(path.join(tmpDir, 'server'), path.join(pluginFolder, 'server'));
+        }
+
+        if (fs.existsSync(path.join(pluginFolder, 'client'))) {
+          fs.renameSync(path.join(pluginFolder, 'client'), oldClient);
+        }
+        if (fs.existsSync(path.join(tmpDir, 'client'))) {
+          fs.renameSync(path.join(tmpDir, 'client'), path.join(pluginFolder, 'client'));
+        }
+
+        // Manifest reflects what is on disk now.
         plugins.update((p) => {
           p[pluginId] = structuredClone(pluginInfoManifest);
           return p;
         });
         pluginManifest = get(plugins)[pluginId];
-        fs.writeFileSync(manifestFilePath, JSON.stringify(pluginManifest, null, 2));
+        fs.writeFileSync(path.join(pluginFolder, manifestFileName), JSON.stringify(pluginManifest, null, 2));
 
-        fs.rmSync(path.join(pluginsFolder, pluginId, 'server'), {
-          recursive: true,
-          force: true,
-        });
-        fs.rmSync(path.join(pluginsFolder, pluginId, 'client'), {
-          recursive: true,
-          force: true,
-        });
+        fs.rmSync(oldServer, { recursive: true, force: true });
+        fs.rmSync(oldClient, { recursive: true, force: true });
+        fs.rmSync(tmpDir, { recursive: true, force: true });
 
-        log(`Downloading '${pluginId}'...`);
-
-        const file = await downloadPluginUiZip(pluginId);
-
-        await downloadAndExtractZip(file, pluginFolder);
         log(`'${pluginId}' successfully updated.`);
       }
     }),
@@ -316,19 +340,36 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
 
 export async function preparePlugins(siteInfo) {
   const currentBackendHash = JSON.stringify(siteInfo.plugins);
-  const isCacheHit = !browser && !siteInfo.developmentMode && serverSidePrepared && lastProcessedBackendHash === currentBackendHash;
 
-  if (!isCacheHit) {
-    createPluginsFolder();
-
-    const pluginsInFolder = readPluginsFromFolder(siteInfo);
-
-    await verifyPlugins(pluginsInFolder, siteInfo);
-
-    if (!browser) {
-      serverSidePrepared = true;
-      lastProcessedBackendHash = currentBackendHash;
+  // Loop so that after awaiting another request's preparation we recheck the cache: it may
+  // have produced the state we need (then we exit immediately), or it may have produced a
+  // different state (then we claim a fresh run).
+  while (true) {
+    if (preparePluginsInflight) {
+      try { await preparePluginsInflight; } catch { /* the owner re-throws to its caller */ }
+      continue;
     }
+
+    const isCacheHit = !browser && !siteInfo.developmentMode && serverSidePrepared && lastProcessedBackendHash === currentBackendHash;
+    if (isCacheHit) break;
+
+    // Claim the lock synchronously before any await — otherwise two callers can both observe
+    // `preparePluginsInflight === null` and race.
+    preparePluginsInflight = (async () => {
+      createPluginsFolder();
+      const pluginsInFolder = readPluginsFromFolder(siteInfo);
+      await verifyPlugins(pluginsInFolder, siteInfo);
+      if (!browser) {
+        serverSidePrepared = true;
+        lastProcessedBackendHash = currentBackendHash;
+      }
+    })();
+    try {
+      await preparePluginsInflight;
+    } finally {
+      preparePluginsInflight = null;
+    }
+    break;
   }
 
   const newSiteInfoPlugins = {};
@@ -459,15 +500,24 @@ async function loadPlugins(siteInfo) {
       if (!plugin) return;
 
       if (browser) {
+        // The `?v=<uiHash>` segment is what gives this URL meaning as a content identifier:
+        // the browser module cache is keyed by URL, so distinct hashes get distinct cache
+        // entries. Without this, a plugin update mutates server-side files but the browser
+        // keeps using the old module from its cache for the rest of the session.
+        const uiHashSuffix = plugin.uiHash ? `?v=${plugin.uiHash}` : '';
         try {
           plugin.module = await import(
-            /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs`
+            /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs${uiHashSuffix}`
             );
         } catch (e) {
-          plugins.update((p) => {
-            delete p[pluginId];
-            return p;
-          });
+          // We land here when (a) the plugin was just updated and the file is mid-rename, or
+          // (b) the user's tab carries a now-deleted plugin reference. Silently deleting the
+          // plugin from the store like before left the UI in an inconsistent state — code
+          // executed in this session would behave as if the plugin doesn't exist. The only
+          // way to resync everything (registered routes, components, hooks) is a full reload.
+          console.warn(`[Plugin Manager] '${pluginId}' client module failed to load, reloading…`, e);
+          location.reload();
+          throw e;
         }
       } else {
         const pluginFolder = path.join(pluginsFolder, pluginId);
