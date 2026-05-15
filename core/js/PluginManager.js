@@ -396,6 +396,26 @@ function generateStablePluginHash(siteInfoPlugins) {
   return JSON.stringify(stableData);
 }
 
+// Live plugin instances on the client. Re-init calls __destroy() on these so a
+// plugin's onUnload runs and any subscriptions it registered via this._unsubscribers
+// get cleaned up before its next onLoad (or before it disappears on disable/remove).
+const livePluginInstances = new Map();
+
+async function destroyLivePluginInstances() {
+  if (livePluginInstances.size === 0) return;
+  const entries = Array.from(livePluginInstances.entries());
+  livePluginInstances.clear();
+  await Promise.allSettled(
+    entries.map(async ([pluginId, instance]) => {
+      try {
+        await instance.__destroy?.();
+      } catch (e) {
+        if (dev) console.error(`[PluginManager] __destroy failed for ${pluginId}:`, e);
+      }
+    })
+  );
+}
+
 export async function initializePlugins(siteInfo) {
   const currentFrontendHash = generateStablePluginHash(siteInfo.plugins);
 
@@ -410,6 +430,10 @@ export async function initializePlugins(siteInfo) {
   }
 
   registeredPages = {};
+
+  if (browser) {
+    await destroyLivePluginInstances();
+  }
 
   await initPluginAPI();
 
@@ -594,6 +618,10 @@ async function loadPlugins(siteInfo) {
         const instance = new PluginClass({ pluginId });
 
         instance.pano = browser ? panoApiClient : panoApiServer;
+
+        if (browser) {
+          livePluginInstances.set(pluginId, instance);
+        }
 
         try {
           await instance.onLoad();
