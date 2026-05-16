@@ -529,19 +529,32 @@ async function loadPlugins(siteInfo) {
         // entries. Without this, a plugin update mutates server-side files but the browser
         // keeps using the old module from its cache for the rest of the session.
         const uiHashSuffix = plugin.uiHash ? `?v=${plugin.uiHash}` : '';
+        const reloadKey = `pano:plugin-reload:${pluginId}:${plugin.uiHash || 'no-hash'}`;
         try {
           plugin.module = await import(
             /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs${uiHashSuffix}`
             );
+          sessionStorage.removeItem(reloadKey);
         } catch (e) {
           // We land here when (a) the plugin was just updated and the file is mid-rename, or
-          // (b) the user's tab carries a now-deleted plugin reference. Silently deleting the
-          // plugin from the store like before left the UI in an inconsistent state — code
-          // executed in this session would behave as if the plugin doesn't exist. The only
-          // way to resync everything (registered routes, components, hooks) is a full reload.
-          console.warn(`[Plugin Manager] '${pluginId}' client module failed to load, reloading…`, e);
-          location.reload();
-          throw e;
+          // (b) the user's tab carries a now-deleted plugin reference, or (c) the plugin's
+          // on-disk files are permanently broken (chunk referenced by client.mjs is missing).
+          // Reload once to resync — but only once per uiHash, since case (c) would otherwise
+          // cause an infinite F5 loop with the server permanently returning 404s.
+          const alreadyReloaded = sessionStorage.getItem(reloadKey) === '1';
+          if (!alreadyReloaded) {
+            sessionStorage.setItem(reloadKey, '1');
+            console.warn(`[Plugin Manager] '${pluginId}' client module failed to load, reloading once…`, e);
+            location.reload();
+            throw e;
+          }
+          // Second failure for the same uiHash: stop the loop. Drop the plugin from the store
+          // so the UI can render the rest of the page without it.
+          console.error(`[Plugin Manager] '${pluginId}' client module is permanently broken (uiHash=${plugin.uiHash}); skipping. The on-disk plugin files are likely corrupt — clear the panel-ui 'plugins/${pluginId}' folder on the server.`, e);
+          plugins.update((p) => {
+            delete p[pluginId];
+            return p;
+          });
         }
       } else {
         const pluginFolder = path.join(pluginsFolder, pluginId);
