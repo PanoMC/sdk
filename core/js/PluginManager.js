@@ -71,15 +71,6 @@ function isDirectory(path) {
   }
 }
 
-function isDirectoryEmpty(directoryPath) {
-  try {
-    const items = fs.readdirSync(directoryPath);
-    return items.length === 0;
-  } catch (error) {
-    return false;
-  }
-}
-
 async function downloadAndExtractZip(file, outputDir) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
@@ -123,36 +114,87 @@ async function downloadPluginUiZip(pluginId) {
   });
 }
 
-async function verifyPlugins(pluginsInFolder, siteInfo) {
+// A plugin folder counts as "intact" only if all three pieces produced by a real install
+// are present: the root manifest.json and both the server/ and client/ subdirs. Anything
+// else is a shell folder — left over from a download that 404'd, an extraction that
+// produced an empty zip, an update that swapped out the old subdirs and then couldn't
+// move new ones in, or a crashed install/update where the staging dir never got renamed
+// into place. We need to recognize and purge these eagerly: readPluginsFromFolder silently
+// drops them (manifest read fails → not in pluginsInFolder), so they slip past the rest
+// of verifyPlugins and then make the install path's existsSync check think the plugin
+// is "already there", which discards the fresh download.
+function isPluginFolderIntact(pluginFolder) {
+  return (
+    fs.existsSync(path.join(pluginFolder, manifestFileName)) &&
+    isDirectory(path.join(pluginFolder, 'server')) &&
+    isDirectory(path.join(pluginFolder, 'client'))
+  );
+}
+
+function purgeIncompletePluginFolders() {
+  let entries;
+  try {
+    entries = fs.readdirSync(pluginsFolder);
+  } catch {
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const entryPath = path.join(pluginsFolder, entry);
+    if (!isDirectory(entryPath)) return;
+
+    // Stale staging dirs from a previous crashed install/update (".pluginId.install.<pid>.<ts>"
+    // / ".pluginId.update.<pid>.<ts>"). The preparePluginsInflight lock guarantees no
+    // install is running in parallel with verifyPlugins, so any leading-dot dir here is
+    // dead and safe to remove.
+    if (entry.startsWith('.')) {
+      log(`Removing stale staging dir '${entry}'...`);
+      fs.rmSync(entryPath, { recursive: true, force: true });
+      return;
+    }
+
+    if (!isPluginFolderIntact(entryPath)) {
+      log(`Removing incomplete plugin folder '${entry}'...`);
+      fs.rmSync(entryPath, { recursive: true, force: true });
+      // Also drop it from the live store if a previous run added it there.
+      plugins.update((p) => {
+        delete p[entry];
+        return p;
+      });
+    }
+  });
+}
+
+async function verifyPlugins(siteInfo) {
   // this method is fully BFF (backend for front-end) SSR
 
   const pluginsInfo = siteInfo.plugins;
+
+  // Phase 0: scrub any shell/staging folders before we trust readPluginsFromFolder's view.
+  // Doing this up front means the rest of verifyPlugins operates on a known-clean disk,
+  // which kills the failure mode where a half-installed folder kept making the install
+  // path's existsSync check throw away every fresh download. The caller's
+  // pluginsInFolder snapshot is discarded — we re-read after purge.
+  purgeIncompletePluginFolders();
+
+  const pluginsInFolder = readPluginsFromFolder(siteInfo);
   const pluginIdInFolderList = Object.keys(pluginsInFolder);
 
+  // After Phase 0 every folder on disk is intact (manifest + server/ + client/), so
+  // pluginIdInFolderList only contains plugins we can trust. The legacy "fix broken
+  // folder" pass that used to live here is now redundant — Phase 0 covers every shape
+  // of brokenness it tried to repair, and does so before we trust the snapshot.
   pluginIdInFolderList.forEach((pluginId) => {
-    // remove plugin folder if not in developmentMode & pluginsInfo (BE) doesn't have
+    // Dev mode wipes everything every SSR so `bun dev` rebuilds reach the panel without
+    // needing the BE-side uiHash to roll. Also wipe plugins the BE no longer reports
+    // (disabled, uninstalled, lost license, etc.).
     if (siteInfo.developmentMode || !pluginsInfo[pluginId]) {
       log(`Removing '${pluginId}' folder...`);
 
-      fs.rmSync(path.join(pluginsFolder, pluginId, 'server'), {
+      fs.rmSync(path.join(pluginsFolder, pluginId), {
         recursive: true,
         force: true,
       });
-      fs.rmSync(path.join(pluginsFolder, pluginId, 'client'), {
-        recursive: true,
-        force: true,
-      });
-      fs.rmSync(path.join(pluginsFolder, pluginId, manifestFileName), {
-        recursive: true,
-        force: true,
-      });
-
-      if (isDirectoryEmpty(path.join(pluginsFolder, pluginId))) {
-        fs.rmSync(path.join(pluginsFolder, pluginId), {
-          recursive: true,
-          force: true,
-        });
-      }
 
       plugins.update((p) => {
         delete p[pluginId];
@@ -161,72 +203,15 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
       return;
     }
 
-    // install plugins in folder
+    // Plugin is intact on disk and still wanted by the BE — surface it via the store.
     plugins.update((p) => {
       p[pluginId] = pluginsInFolder[pluginId];
       return p;
     });
   });
 
-  // Fix broken plugin folder, if it doesn't contain server or client
-  pluginIdInFolderList.forEach((pluginId) => {
-    const pluginFolder = path.join(pluginsFolder, pluginId);
-    const serverIsDirectory = isDirectory(path.join(pluginFolder, 'server'));
-    const clientIsDirectory = isDirectory(path.join(pluginFolder, 'client'));
-
-    let remove;
-
-    if (serverIsDirectory && !clientIsDirectory) {
-      fs.rmSync(path.join(pluginFolder, 'server'), {
-        recursive: true,
-        force: true,
-      });
-      remove = true;
-    }
-
-    if (clientIsDirectory && !serverIsDirectory) {
-      fs.rmSync(path.join(pluginFolder, 'client'), {
-        recursive: true,
-        force: true,
-      });
-      remove = true;
-    }
-
-    if (remove) {
-      log(`Fixing broken '${pluginId}' folder...`);
-      delete pluginsInFolder[pluginId];
-      plugins.update((p) => {
-        delete p[pluginId];
-        return p;
-      });
-      delete pluginIdInFolderList[pluginIdInFolderList.indexOf(pluginId)];
-
-      fs.rmSync(path.join(pluginFolder, manifestFileName), {
-        recursive: true,
-        force: true,
-      });
-
-      if (isDirectoryEmpty(path.join(pluginFolder))) {
-        fs.rmSync(path.join(pluginFolder), {
-          recursive: true,
-          force: true,
-        });
-      }
-    }
-
-    if (
-      !isDirectory(path.join(pluginFolder, 'server')) &&
-      !isDirectory(path.join(pluginFolder, 'client')) &&
-      fs.existsSync(path.join(pluginFolder, manifestFileName))
-    ) {
-      fs.rmSync(path.join(pluginFolder, manifestFileName), {
-        recursive: true,
-        force: true,
-      });
-    }
-  });
-
-  // Remove installed plugin if not in directory
+  // Drop store entries the current pluginIdInFolderList no longer backs (e.g. left
+  // over from a previous run before Phase 0 deleted the underlying folder).
   Object.keys(get(plugins))
     .filter((pluginId) => !pluginIdInFolderList.includes(pluginId))
     .forEach((pluginId) => {
@@ -245,97 +230,102 @@ async function verifyPlugins(pluginsInFolder, siteInfo) {
   );
 
   await Promise.all(
-    notInstalledPlugins.map(async (pluginId) => {
-      const pluginFolder = path.join(pluginsFolder, pluginId);
-      const pluginManifest = pluginsInfo[pluginId];
-
-      log(`Installing plugin '${pluginId}'...`);
-      log(`Downloading '${pluginId}'...`);
-
-      const file = await downloadPluginUiZip(pluginId);
-
-      // Stage extraction in a sibling temp dir, then atomically rename into place.
-      // This keeps requests from observing a half-populated pluginFolder.
-      const tmpDir = path.join(pluginsFolder, `.${pluginId}.install.${process.pid}.${Date.now()}`);
-      await downloadAndExtractZip(file, tmpDir);
-      fs.writeFileSync(path.join(tmpDir, manifestFileName), JSON.stringify(pluginManifest, null, 2));
-
-      if (fs.existsSync(pluginFolder)) {
-        // A concurrent path created it first; discard our temp.
-        fs.rmSync(tmpDir, { recursive: true, force: true });
-      } else {
-        fs.renameSync(tmpDir, pluginFolder);
-      }
-
-      plugins.update((p) => {
-        p[pluginId] = structuredClone(pluginManifest);
-        return p;
-      });
-
-      log(`'${pluginId}' successfully installed.`);
-    }),
+    notInstalledPlugins.map((pluginId) =>
+      downloadAndInstallPlugin(pluginId, pluginsInfo[pluginId], 'install'),
+    ),
   );
 
-  // Verify plugin files
+  // Update plugins whose on-disk version/uiHash doesn't match what the backend now serves.
+  // This is where dev-mode `bun dev` rebuilds get picked up (BE bumps the hash, we re-fetch).
   await Promise.all(
     Object.keys(get(plugins)).map(async (pluginId) => {
-      const pluginFolder = path.join(pluginsFolder, pluginId);
-
       const pluginInfoManifest = pluginsInfo[pluginId];
       if (!pluginInfoManifest) return;
 
-      let pluginManifest = get(plugins)[pluginId];
-
-      // if files not valid
+      const pluginManifest = get(plugins)[pluginId];
       if (
-        pluginManifest.version !== pluginInfoManifest.version ||
-        pluginManifest.uiHash !== pluginInfoManifest.uiHash
+        pluginManifest.version === pluginInfoManifest.version &&
+        pluginManifest.uiHash === pluginInfoManifest.uiHash
       ) {
-        log(`Updating plugin '${pluginId}'.`);
-        log(`Downloading '${pluginId}'...`);
-
-        const file = await downloadPluginUiZip(pluginId);
-
-        // Stage in temp dir so download time doesn't leave pluginFolder mid-mutation.
-        const tmpDir = path.join(pluginsFolder, `.${pluginId}.update.${process.pid}.${Date.now()}`);
-        await downloadAndExtractZip(file, tmpDir);
-
-        // Atomic-ish swap of server/ and client/: rename old aside (constant-time),
-        // rename new into place. The window where a subdir is absent is now microseconds
-        // rather than seconds.
-        const oldServer = path.join(pluginFolder, '.server.old');
-        const oldClient = path.join(pluginFolder, '.client.old');
-
-        if (fs.existsSync(path.join(pluginFolder, 'server'))) {
-          fs.renameSync(path.join(pluginFolder, 'server'), oldServer);
-        }
-        if (fs.existsSync(path.join(tmpDir, 'server'))) {
-          fs.renameSync(path.join(tmpDir, 'server'), path.join(pluginFolder, 'server'));
-        }
-
-        if (fs.existsSync(path.join(pluginFolder, 'client'))) {
-          fs.renameSync(path.join(pluginFolder, 'client'), oldClient);
-        }
-        if (fs.existsSync(path.join(tmpDir, 'client'))) {
-          fs.renameSync(path.join(tmpDir, 'client'), path.join(pluginFolder, 'client'));
-        }
-
-        // Manifest reflects what is on disk now.
-        plugins.update((p) => {
-          p[pluginId] = structuredClone(pluginInfoManifest);
-          return p;
-        });
-        pluginManifest = get(plugins)[pluginId];
-        fs.writeFileSync(path.join(pluginFolder, manifestFileName), JSON.stringify(pluginManifest, null, 2));
-
-        fs.rmSync(oldServer, { recursive: true, force: true });
-        fs.rmSync(oldClient, { recursive: true, force: true });
-        fs.rmSync(tmpDir, { recursive: true, force: true });
-
-        log(`'${pluginId}' successfully updated.`);
+        return;
       }
+
+      await downloadAndInstallPlugin(pluginId, pluginInfoManifest, 'update');
     }),
   );
+}
+
+/**
+ * Download the plugin-ui.zip for a plugin and atomically replace its folder with the new
+ * content. Used for both first-time installs and updates — the two used to have separate
+ * code paths and the update path's per-subdir swap could leave the folder as a manifest-
+ * only shell when the downloaded zip was malformed (no server/ or no client/ inside).
+ * One code path means one set of invariants to enforce.
+ *
+ * Invariant after a successful return: pluginFolder contains manifest.json + server/ +
+ * client/, and the `plugins` store entry matches what's on disk.
+ *
+ * On any failure (download error, malformed zip, missing server/ or client/, fs error)
+ * we leave the previous on-disk state untouched (so an old working build keeps serving)
+ * and drop the plugin from the store so the rest of the SSR pass and the browser-side
+ * loader skip it cleanly instead of trying to import files that don't exist. The
+ * `bun dev` workflow is unaffected: BE bumps the uiHash on rebuild, this function runs,
+ * and the new build replaces the old one wholesale.
+ */
+async function downloadAndInstallPlugin(pluginId, pluginManifest, mode) {
+  const pluginFolder = path.join(pluginsFolder, pluginId);
+  const tmpDir = path.join(pluginsFolder, `.${pluginId}.${mode}.${process.pid}.${Date.now()}`);
+
+  log(`${mode === 'install' ? 'Installing' : 'Updating'} plugin '${pluginId}'...`);
+  log(`Downloading '${pluginId}'...`);
+
+  try {
+    const file = await downloadPluginUiZip(pluginId);
+    await downloadAndExtractZip(file, tmpDir);
+
+    // Skip plugins whose download didn't yield a valid UI build. This is the symptom of
+    // either a 404/empty response that adm-zip didn't reject, or a publisher mistake.
+    // Either way we don't want to commit a manifest-only shell folder to disk.
+    if (
+      !isDirectory(path.join(tmpDir, 'server')) ||
+      !isDirectory(path.join(tmpDir, 'client'))
+    ) {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+      error(`Plugin '${pluginId}' download is missing server/ or client/ — skipping.`);
+      plugins.update((p) => {
+        delete p[pluginId];
+        return p;
+      });
+      return;
+    }
+
+    fs.writeFileSync(path.join(tmpDir, manifestFileName), JSON.stringify(pluginManifest, null, 2));
+
+    // Full-folder swap: rm-rf the old (Phase 0 already removed anything broken; the only
+    // case `pluginFolder` exists here is a clean update), then rename our staged dir in.
+    // The window where pluginFolder is briefly missing is the two-rename interval —
+    // microseconds — and Phase 0 + the inflight lock guarantee nothing else is reading
+    // mid-swap from SSR. Browser-side imports race against rename naturally; if one
+    // lands in the gap it 404s, and the PluginManager's reload-once retry resolves it.
+    fs.rmSync(pluginFolder, { recursive: true, force: true });
+    fs.renameSync(tmpDir, pluginFolder);
+
+    plugins.update((p) => {
+      p[pluginId] = structuredClone(pluginManifest);
+      return p;
+    });
+
+    log(`'${pluginId}' successfully ${mode === 'install' ? 'installed' : 'updated'}.`);
+  } catch (e) {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    error(`Failed to ${mode} plugin '${pluginId}': ${e?.message ?? e}`);
+    // Don't surface the error: a single bad plugin must not break SSR for the rest of
+    // the panel. Drop the entry so downstream code doesn't try to load it.
+    plugins.update((p) => {
+      delete p[pluginId];
+      return p;
+    });
+  }
 }
 
 export async function preparePlugins(siteInfo) {
@@ -357,8 +347,7 @@ export async function preparePlugins(siteInfo) {
     // `preparePluginsInflight === null` and race.
     preparePluginsInflight = (async () => {
       createPluginsFolder();
-      const pluginsInFolder = readPluginsFromFolder(siteInfo);
-      await verifyPlugins(pluginsInFolder, siteInfo);
+      await verifyPlugins(siteInfo);
       if (!browser) {
         serverSidePrepared = true;
         lastProcessedBackendHash = currentBackendHash;
