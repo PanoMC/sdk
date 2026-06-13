@@ -57,88 +57,143 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
   @return "%23" + $hex;
 }
 
-@function svg-square($color) {
-  @return url("data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='128' height='128' rx='4.8' fill='#{svg-color($color)}'/%3E%3C/svg%3E");
+@function svg-square($color, $border-color) {
+  @return url("data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='127' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
-@function svg-wide($color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='128' viewBox='0 0 256 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='256' height='128' rx='4.8' fill='#{svg-color($color)}'/%3E%3C/svg%3E");
+@function svg-wide($color, $border-color) {
+  @return url("data:image/svg+xml,%3Csvg width='256' height='128' viewBox='0 0 256 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='255' height='127' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
-@function svg-tall($color) {
-  @return url("data:image/svg+xml,%3Csvg width='128' height='256' viewBox='0 0 128 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='128' height='256' rx='4.8' fill='#{svg-color($color)}'/%3E%3C/svg%3E");
+@function svg-tall($color, $border-color) {
+  @return url("data:image/svg+xml,%3Csvg width='128' height='256' viewBox='0 0 128 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='255' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
-@function svg-l-top-left($color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h256v128H128v128H0V0z' fill='#{svg-color($color)}'/%3E%3C/svg%3E");
+@function svg-l-top-left($color, $border-color) {
+  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0.5 0.5 H 255.5 V 127.5 H 127.5 V 255.5 H 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
-@function svg-l-top-right($color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h256v256H128V128H0V0z' fill='#{svg-color($color)}'/%3E%3C/svg%3E");
+@function svg-l-top-right($color, $border-color) {
+  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0.5 0.5 H 255.5 V 255.5 H 127.5 V 127.5 H 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
+
+@mixin blocks-images($border-color) {
+  .blocks {
+    background-image: svg-square($danger, $border-color), svg-square($secondary, $border-color), svg-tall($success, $border-color);
+  }
+  .blocks-2 {
+    background-image: svg-square($primary, $border-color), svg-square($info, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-3 {
+    background-image: svg-square($success, $border-color), svg-square($info, $border-color), svg-tall($primary, $border-color);
+  }
+  .blocks-3-top {
+    background-image: svg-square($success, $border-color), svg-square($info, $border-color), svg-tall($primary, $border-color);
+  }
+  .blocks-4 {
+    background-image: svg-square($warning, $border-color), svg-square($secondary, $border-color), svg-tall($danger, $border-color);
+  }
+  .blocks-cool {
+    background-image: svg-square($primary, $border-color), svg-square($info, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-cool-top {
+    background-image: svg-square($primary, $border-color), svg-square($info, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-sunset {
+    background-image: svg-square($danger, $border-color), svg-square($secondary, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-sunset-top {
+    background-image: svg-square($danger, $border-color), svg-square($secondary, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-sunset-l-top {
+    background-image:
+      svg-l-top-left($danger, $border-color),
+      svg-wide($secondary, $border-color),
+      svg-wide($warning, $border-color);
+  }
+  .blocks-duo-cool {
+    background-image: svg-square($primary, $border-color), svg-tall($warning, $border-color);
+  }
+  .blocks-duo-sunset {
+    background-image: svg-square($danger, $border-color), svg-tall($secondary, $border-color);
+  }
+  .blocks-duo-classic {
+    background-image: svg-square($danger, $border-color), svg-tall($success, $border-color);
+  }
+  .blocks-double-cool {
+    background-image:
+      svg-square($primary, $border-color), svg-square($info, $border-color), svg-tall($warning, $border-color),
+      svg-square($secondary, $border-color), svg-square($primary, $border-color), svg-tall($success, $border-color);
+  }
+  .blocks-double-sunset {
+    background-image:
+      svg-square($danger, $border-color), svg-square($secondary, $border-color), svg-tall($warning, $border-color),
+      svg-square($danger, $border-color), svg-square($secondary, $border-color), svg-tall($success, $border-color);
+  }
+}
+
+$blocks-border-light: #dee2e6;
+$blocks-border-dark: #1e293b;
+
+@include blocks-images($blocks-border-light);
 
 .blocks {
   background-position:
     bottom right,
-    bottom left,
+    left 64px bottom,
     bottom left;
-  background-image: svg-square($danger), svg-wide($secondary), svg-tall($success);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-2 {
   background-position:
     top left,
-    top right,
+    right 64px top,
     top right;
-  background-image: svg-square($primary), svg-wide($info), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-3 {
   background-position:
     bottom left,
-    bottom right,
+    right 64px bottom,
     bottom right;
-  background-image: svg-square($success), svg-wide($info), svg-tall($primary);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-3-top {
   background-position:
     top left,
-    top right,
+    right 64px top,
     top right;
-  background-image: svg-square($success), svg-wide($info), svg-tall($primary);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-4 {
   background-position:
     top right,
-    top left,
+    left 64px top,
     top left;
-  background-image: svg-square($warning), svg-wide($secondary), svg-tall($danger);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
@@ -146,26 +201,24 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
 .blocks-cool {
   background-position:
     bottom right,
-    bottom left,
+    left 64px bottom,
     bottom left;
-  background-image: svg-square($primary), svg-wide($info), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-cool-top {
   background-position:
     top right,
-    top left,
+    left 64px top,
     top left;
-  background-image: svg-square($primary), svg-wide($info), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
@@ -173,26 +226,24 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
 .blocks-sunset {
   background-position:
     bottom right,
-    bottom left,
+    left 64px bottom,
     bottom left;
-  background-image: svg-square($danger), svg-wide($secondary), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
 .blocks-sunset-top {
   background-position:
     top right,
-    top left,
+    left 64px top,
     top left;
-  background-image: svg-square($danger), svg-wide($secondary), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
-    128px 64px,
+    64px 64px,
     64px 128px;
 }
 
@@ -201,10 +252,6 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
     top left,
     right top,
     right 0 top 64px;
-  background-image:
-    svg-l-top-left($danger),
-    svg-wide($secondary),
-    svg-wide($warning);
   background-repeat: no-repeat;
   background-size:
     128px 128px,
@@ -217,7 +264,6 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
   background-position:
     bottom right,
     bottom left;
-  background-image: svg-square($primary), svg-tall($warning);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
@@ -228,7 +274,6 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
   background-position:
     top right,
     top left;
-  background-image: svg-square($danger), svg-tall($secondary);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
@@ -239,7 +284,6 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
   background-position:
     bottom right,
     bottom left;
-  background-image: svg-square($danger), svg-tall($success);
   background-repeat: no-repeat;
   background-size:
     64px 64px,
@@ -249,58 +293,65 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
 /* --- Çift Yönlü Varyasyonlar (Hem Üst Hem Alt Köşeler - Double) --- */
 .blocks-double-cool {
   background-position:
-    top left, top right, top right,
-    bottom right, bottom left, bottom left;
-  background-image:
-    svg-square($primary), svg-wide($info), svg-tall($warning),
-    svg-square($secondary), svg-wide($primary), svg-tall($success);
+    top left, right 64px top, top right,
+    bottom right, left 64px bottom, bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px, 128px 64px, 64px 128px,
-    64px 64px, 128px 64px, 64px 128px;
+    64px 64px, 64px 64px, 64px 128px,
+    64px 64px, 64px 64px, 64px 128px;
 }
 
 .blocks-double-sunset {
   background-position:
-    top left, top right, top right,
-    bottom right, bottom left, bottom left;
-  background-image:
-    svg-square($danger), svg-wide($secondary), svg-tall($warning),
-    svg-square($danger), svg-wide($secondary), svg-tall($success);
+    top left, right 64px top, top right,
+    bottom right, left 64px bottom, bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px, 128px 64px, 64px 128px,
-    64px 64px, 128px 64px, 64px 128px;
+    64px 64px, 64px 64px, 64px 128px,
+    64px 64px, 64px 64px, 64px 128px;
+}
+
+[data-bs-theme='dark'] {
+  @include blocks-images($blocks-border-dark);
 }
 
 /* Downscale background blocks decoration for mobile view preserving proportions */
 @media (max-width: 768px) {
   .blocks {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: bottom right, left 32px bottom, bottom left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-2 {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: top left, right 32px top, top right;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-3 {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: bottom left, right 32px bottom, bottom right;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-3-top {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: top left, right 32px top, top right;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-4 {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: top right, left 32px top, top left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-cool {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: bottom right, left 32px bottom, bottom left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-cool-top {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: top right, left 32px top, top left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-sunset {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: bottom right, left 32px bottom, bottom left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-sunset-top {
-    background-size: 32px 32px, 64px 32px, 32px 64px;
+    background-position: top right, left 32px top, top left;
+    background-size: 32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-sunset-l-top {
     background-position: top left, right top, right 0 top 32px;
@@ -316,14 +367,16 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
     background-size: 32px 32px, 32px 64px;
   }
   .blocks-double-cool {
+    background-position: top left, right 32px top, top right, bottom right, left 32px bottom, bottom left;
     background-size:
-      32px 32px, 64px 32px, 32px 64px,
-      32px 32px, 64px 32px, 32px 64px;
+      32px 32px, 32px 32px, 32px 64px,
+      32px 32px, 32px 32px, 32px 64px;
   }
   .blocks-double-sunset {
+    background-position: top left, right 32px top, top right, bottom right, left 32px bottom, bottom left;
     background-size:
-      32px 32px, 64px 32px, 32px 64px,
-      32px 32px, 64px 32px, 32px 64px;
+      32px 32px, 32px 32px, 32px 64px,
+      32px 32px, 32px 32px, 32px 64px;
   }
 }
 
