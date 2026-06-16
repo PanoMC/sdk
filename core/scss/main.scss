@@ -315,8 +315,8 @@ $blocks-border-dark: #1e293b;
   @include blocks-images($blocks-border-dark);
 }
 
-/* Downscale background blocks decoration for mobile view preserving proportions */
-@media (max-width: 768px) {
+/* Downscale background blocks decoration for mobile and tablet views preserving proportions */
+@media (max-width: 991.98px) {
   .blocks {
     background-position: bottom right, left 32px bottom, bottom left;
     background-size: 32px 32px, 32px 32px, 32px 64px;
