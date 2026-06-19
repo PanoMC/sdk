@@ -58,15 +58,15 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
 }
 
 @function svg-square($color, $border-color) {
-  @return url("data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='127' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
+  @return url("data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='127' rx='24' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 @function svg-wide($color, $border-color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='128' viewBox='0 0 256 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='255' height='127' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
+  @return url("data:image/svg+xml,%3Csvg width='256' height='128' viewBox='0 0 256 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='255' height='127' rx='24' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 @function svg-tall($color, $border-color) {
-  @return url("data:image/svg+xml,%3Csvg width='128' height='256' viewBox='0 0 128 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='255' rx='4.3' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
+  @return url("data:image/svg+xml,%3Csvg width='128' height='256' viewBox='0 0 128 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='127' height='255' rx='24' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 @function svg-l-top-left($color, $border-color) {
@@ -140,123 +140,123 @@ $blocks-border-dark: #1e293b;
 .blocks {
   background-position:
     bottom right,
-    left 64px bottom,
+    left 33px bottom,
     bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-2 {
   background-position:
     top left,
-    right 64px top,
+    right 33px top,
     top right;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-3 {
   background-position:
     bottom left,
-    right 64px bottom,
+    right 33px bottom,
     bottom right;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-3-top {
   background-position:
     top left,
-    right 64px top,
+    right 33px top,
     top right;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-4 {
   background-position:
     top right,
-    left 64px top,
+    left 33px top,
     top left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 /* --- Yeni Renk Varyasyonları (Cool / Soğuk Tema) --- */
 .blocks-cool {
   background-position:
     bottom right,
-    left 64px bottom,
+    left 33px bottom,
     bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-cool-top {
   background-position:
     top right,
-    left 64px top,
+    left 33px top,
     top left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 /* --- Yeni Renk Varyasyonları (Sunset / Sıcak Tema) --- */
 .blocks-sunset {
   background-position:
     bottom right,
-    left 64px bottom,
+    left 33px bottom,
     bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-sunset-top {
   background-position:
     top right,
-    left 64px top,
+    left 33px top,
     top left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-sunset-l-top {
   background-position:
     top left,
     right top,
-    right 0 top 64px;
+    right 0 top 33px;
   background-repeat: no-repeat;
   background-size:
-    128px 128px,
-    128px 64px,
-    128px 64px;
+    64px 64px,
+    64px 32px,
+    64px 32px;
 }
 
 /* --- Minimal Varyasyonlar (Sadece 2 Grafik - Duo) --- */
@@ -266,8 +266,8 @@ $blocks-border-dark: #1e293b;
     bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-duo-sunset {
@@ -276,8 +276,8 @@ $blocks-border-dark: #1e293b;
     top left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 64px;
 }
 
 .blocks-duo-classic {
@@ -286,29 +286,29 @@ $blocks-border-dark: #1e293b;
     bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px,
-    64px 128px;
+    32px 32px,
+    32px 64px;
 }
 
 /* --- Çift Yönlü Varyasyonlar (Hem Üst Hem Alt Köşeler - Double) --- */
 .blocks-double-cool {
   background-position:
-    top left, right 64px top, top right,
-    bottom right, left 64px bottom, bottom left;
+    top left, right 33px top, top right,
+    bottom right, left 33px bottom, bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px, 64px 64px, 64px 128px,
-    64px 64px, 64px 64px, 64px 128px;
+    32px 32px, 32px 32px, 32px 64px,
+    32px 32px, 32px 32px, 32px 64px;
 }
 
 .blocks-double-sunset {
   background-position:
-    top left, right 64px top, top right,
-    bottom right, left 64px bottom, bottom left;
+    top left, right 33px top, top right,
+    bottom right, left 33px bottom, bottom left;
   background-repeat: no-repeat;
   background-size:
-    64px 64px, 64px 64px, 64px 128px,
-    64px 64px, 64px 64px, 64px 128px;
+    32px 32px, 32px 32px, 32px 64px,
+    32px 32px, 32px 32px, 32px 64px;
 }
 
 [data-bs-theme='dark'] {
@@ -317,67 +317,6 @@ $blocks-border-dark: #1e293b;
 
 /* Downscale background blocks decoration for mobile and tablet views preserving proportions */
 @media (max-width: 991.98px) {
-  .blocks {
-    background-position: bottom right, left 32px bottom, bottom left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-2 {
-    background-position: top left, right 32px top, top right;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-3 {
-    background-position: bottom left, right 32px bottom, bottom right;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-3-top {
-    background-position: top left, right 32px top, top right;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-4 {
-    background-position: top right, left 32px top, top left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-cool {
-    background-position: bottom right, left 32px bottom, bottom left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-cool-top {
-    background-position: top right, left 32px top, top left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-sunset {
-    background-position: bottom right, left 32px bottom, bottom left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-sunset-top {
-    background-position: top right, left 32px top, top left;
-    background-size: 32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-sunset-l-top {
-    background-position: top left, right top, right 0 top 32px;
-    background-size: 64px 64px, 64px 32px, 64px 32px;
-  }
-  .blocks-duo-cool {
-    background-size: 32px 32px, 32px 64px;
-  }
-  .blocks-duo-sunset {
-    background-size: 32px 32px, 32px 64px;
-  }
-  .blocks-duo-classic {
-    background-size: 32px 32px, 32px 64px;
-  }
-  .blocks-double-cool {
-    background-position: top left, right 32px top, top right, bottom right, left 32px bottom, bottom left;
-    background-size:
-      32px 32px, 32px 32px, 32px 64px,
-      32px 32px, 32px 32px, 32px 64px;
-  }
-  .blocks-double-sunset {
-    background-position: top left, right 32px top, top right, bottom right, left 32px bottom, bottom left;
-    background-size:
-      32px 32px, 32px 32px, 32px 64px,
-      32px 32px, 32px 32px, 32px 64px;
-  }
 }
 
 // Editor
