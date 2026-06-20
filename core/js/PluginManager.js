@@ -693,7 +693,11 @@ async function loadPlugins(siteInfo) {
 
         const PluginClass = plugin.module.default;
 
-        if (PluginClass instanceof PanoPlugin) {
+        // Validate the prototype chain BEFORE instantiating. `PluginClass` is the class
+        // (a constructor), not an instance, so `PluginClass instanceof PanoPlugin` is always
+        // false and never rejected anything — a plugin that doesn't extend PanoPlugin slipped
+        // through and crashed deeper. Accept PanoPlugin itself or any subclass of it.
+        if (PluginClass !== PanoPlugin && !(PluginClass.prototype instanceof PanoPlugin)) {
           throw new Error("Plugin must extend PanoPlugin");
         }
 
