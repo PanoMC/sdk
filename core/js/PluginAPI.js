@@ -1,5 +1,6 @@
 import { base } from '$app/paths';
 import { registeredPages } from './PluginManager.js';
+import { canonicalizeRouteKey } from './RouteMatcher.js';
 
 const isPanel = base === '/panel';
 
@@ -18,11 +19,11 @@ export const pageAPI = {
         restLayout: Boolean,
       },
     ) {
-      registeredPages[page.path] = page;
+      registeredPages[canonicalizeRouteKey(page.path)] = page;
     },
     unregister(path = '') {
-      delete registeredPages[path];
+      delete registeredPages[canonicalizeRouteKey(path)];
     },
-    isPluginPage: (path = '') => registeredPages[path] !== undefined,
+    isPluginPage: (path = '') => registeredPages[canonicalizeRouteKey(path)] !== undefined,
   },
 };

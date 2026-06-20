@@ -91,6 +91,19 @@ export class RouteMatcher {
 }
 
 /**
+ * Canonical form of a route key/path used for the exact-match fast path: query stripped and a
+ * single trailing slash removed (but `/` preserved). Used at BOTH registration and lookup so
+ * `/foo` and `/foo/` collapse to one entry and the exact-match map lookup always hits instead
+ * of falling through to the slower (and buggier) regex/segment branch.
+ * @param {string} path
+ * @returns {string}
+ */
+export function canonicalizeRouteKey(path) {
+  const [pathOnly] = String(path).split('?');
+  return pathOnly === '/' ? '/' : pathOnly.replace(/\/$/, '');
+}
+
+/**
  * Finds a registered page matching the given path.
  * @param {Object} registeredPages - Map of patterns to page objects
  * @param {string} path - The path to match
@@ -98,8 +111,7 @@ export class RouteMatcher {
  */
 export function findMatch(registeredPages, path) {
   // First, try exact match for performance
-  const [pathOnly] = path.split('?');
-  const normalizedPath = pathOnly === '/' ? '/' : pathOnly.replace(/\/$/, '');
+  const normalizedPath = canonicalizeRouteKey(path);
 
   if (registeredPages[normalizedPath]) {
     return { ...registeredPages[normalizedPath], params: {} };
