@@ -47,6 +47,11 @@ export class RouteMatcher {
     const catchAllIndex = patternSegments.findIndex((s) => s.startsWith('[...') && s.endsWith(']'));
 
     if (catchAllIndex !== -1) {
+      // SvelteKit only allows a rest param as the FINAL segment. A catch-all that isn't last
+      // would greedily absorb every trailing segment and ignore the pattern's suffix, so a
+      // pattern like `/[...rest]/edit` would wrongly match `/a/b/c`. Reject it outright.
+      if (catchAllIndex !== patternSegments.length - 1) return null;
+
       // Logic for catch-all
       if (pathSegments.length < catchAllIndex) return null;
 
