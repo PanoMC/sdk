@@ -21,10 +21,13 @@ export class RouteMatcher {
     }
 
     // 2. Regex match
-    // If pattern starts and ends with /, treat as regex
-    if (pattern.startsWith('/') && pattern.endsWith('/') && pattern.length > 2) {
+    // Regex must be explicitly opted in with a `re:` prefix — we must NOT infer "this is a
+    // regex" from a leading/trailing slash, since a normal plugin path with a trailing slash
+    // (e.g. `/news/`) would otherwise be reinterpreted as an UNANCHORED regex and silently
+    // hijack unrelated routes. The body is anchored as `^(?:...)$` so it can't partial-match.
+    if (pattern.startsWith('re:')) {
       try {
-        const regex = new RegExp(pattern.slice(1, -1));
+        const regex = new RegExp(`^(?:${pattern.slice(3)})$`);
         const match = normalizedPath.match(regex);
         if (match) {
           return match.groups || {};
