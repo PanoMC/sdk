@@ -27,6 +27,13 @@ let clientSidePluginHash = null;
 // where some files were being deleted while others were being read.
 let preparePluginsInflight = null;
 
+// In-flight initializePlugins promise, keyed by the frontend plugin hash it is building for.
+// Without it, concurrent SSR requests each reset the shared module-global stores (registeredPages,
+// livePluginInstances, the plugins store) mid-flight, racing each other into torn/blank plugin UI,
+// double onLoad calls and transient false 404s. Claimed synchronously before any await.
+let initializePluginsInflight = null;
+let initializePluginsInflightHash = null;
+
 
 
 if (!browser) {
@@ -405,34 +412,48 @@ async function destroyLivePluginInstances() {
   );
 }
 
-export async function initializePlugins(siteInfo) {
-  const currentFrontendHash = generateStablePluginHash(siteInfo.plugins);
-
+function isInitializeCacheHit(siteInfo, currentFrontendHash) {
   // SSR cache: skip if already initialized with the same plugin set
   if (!browser && !siteInfo.developmentMode && serverSideInitialized && lastProcessedFrontendHash === currentFrontendHash) {
-    return;
+    return true;
   }
-
   // Client-side cache: skip if already initialized with the same plugin set
   if (browser && clientSideInitialized && clientSidePluginHash === currentFrontendHash) {
-    return;
+    return true;
   }
+  return false;
+}
 
-  registeredPages = {};
+async function doInitializePlugins(siteInfo, currentFrontendHash) {
+  // Build the new route table in a LOCAL map and swap the live binding atomically once it is
+  // fully populated, instead of clearing the live `registeredPages` and rebuilding it in place.
+  // Plugins register into the live binding from their onLoad (via PluginAPI), so we point it at
+  // the fresh map for the duration of the build and only ever expose a complete table — a
+  // reader (findMatch) racing a rebuild sees either the old complete table or the new complete
+  // one, never a half-cleared one.
+  const previousRegisteredPages = registeredPages;
+  const newRegisteredPages = {};
+  registeredPages = newRegisteredPages;
 
-  if (browser) {
-    await destroyLivePluginInstances();
+  try {
+    if (browser) {
+      await destroyLivePluginInstances();
+    }
+
+    await initPluginAPI();
+
+    if (browser) {
+      const pluginsInfo = siteInfo.plugins;
+
+      plugins.set(pluginsInfo);
+    }
+
+    await loadPlugins(siteInfo);
+  } catch (e) {
+    // On failure, restore the previous complete table so we don't leave a partial one live.
+    registeredPages = previousRegisteredPages;
+    throw e;
   }
-
-  await initPluginAPI();
-
-  if (browser) {
-    const pluginsInfo = siteInfo.plugins;
-
-    plugins.set(pluginsInfo);
-  }
-
-  await loadPlugins(siteInfo);
 
   if (!browser) {
     serverSideInitialized = true;
@@ -440,6 +461,37 @@ export async function initializePlugins(siteInfo) {
   } else {
     clientSideInitialized = true;
     clientSidePluginHash = currentFrontendHash;
+  }
+}
+
+export async function initializePlugins(siteInfo) {
+  const currentFrontendHash = generateStablePluginHash(siteInfo.plugins);
+
+  // Loop so that after awaiting another request's in-flight init we recheck the cache: it may
+  // have produced exactly the state we need (exit), or a different one (claim a fresh run).
+  while (true) {
+    if (isInitializeCacheHit(siteInfo, currentFrontendHash)) return;
+
+    if (initializePluginsInflight) {
+      // Someone is already initializing. If it's for our hash, just await it and we're done;
+      // otherwise await it and re-loop to claim our own run against the now-settled state.
+      const sameHash = initializePluginsInflightHash === currentFrontendHash;
+      try { await initializePluginsInflight; } catch { /* the owner re-throws to its caller */ }
+      if (sameHash && isInitializeCacheHit(siteInfo, currentFrontendHash)) return;
+      continue;
+    }
+
+    // Claim the lock synchronously before any await — otherwise two callers can both observe
+    // `initializePluginsInflight === null` and race, each resetting the shared stores.
+    initializePluginsInflightHash = currentFrontendHash;
+    initializePluginsInflight = doInitializePlugins(siteInfo, currentFrontendHash);
+    try {
+      await initializePluginsInflight;
+    } finally {
+      initializePluginsInflight = null;
+      initializePluginsInflightHash = null;
+    }
+    return;
   }
 }
 
