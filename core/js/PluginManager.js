@@ -384,10 +384,16 @@ export async function preparePlugins(siteInfo) {
 
 function generateStablePluginHash(siteInfoPlugins) {
   const stableData = {};
-  for (const [id, plugin] of Object.entries(siteInfoPlugins || {})) {
+  // Sort plugin ids so the hash is independent of object iteration order.
+  for (const id of Object.keys(siteInfoPlugins || {}).sort()) {
+    const plugin = siteInfoPlugins[id];
     const vObj = plugin.version;
     const { version, uiHash } = (vObj && typeof vObj === "object") ? vObj : plugin;
-    stableData[id] = { version, uiHash };
+    // Include dependencies (load-order relevant): a dep-only change must invalidate the init
+    // cache, otherwise the topological load order can go stale while version/uiHash are equal.
+    // Normalize to a sorted array so the dep set — not its declaration order — is what matters.
+    const deps = Array.isArray(plugin.dependencies) ? [...plugin.dependencies].sort() : [];
+    stableData[id] = { version, uiHash, dependencies: deps };
   }
   return JSON.stringify(stableData);
 }
@@ -674,6 +680,15 @@ async function loadPlugins(siteInfo) {
 
         plugin.module = module;
         if (!siteInfo.developmentMode) {
+          // Evict this plugin's previous (different-uiHash) entries before caching the new one,
+          // so moduleCache stays bounded — without this it grew one stale entry per plugin
+          // update for the lifetime of the process, and old modules were never released.
+          const prefix = `${pluginId}-`;
+          for (const key of moduleCache.keys()) {
+            if (key !== cacheKey && key.startsWith(prefix)) {
+              moduleCache.delete(key);
+            }
+          }
           moduleCache.set(cacheKey, module);
         }
       }
