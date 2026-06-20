@@ -577,11 +577,32 @@ async function loadPlugins(siteInfo) {
             );
           sessionStorage.removeItem(reloadKey);
         } catch (e) {
-          // We land here when (a) the plugin was just updated and the file is mid-rename, or
-          // (b) the user's tab carries a now-deleted plugin reference, or (c) the plugin's
-          // on-disk files are permanently broken (chunk referenced by client.mjs is missing).
-          // Reload once to resync — but only once per uiHash, since case (c) would otherwise
-          // cause an infinite F5 loop with the server permanently returning 404s.
+          // Classify the failure before deciding whether to reload. A reload only helps the
+          // genuinely *transient* cases — the plugin was updated and a chunk is mid-rename, or
+          // the file briefly 404s during the two-rename swap — where a fresh fetch resolves it.
+          //
+          // A SyntaxError or a "does not provide an export named …" / "is not a module" error is
+          // ABI/version skew: the plugin was built against a different svelte/SDK and re-fetching
+          // the exact same bytes will fail identically forever. Reloading there punishes every
+          // fresh tab with a forced refresh loop, so we skip the plugin immediately with a warn
+          // and NO reload.
+          const msg = String(e?.message ?? e);
+          const isVersionSkew =
+            e instanceof SyntaxError ||
+            /does not provide an export named|is not a module|Unexpected (token|reserved word|end of input)/i.test(msg);
+
+          if (isVersionSkew) {
+            console.warn(`[Plugin Manager] '${pluginId}' client module failed to load and looks like a version mismatch (the plugin may be built for an incompatible svelte/SDK version); skipping without reload.`, e);
+            sessionStorage.removeItem(reloadKey);
+            plugins.update((p) => {
+              delete p[pluginId];
+              return p;
+            });
+            return;
+          }
+
+          // Transient case (chunk-missing / mid-rename): reload once to resync — but only once
+          // per uiHash, since a permanent 404 would otherwise cause an infinite F5 loop.
           const alreadyReloaded = sessionStorage.getItem(reloadKey) === '1';
           if (!alreadyReloaded) {
             sessionStorage.setItem(reloadKey, '1');
