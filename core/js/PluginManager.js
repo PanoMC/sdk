@@ -556,8 +556,15 @@ async function loadPlugins(siteInfo) {
           return;
         }
 
-        const timestamp = siteInfo.developmentMode ? `?${Date.now()}` : "";
-        const mainPath = path.join(pluginFolder, "server", "server.mjs") + timestamp;
+        // Cache-buster for Node's ESM module cache (keyed by resolved URL). In dev we use a
+        // timestamp so every SSR pass re-imports the freshly rebuilt module. In production we
+        // mirror the client branch and key on the plugin's uiHash: without this the ESM cache
+        // returns the STALE server module after a plugin update, producing an SSR/client
+        // hydration mismatch (client uses the new hashed module, server keeps the old one).
+        const importSuffix = siteInfo.developmentMode
+          ? `?${Date.now()}`
+          : (pluginHash !== "no-hash" ? `?v=${pluginHash}` : "");
+        const mainPath = path.join(pluginFolder, "server", "server.mjs") + importSuffix;
 
         const __filename = url.fileURLToPath(import.meta.url);
 
