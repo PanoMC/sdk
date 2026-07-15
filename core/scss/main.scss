@@ -70,11 +70,11 @@ $utilities: map-merge($utilities, ("color": map-merge(map-get($utilities, "color
 }
 
 @function svg-l-top-left($color, $border-color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0.5 0.5 H 255.5 V 127.5 H 127.5 V 255.5 H 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
+  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 24.5 0.5 H 231.5 A 24 24 0 0 1 255.5 24.5 V 103.5 A 24 24 0 0 1 231.5 127.5 H 127.5 V 231.5 A 24 24 0 0 1 103.5 255.5 H 24.5 A 24 24 0 0 1 0.5 231.5 V 24.5 A 24 24 0 0 1 24.5 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 @function svg-l-top-right($color, $border-color) {
-  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0.5 0.5 H 255.5 V 255.5 H 127.5 V 127.5 H 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
+  @return url("data:image/svg+xml,%3Csvg width='256' height='256' viewBox='0 0 256 256' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 24.5 0.5 H 231.5 A 24 24 0 0 1 255.5 24.5 V 231.5 A 24 24 0 0 1 231.5 255.5 H 151.5 A 24 24 0 0 1 127.5 231.5 V 127.5 H 24.5 A 24 24 0 0 1 0.5 103.5 V 24.5 A 24 24 0 0 1 24.5 0.5 Z' fill='#{svg-color($color)}' stroke='#{svg-color($border-color)}' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 @mixin blocks-images($border-color) {
