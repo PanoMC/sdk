@@ -577,27 +577,45 @@ async function loadPlugins(siteInfo) {
         // keeps using the old module from its cache for the rest of the session.
         const uiHashSuffix = plugin.uiHash ? `?v=${plugin.uiHash}` : '';
         const reloadKey = `pano:plugin-reload:${pluginId}:${plugin.uiHash || 'no-hash'}`;
+        const moduleUrl = `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs${uiHashSuffix}`;
+        // Permanent, deterministic failures where re-fetching the exact same bytes fails
+        // identically forever — reloading is useless and punishes every fresh tab:
+        //  - SyntaxError / "does not provide an export named …" / "is not a module":
+        //    the plugin was built against a different svelte/SDK (ABI/version skew).
+        //  - "Failed to resolve module specifier" (Chrome) / "was a bare specifier" (Firefox)
+        //    / "does not resolve to a valid URL" (Safari): the plugin imports a bare
+        //    specifier absent from the host import map — resolution never touches the
+        //    network, so retry and reload cannot change the outcome.
+        //  - "[pano-runtime] …": the host runtime registry rejected the specifier.
+        const isVersionSkewError = (err) =>
+          err instanceof SyntaxError ||
+          /does not provide an export named|is not a module|Unexpected (token|reserved word|end of input)|Failed to resolve module specifier|bare specifier|does not resolve to a valid URL|pano-runtime/i.test(
+            String(err?.message ?? err),
+          );
         try {
-          plugin.module = await import(
-            /* @vite-ignore */ `${base}/plugins/${pluginId}/resources/plugin-ui/client/client.mjs${uiHashSuffix}`
-            );
+          try {
+            plugin.module = await import(/* @vite-ignore */ moduleUrl);
+          } catch (firstError) {
+            if (isVersionSkewError(firstError)) throw firstError;
+            // A failed module fetch is cached in the document's module map (per HTML
+            // spec) — re-importing the SAME URL returns the cached failure without a
+            // network attempt. A changed query string is a new module-map key AND a
+            // new HTTP-cache key, so transient 404s (mid-update swap window, proxy
+            // hiccup) recover here without the full reload below.
+            const retryUrl = `${moduleUrl}${uiHashSuffix ? '&' : '?'}r=${Date.now().toString(36)}`;
+            console.warn(`[Plugin Manager] '${pluginId}' client module failed to load, retrying with cache-bust…`, firstError);
+            plugin.module = await import(/* @vite-ignore */ retryUrl);
+          }
           sessionStorage.removeItem(reloadKey);
         } catch (e) {
           // Classify the failure before deciding whether to reload. A reload only helps the
           // genuinely *transient* cases — the plugin was updated and a chunk is mid-rename, or
           // the file briefly 404s during the two-rename swap — where a fresh fetch resolves it.
           //
-          // A SyntaxError or a "does not provide an export named …" / "is not a module" error is
-          // ABI/version skew: the plugin was built against a different svelte/SDK and re-fetching
-          // the exact same bytes will fail identically forever. Reloading there punishes every
-          // fresh tab with a forced refresh loop, so we skip the plugin immediately with a warn
-          // and NO reload.
-          const msg = String(e?.message ?? e);
-          const isVersionSkew =
-            e instanceof SyntaxError ||
-            /does not provide an export named|is not a module|Unexpected (token|reserved word|end of input)/i.test(msg);
-
-          if (isVersionSkew) {
+          // Version skew (see isVersionSkewError above): reloading punishes every fresh tab
+          // with a forced refresh loop, so we skip the plugin immediately with a warn and NO
+          // reload.
+          if (isVersionSkewError(e)) {
             console.warn(`[Plugin Manager] '${pluginId}' client module failed to load and looks like a version mismatch (the plugin may be built for an incompatible svelte/SDK version); skipping without reload.`, e);
             sessionStorage.removeItem(reloadKey);
             plugins.update((p) => {
@@ -708,12 +726,26 @@ async function loadPlugins(siteInfo) {
 
         const PluginClass = plugin.module.default;
 
-        // Validate the prototype chain BEFORE instantiating. `PluginClass` is the class
-        // (a constructor), not an instance, so `PluginClass instanceof PanoPlugin` is always
-        // false and never rejected anything — a plugin that doesn't extend PanoPlugin slipped
-        // through and crashed deeper. Accept PanoPlugin itself or any subclass of it.
-        if (PluginClass !== PanoPlugin && !(PluginClass.prototype instanceof PanoPlugin)) {
-          throw new Error("Plugin must extend PanoPlugin");
+        // Validate BEFORE instantiating. `PluginClass` is a constructor, so the old
+        // `PluginClass instanceof PanoPlugin` was always false and never rejected anything.
+        // A strict `prototype instanceof PanoPlugin` is wrong across bundles too: released
+        // plugins bundle their OWN copy of the SDK, so their PanoPlugin base class is a
+        // different identity than the host's. Accept the cross-bundle duck-type marker
+        // (`static isPanoPlugin`, inherited by subclasses), and skip the offending plugin
+        // instead of throwing — one bad plugin must not kill the whole load level.
+        const isValidPluginClass =
+          typeof PluginClass === "function" &&
+          (PluginClass === PanoPlugin ||
+            PluginClass.prototype instanceof PanoPlugin ||
+            PluginClass.isPanoPlugin === true);
+
+        if (!isValidPluginClass) {
+          error(`Plugin '${pluginId}' does not extend PanoPlugin; skipping.`);
+          plugins.update((p) => {
+            delete p[pluginId];
+            return p;
+          });
+          return;
         }
 
         const instance = new PluginClass({ pluginId });
