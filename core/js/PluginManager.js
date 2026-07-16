@@ -192,10 +192,8 @@ async function verifyPlugins(siteInfo) {
   // folder" pass that used to live here is now redundant — Phase 0 covers every shape
   // of brokenness it tried to repair, and does so before we trust the snapshot.
   pluginIdInFolderList.forEach((pluginId) => {
-    // Dev mode wipes everything every SSR so `bun dev` rebuilds reach the panel without
-    // needing the BE-side uiHash to roll. Also wipe plugins the BE no longer reports
-    // (disabled, uninstalled, lost license, etc.).
-    if (siteInfo.developmentMode || !pluginsInfo[pluginId]) {
+    // Wipe plugins the BE no longer reports (disabled, uninstalled, lost license, etc.).
+    if (!pluginsInfo[pluginId]) {
       log(`Removing '${pluginId}' folder...`);
 
       fs.rmSync(path.join(pluginsFolder, pluginId), {
@@ -211,8 +209,22 @@ async function verifyPlugins(siteInfo) {
     }
 
     // Plugin is intact on disk and still wanted by the BE — surface it via the store.
+    //
+    // Dev mode used to WIPE every folder here on every SSR pass so `bun dev` rebuilds
+    // reach the page without needing the BE-side uiHash to roll. That opened a window
+    // spanning the whole re-download in which /plugins/<id>/resources/... 404'd: any
+    // browser module fetch racing an SSR pass failed, and when its one cache-busted
+    // retry landed in the same window the plugin was dropped for the entire session
+    // (page renders via SSR, then loses every plugin UI at CSR). Instead, poison the
+    // stored uiHash so the update pass below re-downloads just as eagerly, but through
+    // downloadAndInstallPlugin's staged download + atomic rename — the old build keeps
+    // serving until the new one is in place, so the missing-folder window collapses
+    // from ~download-time to the two-rename instant (which the browser-side
+    // cache-busted retry already absorbs).
     plugins.update((p) => {
-      p[pluginId] = pluginsInFolder[pluginId];
+      p[pluginId] = siteInfo.developmentMode
+        ? { ...pluginsInFolder[pluginId], uiHash: `dev-stale-${Date.now()}` }
+        : pluginsInFolder[pluginId];
       return p;
     });
   });
