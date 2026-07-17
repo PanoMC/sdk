@@ -1,5 +1,6 @@
 import fs from "fs";
 
+import { error as httpError } from "@sveltejs/kit";
 import { browser, dev } from "$app/environment";
 import { get, writable } from "svelte/store";
 import ApiUtil from "$lib/api.util.js";
@@ -348,6 +349,15 @@ async function downloadAndInstallPlugin(pluginId, pluginManifest, mode) {
 }
 
 export async function preparePlugins(siteInfo) {
+  // The backend is the source of truth for the plugin set. While it is unreachable
+  // (still booting, restarting, crashed) siteInfo arrives undefined/empty — fail with a
+  // real 503 instead of a TypeError-turned-500 with a stack trace, so proxies and
+  // monitoring see "temporarily unavailable" and the first request after the backend
+  // returns recovers normally.
+  if (!siteInfo || typeof siteInfo !== "object" || !siteInfo.plugins) {
+    throw httpError(503, "Pano backend is not reachable yet");
+  }
+
   const currentBackendHash = JSON.stringify(siteInfo.plugins);
 
   // Loop so that after awaiting another request's preparation we recheck the cache: it may
