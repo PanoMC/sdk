@@ -1,0 +1,28 @@
+{
+  "name": "@panomc/theme-core",
+  "version": "0.0.0-development",
+  "description": "The Pano theme engine: hooks factories, plugin engine, headless page controllers, default views and the theme CLI. Themes depend on this package instead of forking vanilla-theme.",
+  "author": "PanoMC",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/PanoMC/sdk"
+  },
+  "svelte": "./src/index.js",
+  "exports": {
+    ".": {
+      "svelte": "./src/index.js",
+      "default": "./src/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "svelte": "5.55.4"
+  }
+}
