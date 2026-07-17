@@ -1,0 +1,77 @@
+import { get } from "svelte/store";
+import { page } from "$app/stores";
+import { browser } from "$app/environment";
+
+export const Permissions = Object.freeze({
+  ACCESS_PANEL: "ACCESS_PANEL",
+  MANAGE_SERVERS: "MANAGE_SERVERS",
+  MANAGE_POSTS: "MANAGE_POSTS",
+  MANAGE_TICKETS: "MANAGE_TICKETS",
+  MANAGE_PLAYERS: "MANAGE_PLAYERS",
+  MANAGE_VIEW: "MANAGE_VIEW",
+  MANAGE_ADDONS: "MANAGE_ADDONS",
+  MANAGE_PLATFORM_SETTINGS: "MANAGE_PLATFORM_SETTINGS",
+  MANAGE_PERMISSION_GROUPS: "MANAGE_PERMISSION_GROUPS",
+  ACCESS_ACTIVITY_LOGS: "ACCESS_ACTIVITY_LOGS",
+  MANAGE_TRANSLATIONS: "MANAGE_TRANSLATIONS",
+});
+
+export function hasPermission(permission, user) {
+  if (!permission) {
+    return true;
+  }
+
+  if (!user) {
+    let pageUser;
+
+    if (browser) {
+      pageUser = get(page).data?.session?.user;
+    } else {
+      pageUser = get(page).data?.user;
+
+      if (!pageUser) {
+        pageUser = get(page).data?.session?.user;
+      }
+    }
+    user = pageUser;
+  }
+
+  const userObject = user;
+
+  if (!userObject) {
+    return false;
+  }
+
+  if (userObject.admin) {
+    return true;
+  }
+
+  if (!userObject.permissions) {
+    return false;
+  }
+
+  const toPermNode = (p) => {
+    const raw = String(p || "").trim();
+    if (!raw) return "";
+
+    const lower = raw.toLowerCase();
+
+    // old enum format: MANAGE_PERMISSION_GROUPS -> pano.panel.manage.permission.groups
+    return lower.replaceAll("_", ".");
+  };
+
+  const wantedNode = toPermNode(permission);
+  const wantedKey = String(permission || "")
+    .trim()
+    .toUpperCase();
+  const perms = Array.isArray(userObject.permissions)
+    ? userObject.permissions
+    : [];
+  const permsLower = perms.map((x) => String(x || "").toLowerCase());
+
+  // Prefer node-style checks; keep legacy key check for backward compatibility.
+  return (
+    (wantedNode && permsLower.includes(wantedNode)) ||
+    (wantedKey && perms.includes(wantedKey))
+  );
+}

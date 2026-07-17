@@ -1,0 +1,63 @@
+{#if banned}
+  <div class="badge rounded-pill text-bg-danger">
+    <i class="fa-solid fa-hammer me-1"></i>
+    {$_("components.player-status-badge.banned")}
+  </div>
+{:else if isOnline}
+  <div
+    class="badge rounded-pill text-bg-success"
+    use:tooltip={[
+      (inGame
+        ? $_("components.player-status-badge.in-game")
+        : $_("components.player-status-badge.in-website")) +
+        " " +
+        $_("components.player-status-badge.online"),
+      { placement: "bottom" },
+    ]}>
+    <span>
+      {#if inGame}
+        <i class="fa-solid fa-gamepad me-1"></i>
+      {:else}
+        <i class="fa-solid fa-globe me-1"></i>
+      {/if}
+      {$_("components.player-status-badge.online")}
+    </span>
+  </div>
+{:else}
+  <div
+    class="badge rounded-pill text-bg-primary"
+    use:tooltip={[
+      getOfflineRelativeDateText(checkTime),
+      { placement: "bottom" },
+    ]}>
+    <span>{$_("components.player-status-badge.offline")}</span>
+  </div>
+{/if}
+
+<script context="module">
+  String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  };
+</script>
+
+<script>
+  import { formatRelative } from "date-fns";
+
+  import tooltip from "$pano/lib/tooltip.util.js";
+  import { _ } from "svelte-i18n";
+
+  export let banned = false;
+  export let lastActivityTime = 0;
+  export let inGame = false;
+  export let checkTime = 0;
+
+  $: isOnline = lastActivityTime > Date.now() - 5 * 60 * 1000 || inGame;
+
+  function getOfflineRelativeDateText(checkTime) {
+    if (!lastActivityTime) return $_("components.player-status-badge.offline");
+    return formatRelative(
+      new Date(parseInt(lastActivityTime)),
+      new Date(),
+    ).capitalize();
+  }
+</script>

@@ -63,10 +63,16 @@
     "./svelte": {
       "svelte": "./src/svelte.js",
       "default": "./src/svelte.js"
-    }
+    },
+    "./core/*": {
+      "svelte": "./core/*",
+      "default": "./core/*"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "src"
+    "src",
+    "core"
   ],
   "publishConfig": {
     "access": "public"
