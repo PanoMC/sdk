@@ -23,6 +23,10 @@
       "svelte": "./src/kit/*.js",
       "default": "./src/kit/*.js"
     },
+    "./plugin-engine/*": {
+      "svelte": "./src/plugin-engine/*",
+      "default": "./src/plugin-engine/*"
+    },
     "./lib/*": {
       "svelte": "./src/lib/*",
       "default": "./src/lib/*"
