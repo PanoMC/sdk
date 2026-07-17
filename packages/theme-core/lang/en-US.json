@@ -1,0 +1,514 @@
+{
+  "buttons": {
+    "view": "View",
+    "show-all": "Show All",
+    "login": "Login",
+    "forgot-password": "Forgot your password?",
+    "register": "Register",
+    "create-ticket": "Create Ticket",
+    "delete-all": "Delete All",
+    "activate-email": "Verify E-mail",
+    "change-password": "Change My Password",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "send": "Send",
+    "already-registered": "Login if you are already registered",
+    "close-ticket": "Close Ticket",
+    "reset-password": "Send Reset Email",
+    "filter": "Filter",
+    "click-to-copy": "Click to copy",
+    "close": "Close",
+    "toggle": "Toggle",
+    "remove": "Remove",
+    "profile": "Profile",
+    "tickets": "Tickets",
+    "settings": "Settings",
+    "logout": "Logout",
+    "save": "Save",
+    "reset-tab": "Reset Tab",
+    "reset-all": "Reset All",
+    "notifications": "Notifications"
+  },
+  "labels": {
+    "plugin": "Plugin",
+    "demo-panel-hint": "You can explore the management panel from here!",
+    "demo-login-hint": "You can log in from here!"
+  },
+  "messages": {
+    "confirm-reset-all": "Are you sure you want to reset all theme settings to default? This action cannot be undone.",
+    "settings-save-success": "Settings saved successfully!",
+    "settings-reset-tab-success": "Tab settings have been reset to default.",
+    "settings-reset-all-success": "All theme settings have been reset to default!",
+    "settings-reset-all-error": "An error occurred while resetting settings!"
+  },
+  "nav-links": {
+    "support": "Support",
+    "panel": "Panel",
+    "homepage": "Homepage",
+    "rules": "Rules"
+  },
+  "footer": {
+    "been-created-with": "Created with {pano}."
+  },
+  "sidebars": {
+    "home": {
+      "copied": "Copied!",
+      "copy": "Copy",
+      "server-status": "Server Status",
+      "online": "Online",
+      "offline": "Offline",
+      "last-registrants": "Last Registrants",
+      "game-client-version": "Game Client Version",
+      "playing": "{playerCount}/{maxPlayerCount} playing",
+      "click-to-copy": "Click to copy"
+    }
+  },
+  "toasts": {
+    "session-logged-out-successful": "Session logged out successfully!"
+  },
+  "components": {
+    "toasts": {
+      "demo-mode-restricted": "This action is disabled in demo mode."
+    },
+    "player-head": {
+      "in-game": "Online In Game",
+      "in-website": "Online In Website"
+    },
+    "notification-container": {
+      "notification": "Notification"
+    },
+    "post": {
+      "read-more": "Read More",
+      "view": "Views"
+    },
+    "online-admins": {
+      "online-admins": "Online Admins"
+    },
+    "player-permission-badge": {
+      "player": "Player"
+    },
+    "player-status-badge": {
+      "banned": "Banned",
+      "in-game": "In Game",
+      "in-website": "In Website",
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "player-profile-sidebar": {
+      "banned": "Banned"
+    },
+    "modals": {
+      "login": {
+        "title": "Login",
+        "inputs": {
+          "username-email": "Username / E-Mail",
+          "password": "Password"
+        },
+        "link-code": {
+          "title": "Link Code Required",
+          "description": "Enter the 6-digit code given to you in-game. If you don't have a code, you can get one by using the <mark>/link</mark> command in-game.",
+          "verify": "Verify"
+        },
+        "register-with-link": {
+          "title": "Complete Registration"
+        }
+      },
+      "register": {
+        "title": "Register",
+        "inputs": {
+          "username": "Username",
+          "email": "E-Mail",
+          "password": "Password",
+          "password-repeat": "Password Repeat",
+          "server-rules": "Server Rules",
+          "agreement-text": "I have read and accept {link}."
+        }
+      },
+      "confirm-remove-all-notifications": {
+        "title": "Are you sure you want to permanently delete all notifications?"
+      },
+      "close-ticket-confirm": {
+        "title": "Are you sure you want to close this ticket?"
+      },
+      "logout-session-confirm": {
+        "title": "Are you sure you want to logout from your current session?"
+      }
+    },
+    "header": {
+      "alt": "Server Logo"
+    },
+    "no-content": {
+      "text": "Here is empty."
+    },
+    "ticket-row": {
+      "show-ticket": "View Ticket",
+      "filter": "Filter",
+      "no-category": "No Category"
+    },
+    "tickets": {
+      "table": {
+        "title": "Title",
+        "status": "Status",
+        "category": "Category",
+        "last-reply": "Last Reply"
+      }
+    }
+  },
+  "pages": {
+    "login": {
+      "demo-mode-alert": "You are in demo mode. You can log in with the username \"demo\" and the password \"123456\".",
+      "register-email-required-info": "You need to register your email address to complete the login process.",
+      "email-verification-sent-info": "Your email address has been successfully saved. Please verify your email to log in. Don't forget to check your inbox and spam folder.",
+      "or": "or"
+    },
+    "homepage": {
+      "title": "News"
+    },
+    "rules": {
+      "title": "Rules",
+      "rules-description": "",
+      "warning": "Please read the rules carefully. Violating its terms may result in your being banned."
+    },
+    "post-detail": {
+      "previous-post": "Previous Post",
+      "next-post": "Next Post"
+    },
+    "support": {
+      "title": "Support",
+      "description": "How can we help you?",
+      "options": {
+        "create-ticket": {
+          "title": "Support Ticket",
+          "description": "Contact the authorities as a player."
+        },
+        "send-email": {
+          "title": "E-Mail",
+          "description": "Email the {websiteName} support address."
+        }
+      }
+    },
+    "create-ticket": {
+      "title": "Create Support Ticket",
+      "inputs": {
+        "title": "Title",
+        "no-category": "No Category"
+      }
+    },
+    "player-profile": {
+      "title": "Profile",
+      "register-date": "Register Date"
+    },
+    "profile": {
+      "title": "Profile",
+      "register-date": "Register Date",
+      "last-login": "Last Login"
+    },
+    "notifications": {
+      "page-title": "Notifications",
+      "delete-notification": "Delete Notification",
+      "show-more": "Show More ({count})"
+    },
+    "activate": {
+      "title": "Activate Your E-Mail"
+    },
+    "activate-new-email": {
+      "title": "Verify New E-Mail"
+    },
+    "category-posts": {
+      "title": "Category: {categoryTitle} ({postCount} Posts)",
+      "posts": "Posts"
+    },
+    "preview-post": {
+      "title": "Previewing Post: {postTitle}"
+    },
+    "renew-password": {
+      "title": "Change Password",
+      "inputs": {
+        "new-password": "New Password",
+        "new-password-repeat": "New Password Repeat"
+      }
+    },
+    "reset-password": {
+      "title": "Reset Password",
+      "description": "A reset link will be sent to the email address you registered with.",
+      "inputs": {
+        "email-username": {
+          "placeholder": "Username / E-Mail"
+        }
+      }
+    },
+    "tickets": {
+      "title": "Support Tickets",
+      "all": "All",
+      "closed": "Closed"
+    },
+    "ticket-detail": {
+      "tab-title": "Ticket {ticketId}: {title}",
+      "detail": {
+        "opened-in-category": "opened in {category} category."
+      },
+      "no-category": "No Category",
+      "filter": "Filter",
+      "previous-messages": "Previous Messages ({count})",
+      "inputs": {
+        "message": {
+          "placeholder": "Your message..."
+        }
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "inputs": {
+        "display-language": {
+          "title": "Display Language"
+        },
+        "change-password": {
+          "title": "Change Your Password",
+          "description": "Send password reset link",
+          "success-message": "A link to change your password was sent to your email address.",
+          "new-email-placeholder": "New E-Mail"
+        },
+        "change-email": {
+          "title": "Change E-Mail",
+          "success-message": "{newEmail} has been sent a link to change your email.",
+          "description": "Change E-Mail",
+          "back": "Back",
+          "confirm": "Confirm",
+          "cancel": "Cancel",
+          "continue": "Continue",
+          "current-password-placeholder": "Current Password"
+        },
+        "sessions": {
+          "title": "Sessions",
+          "browser": "Browser",
+          "last-entrance": "Last Activity",
+          "expire-date": "Expire Date",
+          "current-session": "Current Session",
+          "max-sessions-warning": "You can have a maximum of 5 active sessions. The oldest session will be automatically deleted upon new login."
+        }
+      }
+    },
+    "category-tickets": {
+      "title": "{categoryName} Tickets",
+      "no-category": "No Category"
+    },
+    "theme-settings": {
+      "tabs": {
+        "general": "General",
+        "logo": "Logo",
+        "cover": "Cover",
+        "navbar": "Navigation Bar",
+        "sidebar": "Sidebar",
+        "post-card": "Post Card",
+        "footer": "Footer",
+        "play-card": "Play Card",
+        "advanced": "Advanced"
+      },
+      "general": {
+        "theme-color": "Theme Color",
+        "breadcrumb": "Show Breadcrumb",
+        "colors": {
+          "dark": "Dark",
+          "light": "Light",
+          "copper": "Copper",
+          "emerald": "Emerald",
+          "midnight": "Midnight",
+          "crimson": "Crimson"
+        },
+        "bg-color": "Background Color",
+        "bg-image": "Background Image",
+        "bg-image-placement": "Background Image Placement",
+        "placements": {
+          "left-top": "Top Left",
+          "center": "Center",
+          "right-bottom": "Bottom Right"
+        },
+        "bg-image-repeat": "Background Image Repeat",
+        "repeats": {
+          "repeat": "Repeat",
+          "no-repeat": "No Repeat",
+          "repeat-x": "Repeat X",
+          "repeat-y": "Repeat Y"
+        },
+        "bg-image-size": "Background Image Size",
+        "sizes": {
+          "auto": "Auto",
+          "cover": "Cover",
+          "contain": "Contain",
+          "stretch": "Stretch"
+        }
+      },
+      "logo": {
+        "visibility": "Visibility",
+        "position": "Position",
+        "positions": {
+          "top-start": "Top Start",
+          "top": "Top",
+          "top-end": "Top End",
+          "center-start": "Center Start",
+          "center": "Center",
+          "center-end": "Center End",
+          "bottom-start": "Bottom Start",
+          "bottom": "Bottom",
+          "bottom-end": "Bottom End"
+        },
+        "height": "Height (px)",
+        "width": "Width (px)",
+        "animation": "Animation",
+        "animations": {
+          "off": "Off",
+          "zoom": "Zoom",
+          "floating": "Floating"
+        }
+      },
+      "cover": {
+        "default-bg": "Default Background Image",
+        "bg-image": "Background Image",
+        "bg-color": "Background Color",
+        "height": "Height (px)",
+        "width": "Width",
+        "width-options": {
+          "by-content": "By Content",
+          "full-size": "Full Size"
+        },
+        "nav-gap": "Navigation Menu Gap"
+      },
+      "navbar": {
+        "width": "Width",
+        "bg-color": "Background Color",
+        "border-radius": "Border Radius",
+        "links-visibility": "Links Visibility",
+        "links": "Links",
+        "home": "Home",
+        "rules": "Rules",
+        "support": "Support",
+        "drag-drop-hint": "You can sort the links by dragging and dropping them."
+      },
+      "sidebar": {
+        "visibility": "Visibility",
+        "position": "Position",
+        "positions": {
+          "left": "Left",
+          "right": "Right"
+        },
+        "last-registrants": "Last Registrants Card",
+        "online-admins": "Online Admins Card (Support)",
+        "play-card-style": "Card Style",
+        "play-card-styles": {
+          "style-1": "Legacy",
+          "style-2": "Modern"
+        },
+        "play-card-bg-image": "Background Image",
+        "play-card-default-bg": "Default Background Image",
+        "play-card-bg-opacity": "Background Opacity",
+        "play-card-bg-effect": "Effect Style",
+        "play-card-bg-effects": {
+          "solid": "Solid Color",
+          "gradient": "Color Gradient"
+        },
+        "play-card-ip-color": "IP Link Color",
+        "play-card-border-color": "Border Color",
+        "play-card-ip-text": "IP Text",
+        "play-card-ip-text-hint": "Leave blank for default IP.",
+        "play-card-status-badge": "Status Badge",
+        "play-card-player-count": "Player Count",
+        "play-card-version-info": "Version Info",
+        "default": "Default"
+      },
+      "post-card": {
+        "visibility": "Visibility",
+        "cover-image": "Cover Image",
+        "read-more": "Read More Button",
+        "author-image": "Author Head Image",
+        "views": "Views",
+        "previous-post": "Previous Post Button",
+        "next-post": "Next Post Button"
+      },
+      "footer": {
+        "visibility": "Visibility",
+        "logo-visibility": "Logo Visibility",
+        "title": "Site Title",
+        "title-visibility": "Site Title Visibility",
+        "content": "Site Description",
+        "content-visibility": "Site Description Visibility",
+        "links": "Links",
+        "links-visibility": "Links Visibility",
+        "plugin-links-visibility": "Show Plugin Links"
+      },
+      "advanced": {
+        "custom-css": "Custom CSS"
+      }
+    }
+  },
+  "page-errors": {
+    "404": "The page is not found!",
+    "404-description": "The page you're looking for doesn't exist or has been moved.",
+    "need-help": "If you believe this is an error, please contact support."
+  },
+  "ticket-statuses": {
+    "new": "New",
+    "replied": "Replied",
+    "closed": "Closed"
+  },
+  "notifications": {
+    "AN_ADMIN_CLOSED_TICKET": "An admin closed your ticket (<b>#{id}</b>).",
+    "AN_ADMIN_REPLIED_TICKET": "An admin replied to your ticket (<b>#{id}</b>)."
+  },
+  "errors": {
+    "NETWORK_ERROR": "Network error, please check your connection!",
+    "INTERNAL_SERVER_ERROR": "An error occurred, please report it.",
+    "DISABLED_FOR_DEMO": "This action is disabled in demo mode.",
+    "LOGIN_IS_INVALID": "Can't login, check your information!",
+    "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Can't change email, wait 15 minutes.",
+    "CANT_RESET_PASSWORD_WAIT5MINUTES": "Can't reset password, wait 5 minutes.",
+    "CATEGORY_NOT_EXISTS": "This category is not found!",
+    "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
+    "INVALID_DATA": "Invalid data!",
+    "INVALID_EMAIL": "Invalid e-mail!",
+    "INVALID_IP_ADDRESS": "Invalid IP address!",
+    "INVALID_LINK": "Link is invalid!",
+    "LOGIN_EMAIL_NOT_VERIFIED": "Your email address ({email}) is not verified yet! Please check your inbox and spam folder to verify your account.",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY": "You are permanently banned!",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY_WITH_REASON": "You are permanently banned! Reason: {reason}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY": "You are temporarily banned! Until: {untilTime}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON": "You are temporarily banned!, Reason: {reason}, Until: {untilTime}",
+    "MESSAGE_CANT_BE_EMPTY": "Message can't be empty!",
+    "NEW_EMAIL_EXISTS": "This e-mail is not available!",
+    "NEW_PASSWORD_EMPTY": "New Password is empty!",
+    "NEW_PASSWORD_REPEAT_DOESNT_MATCH": "New Password Repeat does not match!",
+    "NEW_PASSWORD_TOO_LONG": "New Password is too long!",
+    "NEW_PASSWORD_TOO_SHORT": "New Password is too short!",
+    "NO_PERMISSION": "No permission to this action!",
+    "NOT_EXISTS": "Not exists!",
+    "NOT_FOUND": "Not found!",
+    "NOT_LOGGED_IN": "Not logged in!",
+    "PAGE_NOT_FOUND": "Page not found!",
+    "PASSWORD_EMPTY": "Password is empty!",
+    "PASSWORD_TOO_LONG": "Password is too long!",
+    "PASSWORD_TOO_SHORT": "Password is too short!",
+    "POST_NOT_FOUND": "This post is not found!",
+    "REGISTER_EMAIL_EMPTY": "E-mail is empty!",
+    "REGISTER_EMAIL_NOT_AVAILABLE": "E-mail is not available!",
+    "REGISTER_INVALID_EMAIL": "E-mail is invalid.",
+    "REGISTER_INVALID_USERNAME": "Username is invalid.",
+    "REGISTER_NOT_ACCEPTED_AGREEMENT": "Agreement is not accepted!",
+    "REGISTER_PASSWORD_AND_PASSWORD_REPEAT_NOT_SAME": "Password and Password Repeat not matching!",
+    "REGISTER_USERNAME_EMPTY": "Username is empty!",
+    "REGISTER_USERNAME_NOT_AVAILABLE": "Username is not available!",
+    "REGISTER_USERNAME_TOO_LONG": "Username is too long!",
+    "REGISTER_USERNAME_TOO_SHORT": "Username is too short!",
+    "TICKET_IS_CLOSED": "Ticket is closed!",
+    "REGISTER_LINK_CODE_INVALID": "The link code you entered is invalid or expired!",
+    "CANT_CHANGE_EMAIL_WAIT15MINUTES": "Can't change e-mail, wait 15 minutes.",
+    "USERNAME_REQUIRED": "You need to set a new username to continue.",
+    "PLUGIN_DENIED_LOGIN": "Login was denied.",
+    "INVALID_TOKEN": "The link has expired or is invalid."
+  },
+  "successes": {
+    "REGISTER_SUCCESSFUL": "Successfully registered! An e-email sent to verify your e-mail.",
+    "VALIDATION_SUCCESSFUL": "Successfully activated e-mail! Now you can login.",
+    "RENEW_PASSWORD_SUCCESSFUL": "Password changed successfully!",
+    "RESET_PASSWORD_SUCCESSFUL": "Sent an e-mail to reset your password.",
+    "LOGIN_SUCCESSFUL": "Login successful!"
+  }
+}

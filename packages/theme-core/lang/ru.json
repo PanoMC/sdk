@@ -1,0 +1,514 @@
+{
+  "buttons": {
+    "view": "Просмотр",
+    "show-all": "Показать все",
+    "login": "Войти",
+    "forgot-password": "Забыли пароль?",
+    "register": "Регистрация",
+    "create-ticket": "Создать тикет",
+    "delete-all": "Удалить все",
+    "activate-email": "Подтвердить E-mail",
+    "change-password": "Сменить пароль",
+    "yes": "Да",
+    "cancel": "Отмена",
+    "send": "Отправить",
+    "already-registered": "Войдите, если вы уже зарегистрированы",
+    "close-ticket": "Закрыть тикет",
+    "reset-password": "Сбросить пароль",
+    "filter": "Фильтр",
+    "click-to-copy": "Нажмите, чтобы скопировать",
+    "close": "Закрыть",
+    "toggle": "Переключить",
+    "remove": "Удалить",
+    "profile": "Профиль",
+    "tickets": "Тикеты",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "save": "Сохранить",
+    "reset-tab": "Сбросить вкладку",
+    "reset-all": "Сбросить все",
+    "notifications": "Уведомления"
+  },
+  "labels": {
+    "plugin": "Плагин",
+    "demo-panel-hint": "Вы можете изучить панель управления отсюда!",
+    "demo-login-hint": "Вы можете войти отсюда!"
+  },
+  "messages": {
+    "confirm-reset-all": "Вы уверены, что хотите сбросить все настройки темы по умолчанию? Это действие нельзя отменить.",
+    "settings-save-success": "Настройки успешно сохранены!",
+    "settings-reset-tab-success": "Настройки вкладки сброшены до значений по умолчанию.",
+    "settings-reset-all-success": "Все настройки темы сброшены до значений по умолчанию!",
+    "settings-reset-all-error": "Произошла ошибка при сбросе настроек!"
+  },
+  "nav-links": {
+    "support": "Поддержка",
+    "panel": "Панель",
+    "homepage": "Главная",
+    "rules": "Правила"
+  },
+  "footer": {
+    "been-created-with": "Создано с помощью {pano}."
+  },
+  "sidebars": {
+    "home": {
+      "copied": "Скопировано!",
+      "copy": "Копировать",
+      "server-status": "Статус сервера",
+      "online": "В сети",
+      "offline": "Не в сети",
+      "last-registrants": "Последние регистрации",
+      "game-client-version": "Версия клиента",
+      "playing": "{playerCount}/{maxPlayerCount} играют",
+      "click-to-copy": "Нажмите, чтобы скопировать"
+    }
+  },
+  "toasts": {
+    "session-logged-out-successful": "Сеанс успешно завершен!"
+  },
+  "components": {
+    "toasts": {
+      "demo-mode-restricted": "Это действие недоступно в демо-режиме."
+    },
+    "player-head": {
+      "in-game": "В игре",
+      "in-website": "На сайте"
+    },
+    "notification-container": {
+      "notification": "Уведомление"
+    },
+    "post": {
+      "read-more": "Читать далее",
+      "view": "Просмотры"
+    },
+    "online-admins": {
+      "online-admins": "Админы в сети"
+    },
+    "player-permission-badge": {
+      "player": "Игрок"
+    },
+    "player-status-badge": {
+      "banned": "Забанен",
+      "in-game": "В игре",
+      "in-website": "На сайте",
+      "online": "В сети",
+      "offline": "Не в сети"
+    },
+    "player-profile-sidebar": {
+      "banned": "Забанен"
+    },
+    "modals": {
+      "login": {
+        "title": "Вход",
+        "inputs": {
+          "username-email": "Имя пользователя / E-Mail",
+          "password": "Пароль"
+        },
+        "link-code": {
+          "title": "Требуется код привязки",
+          "description": "Введите 6-значный код, который вы получили в игре. Если кода нет, получите его командой <mark>/link</mark> в игре.",
+          "verify": "Проверить"
+        },
+        "register-with-link": {
+          "title": "Завершить регистрацию"
+        }
+      },
+      "register": {
+        "title": "Регистрация",
+        "inputs": {
+          "username": "Имя пользователя",
+          "email": "E-Mail",
+          "password": "Пароль",
+          "password-repeat": "Повторите пароль",
+          "server-rules": "Правила сервера",
+          "agreement-text": "Я прочитал и принимаю {link}."
+        }
+      },
+      "confirm-remove-all-notifications": {
+        "title": "Вы уверены, что хотите навсегда удалить все уведомления?"
+      },
+      "close-ticket-confirm": {
+        "title": "Вы уверены, что хотите закрыть этот тикет?"
+      },
+      "logout-session-confirm": {
+        "title": "Вы уверены, что хотите выйти из текущей сессии?"
+      }
+    },
+    "header": {
+      "alt": "Логотип сервера"
+    },
+    "no-content": {
+      "text": "Здесь пусто."
+    },
+    "ticket-row": {
+      "show-ticket": "Просмотреть тикет",
+      "filter": "Фильтр",
+      "no-category": "Без категории"
+    },
+    "tickets": {
+      "table": {
+        "title": "Заголовок",
+        "status": "Статус",
+        "category": "Категория",
+        "last-reply": "Последний ответ"
+      }
+    }
+  },
+  "pages": {
+    "login": {
+      "demo-mode-alert": "Вы находитесь в демо-режиме. Вы можете войти с именем пользователя «demo» и паролем «123456».",
+      "register-email-required-info": "Вам необходимо зарегистрировать свой адрес электронной почты, чтобы завершить процесс входа.",
+      "email-verification-sent-info": "Ваш адрес электронной почты успешно сохранен. Пожалуйста, подтвердите свою электронную почту, чтобы войти. Не забудьте проверить папку «Входящие» и папку со спамом.",
+      "or": "или"
+    },
+    "homepage": {
+      "title": "Новости"
+    },
+    "rules": {
+      "title": "Правила",
+      "rules-description": "",
+      "warning": "Пожалуйста, внимательно прочитайте правила. Нарушение условий может привести к блокировке."
+    },
+    "post-detail": {
+      "previous-post": "Предыдущий пост",
+      "next-post": "Следующий пост"
+    },
+    "support": {
+      "title": "Поддержка",
+      "description": "Как мы можем вам помочь?",
+      "options": {
+        "create-ticket": {
+          "title": "Тикет поддержки",
+          "description": "Связаться с администрацией как игрок."
+        },
+        "send-email": {
+          "title": "E-Mail",
+          "description": "Напишите на адрес поддержки {websiteName}."
+        }
+      }
+    },
+    "create-ticket": {
+      "title": "Создать тикет поддержки",
+      "inputs": {
+        "title": "Заголовок",
+        "no-category": "Без категории"
+      }
+    },
+    "player-profile": {
+      "title": "Профиль",
+      "register-date": "Дата регистрации"
+    },
+    "profile": {
+      "title": "Профиль",
+      "register-date": "Дата регистрации",
+      "last-login": "Последний вход"
+    },
+    "notifications": {
+      "page-title": "Уведомления",
+      "delete-notification": "Удалить уведомление",
+      "show-more": "Показать больше ({count})"
+    },
+    "activate": {
+      "title": "Активируйте свой E-Mail"
+    },
+    "activate-new-email": {
+      "title": "Подтвердите новый E-Mail"
+    },
+    "category-posts": {
+      "title": "Категория: {categoryTitle} ({postCount} постов)",
+      "posts": "Посты"
+    },
+    "preview-post": {
+      "title": "Предпросмотр поста: {postTitle}"
+    },
+    "renew-password": {
+      "title": "Сменить пароль",
+      "inputs": {
+        "new-password": "Новый пароль",
+        "new-password-repeat": "Повторите новый пароль"
+      }
+    },
+    "reset-password": {
+      "title": "Сброс пароля",
+      "description": "Ссылка для сброса будет отправлена на адрес электронной почты, с которым вы зарегистрировались.",
+      "inputs": {
+        "email-username": {
+          "placeholder": "Имя пользователя / E-Mail"
+        }
+      }
+    },
+    "tickets": {
+      "title": "Тикеты поддержки",
+      "all": "Все",
+      "closed": "Закрытые"
+    },
+    "ticket-detail": {
+      "tab-title": "Тикет {ticketId}: {title}",
+      "detail": {
+        "opened-in-category": "открыт в категории {category}."
+      },
+      "no-category": "Без категории",
+      "filter": "Фильтр",
+      "previous-messages": "Предыдущие сообщения ({count})",
+      "inputs": {
+        "message": {
+          "placeholder": "Ваше сообщение..."
+        }
+      }
+    },
+    "settings": {
+      "title": "Настройки",
+      "inputs": {
+        "display-language": {
+          "title": "Язык отображения"
+        },
+        "change-password": {
+          "title": "Сменить пароль",
+          "description": "Отправить ссылку для сброса пароля",
+          "success-message": "Ссылка для смены пароля отправлена на ваш адрес электронной почты.",
+          "new-email-placeholder": "Новый E-Mail"
+        },
+        "change-email": {
+          "title": "Сменить E-Mail",
+          "success-message": "На {newEmail} отправлена ссылка для смены электронной почты.",
+          "description": "Сменить E-Mail",
+          "back": "Назад",
+          "confirm": "Подтвердить",
+          "cancel": "Отмена",
+          "continue": "Продолжить",
+          "current-password-placeholder": "Текущий пароль"
+        },
+        "sessions": {
+          "title": "Активные сессии",
+          "browser": "Браузер",
+          "last-entrance": "Активность",
+          "expire-date": "Истекает",
+          "current-session": "Текущая",
+          "max-sessions-warning": "У вас может быть не более 5 активных сессий. Самая старая сессия будет автоматически удалена при новом входе."
+        }
+      }
+    },
+    "category-tickets": {
+      "title": "Тикеты {categoryName}",
+      "no-category": "Без категории"
+    },
+    "theme-settings": {
+      "tabs": {
+        "general": "Общие",
+        "logo": "Логотип",
+        "cover": "Обложка",
+        "navbar": "Панель навигации",
+        "sidebar": "Боковая панель",
+        "post-card": "Карточка поста",
+        "footer": "Подвал",
+        "play-card": "Карточка игры",
+        "advanced": "Дополнительно"
+      },
+      "general": {
+        "theme-color": "Цвет темы",
+        "breadcrumb": "Показать хлебные крошки",
+        "colors": {
+          "dark": "Темная",
+          "light": "Светлая",
+          "copper": "Медная",
+          "emerald": "Изумрудная",
+          "midnight": "Полночь",
+          "crimson": "Малиновая"
+        },
+        "bg-color": "Цвет фона",
+        "bg-image": "Фоновое изображение",
+        "bg-image-placement": "Расположение фонового изображения",
+        "placements": {
+          "left-top": "Сверху слева",
+          "center": "Центр",
+          "right-bottom": "Снизу справа"
+        },
+        "bg-image-repeat": "Повтор фонового изображения",
+        "repeats": {
+          "repeat": "Повторять",
+          "no-repeat": "Не повторять",
+          "repeat-x": "Повторять по X",
+          "repeat-y": "Повторять по Y"
+        },
+        "bg-image-size": "Размер фонового изображения",
+        "sizes": {
+          "auto": "Авто",
+          "cover": "Заполнение",
+          "contain": "Вписать",
+          "stretch": "Растянуть"
+        }
+      },
+      "logo": {
+        "visibility": "Видимость",
+        "position": "Позиция",
+        "positions": {
+          "top-start": "Сверху слева",
+          "top": "Сверху",
+          "top-end": "Сверху справа",
+          "center-start": "По центру слева",
+          "center": "По центру",
+          "center-end": "По центру справа",
+          "bottom-start": "Снизу слева",
+          "bottom": "Снизу",
+          "bottom-end": "Снизу справа"
+        },
+        "height": "Высота (px)",
+        "width": "Ширина (px)",
+        "animation": "Анимация",
+        "animations": {
+          "off": "Выключено",
+          "zoom": "Зум",
+          "floating": "Вверх-вниз"
+        }
+      },
+      "cover": {
+        "default-bg": "Фоновое изображение по умолчанию",
+        "bg-image": "Фоновое изображение",
+        "bg-color": "Цвет фона",
+        "height": "Высота (px)",
+        "width": "Ширина",
+        "width-options": {
+          "by-content": "По контенту",
+          "full-size": "Во всю ширину"
+        },
+        "nav-gap": "Отступ меню навигации"
+      },
+      "navbar": {
+        "width": "Ширина",
+        "bg-color": "Цвет фона",
+        "border-radius": "Радиус скругления",
+        "links-visibility": "Видимость ссылок",
+        "links": "Ссылки",
+        "home": "Главная",
+        "rules": "Правила",
+        "support": "Поддержка",
+        "drag-drop-hint": "Вы можете изменять порядок ссылок, перетаскивая их."
+      },
+      "sidebar": {
+        "visibility": "Видимость",
+        "position": "Позиция",
+        "positions": {
+          "left": "Слева",
+          "right": "Справа"
+        },
+        "last-registrants": "Карточка последних регистраций",
+        "online-admins": "Карточка админов в сети (Поддержка)",
+        "play-card-style": "Стиль карточки",
+        "play-card-styles": {
+          "style-1": "Legacy",
+          "style-2": "Modern"
+        },
+        "play-card-bg-image": "Фоновое изображение",
+        "play-card-default-bg": "Фоновое изображение по умолчанию",
+        "play-card-bg-opacity": "Прозрачность фона",
+        "play-card-bg-effect": "Стиль эффекта",
+        "play-card-bg-effects": {
+          "solid": "Сплошной цвет",
+          "gradient": "Цветовой градиент"
+        },
+        "play-card-ip-color": "Цвет IP-адреса",
+        "play-card-border-color": "Цвет рамки",
+        "play-card-ip-text": "Текст IP",
+        "play-card-ip-text-hint": "Оставьте пустым для IP по умолчанию.",
+        "play-card-status-badge": "Значок статуса",
+        "play-card-player-count": "Количество игроков",
+        "play-card-version-info": "Версия игры",
+        "default": "По умолчанию"
+      },
+      "post-card": {
+        "visibility": "Видимость",
+        "cover-image": "Изображение обложки",
+        "read-more": "Кнопка «Читать далее»",
+        "author-image": "Голова автора",
+        "views": "Просмотры",
+        "previous-post": "Кнопка предыдущего поста",
+        "next-post": "Кнопка следующего поста"
+      },
+      "footer": {
+        "visibility": "Подвал",
+        "logo-visibility": "Видимость логотипа",
+        "title": "Заголовок сайта",
+        "title-visibility": "Видимость заголовка сайта",
+        "content": "Контент",
+        "content-visibility": "Видимость описания сайта",
+        "links": "Ссылки",
+        "links-visibility": "Видимость ссылок",
+        "plugin-links-visibility": "Показывать ссылки плагинов"
+      },
+      "advanced": {
+        "custom-css": "Пользовательский CSS"
+      }
+    }
+  },
+  "page-errors": {
+    "404": "Страница не найдена!",
+    "404-description": "Страница, которую вы ищете, не существует или была перенесена.",
+    "need-help": "Если вы считаете, что это ошибка, обратитесь в поддержку."
+  },
+  "ticket-statuses": {
+    "new": "Новый",
+    "replied": "Дан ответ",
+    "closed": "Закрыт"
+  },
+  "notifications": {
+    "AN_ADMIN_CLOSED_TICKET": "Администратор закрыл ваш тикет (<b>#{id}</b>).",
+    "AN_ADMIN_REPLIED_TICKET": "Администратор ответил на ваш тикет (<b>#{id}</b>)."
+  },
+  "errors": {
+    "NETWORK_ERROR": "Сетевая ошибка, проверьте подключение!",
+    "INTERNAL_SERVER_ERROR": "Произошла ошибка, пожалуйста, сообщите о ней.",
+    "DISABLED_FOR_DEMO": "Это действие недоступно в демо-режиме.",
+    "LOGIN_IS_INVALID": "Не удалось войти, проверьте свои данные!",
+    "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Нельзя сменить почту, подождите 15 минут.",
+    "CANT_RESET_PASSWORD_WAIT5MINUTES": "Нельзя сбросить пароль, подождите 5 минут.",
+    "CATEGORY_NOT_EXISTS": "Эта категория не найдена!",
+    "CURRENT_PASSWORD_NOT_CORRECT": "Текущий пароль неверен!",
+    "INVALID_DATA": "Неверные данные!",
+    "INVALID_EMAIL": "Неверный e-mail!",
+    "INVALID_IP_ADDRESS": "Неверный IP-адрес!",
+    "INVALID_LINK": "Недействительная ссылка!",
+    "LOGIN_EMAIL_NOT_VERIFIED": "Ваш e-mail ({email}) еще не подтвержден! Пожалуйста, проверьте папку «Входящие» и папку со спамом, чтобы подтвердить свой аккаунт.",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY": "Вы забанены навсегда!",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY_WITH_REASON": "Вы забанены навсегда! Причина: {reason}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY": "Вы временно забанены! До: {untilTime}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON": "Вы временно забанены! Причина: {reason}, До: {untilTime}",
+    "MESSAGE_CANT_BE_EMPTY": "Сообщение не может быть пустым!",
+    "NEW_EMAIL_EXISTS": "Этот e-mail уже занят!",
+    "NEW_PASSWORD_EMPTY": "Новый пароль пуст!",
+    "NEW_PASSWORD_REPEAT_DOESNT_MATCH": "Повтор нового пароля не совпадает!",
+    "NEW_PASSWORD_TOO_LONG": "Новый пароль слишком длинный!",
+    "NEW_PASSWORD_TOO_SHORT": "Новый пароль слишком короткий!",
+    "NO_PERMISSION": "Нет прав для этого действия!",
+    "NOT_EXISTS": "Не существует!",
+    "NOT_FOUND": "Не найдено!",
+    "NOT_LOGGED_IN": "Вы не вошли в систему!",
+    "PAGE_NOT_FOUND": "Страница не найдена!",
+    "PASSWORD_EMPTY": "Пароль пуст!",
+    "PASSWORD_TOO_LONG": "Пароль слишком длинный!",
+    "PASSWORD_TOO_SHORT": "Пароль слишком короткий!",
+    "POST_NOT_FOUND": "Этот пост не найден!",
+    "REGISTER_EMAIL_EMPTY": "E-mail не указан!",
+    "REGISTER_EMAIL_NOT_AVAILABLE": "E-mail недоступен!",
+    "REGISTER_INVALID_EMAIL": "Неверный формат e-mail.",
+    "REGISTER_INVALID_USERNAME": "Неверное имя пользователя.",
+    "REGISTER_NOT_ACCEPTED_AGREEMENT": "Вы должны принять соглашение!",
+    "REGISTER_PASSWORD_AND_PASSWORD_REPEAT_NOT_SAME": "Пароли не совпадают!",
+    "REGISTER_USERNAME_EMPTY": "Имя пользователя не указано!",
+    "REGISTER_USERNAME_NOT_AVAILABLE": "Имя пользователя недоступно!",
+    "REGISTER_USERNAME_TOO_LONG": "Имя пользователя слишком длинное!",
+    "REGISTER_USERNAME_TOO_SHORT": "Имя пользователя слишком короткое!",
+    "TICKET_IS_CLOSED": "Тикет закрыт!",
+    "REGISTER_LINK_CODE_INVALID": "Введенный вами код ссылки недействителен или истек!",
+    "CANT_CHANGE_EMAIL_WAIT15MINUTES": "Нельзя сменить e-mail, подождите 15 минут.",
+    "USERNAME_REQUIRED": "Необходимо задать новое имя пользователя для продолжения.",
+    "PLUGIN_DENIED_LOGIN": "Вход отклонён.",
+    "INVALID_TOKEN": "Ссылка истекла или недействительна."
+  },
+  "successes": {
+    "REGISTER_SUCCESSFUL": "Успешная регистрация! Письмо для подтверждения отправлено на вашу почту.",
+    "VALIDATION_SUCCESSFUL": "E-mail успешно подтвержден! Теперь вы можете войти.",
+    "RENEW_PASSWORD_SUCCESSFUL": "Пароль успешно изменен!",
+    "RESET_PASSWORD_SUCCESSFUL": "Письмо для сброса пароля отправлено.",
+    "LOGIN_SUCCESSFUL": "Вход выполнен успешно!"
+  }
+}

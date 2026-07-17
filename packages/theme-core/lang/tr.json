@@ -1,0 +1,514 @@
+{
+  "buttons": {
+    "view": "Görüntüle",
+    "show-all": "Hepsini Görüntüle",
+    "login": "Giriş Yap",
+    "forgot-password": "Şifreni mi unuttun?",
+    "register": "Kayıt Ol",
+    "create-ticket": "Talep Oluştur",
+    "delete-all": "Tümünü Sil",
+    "activate-email": "E-Posta'yı Doğrula",
+    "change-password": "Şifremi Değiştir",
+    "yes": "Evet",
+    "cancel": "İptal",
+    "send": "Gönder",
+    "already-registered": "Zaten kayıtlıysan Giriş Yap",
+    "close-ticket": "Talebi Kapat",
+    "reset-password": "Sıfırlama E-Postası Gönder",
+    "filter": "Filtrele",
+    "click-to-copy": "Kopyalamak için tıklayın",
+    "close": "Kapat",
+    "toggle": "Aç/Kapat",
+    "remove": "Kaldır",
+    "profile": "Profil",
+    "tickets": "Talepler",
+    "settings": "Ayarlar",
+    "logout": "Çıkış Yap",
+    "save": "Kaydet",
+    "reset-tab": "Sekmeyi Sıfırla",
+    "reset-all": "Tümünü Sıfırla",
+    "notifications": "Bildirimler"
+  },
+  "labels": {
+    "plugin": "Eklenti",
+    "demo-panel-hint": "Yönetim panelini buradan inceleyebilirsin!",
+    "demo-login-hint": "Buradan giriş yapabilirsin!"
+  },
+  "messages": {
+    "confirm-reset-all": "Tüm tema ayarlarını varsayılana sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "settings-save-success": "Ayarlar başarıyla kaydedildi!",
+    "settings-reset-tab-success": "Sekme ayarları varsayılana döndürüldü.",
+    "settings-reset-all-success": "Tüm tema ayarları başarıyla sıfırlandı!",
+    "settings-reset-all-error": "Ayarlar sıfırlanırken bir hata oluştu!"
+  },
+  "nav-links": {
+    "support": "Destek",
+    "panel": "Panel",
+    "homepage": "Ana Sayfa",
+    "rules": "Kurallar"
+  },
+  "footer": {
+    "been-created-with": "{pano} ile oluşturuldu."
+  },
+  "sidebars": {
+    "home": {
+      "copied": "Kopyalandı!",
+      "copy": "Kopyala",
+      "server-status": "Sunucu Durumu",
+      "online": "Çevrimiçi",
+      "offline": "Çevrimdışı",
+      "last-registrants": "Son Kayıt Olanlar",
+      "game-client-version": "Oyun Versiyonu",
+      "playing": "{playerCount}/{maxPlayerCount} oynuyor",
+      "click-to-copy": "Kopyalamak için tıkla"
+    }
+  },
+  "toasts": {
+    "session-logged-out-successful": "Oturum başarıyla kapatıldı!"
+  },
+  "components": {
+    "toasts": {
+      "demo-mode-restricted": "Bu özellik demo modunda devre dışı bırakılmıştır."
+    },
+    "player-head": {
+      "in-game": "Oyunda Çevrimiçi",
+      "in-website": "Websitede Çevrimiçi"
+    },
+    "notification-container": {
+      "notification": "Bildirim"
+    },
+    "post": {
+      "read-more": "Devamını Oku",
+      "view": "Görüntülenme"
+    },
+    "online-admins": {
+      "online-admins": "Çevrimiçi Yöneticiler"
+    },
+    "player-permission-badge": {
+      "player": "Oyuncu"
+    },
+    "player-status-badge": {
+      "banned": "Yasaklı",
+      "in-game": "Oyunda",
+      "in-website": "Sitede",
+      "online": "Çevrimiçi",
+      "offline": "Çevrimdışı"
+    },
+    "player-profile-sidebar": {
+      "banned": "Yasaklanmış"
+    },
+    "modals": {
+      "login": {
+        "title": "Giriş Yap",
+        "inputs": {
+          "username-email": "Oyuncu Adı / E-Posta",
+          "password": "Şifre"
+        },
+        "link-code": {
+          "title": "Link Kodu Gerekli",
+          "description": "Oyunda size verilen 6 haneli kodu giriniz. Kodunuz yoksa oyunda <mark>/link</mark> komutunu kullanarak alabilirsiniz.",
+          "verify": "Doğrula"
+        },
+        "register-with-link": {
+          "title": "Kaydı Tamamla"
+        }
+      },
+      "register": {
+        "title": "Kayıt Ol",
+        "inputs": {
+          "username": "Oyuncu Adı",
+          "email": "E-Posta",
+          "password": "Şifre",
+          "password-repeat": "Şifre Tekrarı",
+          "server-rules": "Sunucu Kurallarını",
+          "agreement-text": "{link} okudum ve kabul ediyorum."
+        }
+      },
+      "confirm-remove-all-notifications": {
+        "title": "Tüm bildirimleri kalıcı olarak silmek istediğinizden emin misiniz?"
+      },
+      "close-ticket-confirm": {
+        "title": "Bu talebi kapatmak istediğinizden emin misiniz?"
+      },
+      "logout-session-confirm": {
+        "title": "Mevcut oturumunuzdan çıkış yapmak istediğinizden emin misiniz?"
+      }
+    },
+    "header": {
+      "alt": "Sunucu Logosu"
+    },
+    "no-content": {
+      "text": "Burası boş."
+    },
+    "ticket-row": {
+      "show-ticket": "Talebi Görüntüle",
+      "filter": "Filtrele",
+      "no-category": "Kategorisiz"
+    },
+    "tickets": {
+      "table": {
+        "title": "Başlık",
+        "status": "Durum",
+        "category": "Kategori",
+        "last-reply": "Son Yanıt"
+      }
+    }
+  },
+  "pages": {
+    "login": {
+      "demo-mode-alert": "Şu an demo modundasınız. \"demo\" kullanıcı adı ve \"123456\" şifresi ile giriş yapabilirsiniz.",
+      "register-email-required-info": "Giriş işlemini tamamlamak için e-posta adresinizi kaydetmeniz gerekmektedir.",
+      "email-verification-sent-info": "E-posta adresiniz başarıyla kaydedildi. Giriş yapabilmek için lütfen e-postanızı doğrulayın. Gelen kutunuzu ve spam klasörünüzü kontrol etmeyi unutmayın.",
+      "or": "veya"
+    },
+    "homepage": {
+      "title": "Haberler"
+    },
+    "rules": {
+      "title": "Kurallar",
+      "rules-description": "",
+      "warning": "Lütfen kuralları dikkatlice okuyun. Şartları ihlal etmek hesabınızın yasaklanmasına yol açabilir."
+    },
+    "post-detail": {
+      "previous-post": "Önceki Yazı",
+      "next-post": "Sonraki Yazı"
+    },
+    "support": {
+      "title": "Destek",
+      "description": "Nasıl yardımcı olabiliriz?",
+      "options": {
+        "create-ticket": {
+          "title": "Destek Talebi",
+          "description": "Oyuncu olarak yetkililerle iletişime geç."
+        },
+        "send-email": {
+          "title": "E-Posta",
+          "description": "{websiteName} destek adresine e-posta gönder."
+        }
+      }
+    },
+    "create-ticket": {
+      "title": "Destek Talebi Oluştur",
+      "inputs": {
+        "title": "Başlık",
+        "no-category": "Kategorisiz"
+      }
+    },
+    "player-profile": {
+      "title": "Profil",
+      "register-date": "Kayıt"
+    },
+    "profile": {
+      "title": "Profil",
+      "register-date": "Kayıt",
+      "last-login": "Son Giriş"
+    },
+    "notifications": {
+      "page-title": "Bildirimler",
+      "delete-notification": "Bildirimi Sil",
+      "show-more": "Daha Fazla Göster ({count})"
+    },
+    "activate": {
+      "title": "E-Posta Doğrula"
+    },
+    "activate-new-email": {
+      "title": "Yeni E-Posta'yı Doğrula"
+    },
+    "category-posts": {
+      "title": "Kategori: {categoryTitle} ({postCount} Yazı)",
+      "posts": "Yazılar"
+    },
+    "preview-post": {
+      "title": "Önizlenen Yazı: {postTitle}"
+    },
+    "renew-password": {
+      "title": "Şifreni Değiştir",
+      "inputs": {
+        "new-password": "Yeni Şifre",
+        "new-password-repeat": "Yeni Şifre Tekrarı"
+      }
+    },
+    "reset-password": {
+      "title": "Şifreni Sıfırla",
+      "description": "Kayıt olduğun e-posta adresine bir sıfırlama bağlantısı gönderilecek.",
+      "inputs": {
+        "email-username": {
+          "placeholder": "Kullanıcı Adı / E-Posta"
+        }
+      }
+    },
+    "tickets": {
+      "title": "Destek Talepleri",
+      "all": "Tümü",
+      "closed": "Kapalı"
+    },
+    "ticket-detail": {
+      "tab-title": "Talep {ticketId}: {title}",
+      "detail": {
+        "opened-in-category": "{category} kategorisinde açıldı."
+      },
+      "no-category": "Kategorisiz",
+      "filter": "Filtrele",
+      "previous-messages": "Önceki Mesajlar ({count})",
+      "inputs": {
+        "message": {
+          "placeholder": "Mesajınız..."
+        }
+      }
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "inputs": {
+        "display-language": {
+          "title": "Görüntüleme Dili"
+        },
+        "change-password": {
+          "title": "Şifre Değiştir",
+          "description": "Şifre sıfırlama bağlantısı gönder",
+          "success-message": "E-posta adresine şifreni değiştirme bağlantısı gönderildi.",
+          "new-email-placeholder": "Yeni E-Posta"
+        },
+        "change-email": {
+          "title": "E-Posta Değiştir",
+          "success-message": "{newEmail} adresine e-postanı değiştirme bağlantısı gönderildi.",
+          "description": "E-posta değiştir",
+          "back": "Geri",
+          "confirm": "Onayla",
+          "cancel": "İptal",
+          "continue": "Devam Et",
+          "current-password-placeholder": "Mevcut Şifre"
+        },
+        "sessions": {
+          "title": "Oturumlar",
+          "browser": "Tarayıcı",
+          "last-entrance": "Son Aktivite",
+          "expire-date": "Bitiş Tarihi",
+          "current-session": "Mevcut Oturum",
+          "max-sessions-warning": "Maksimum 5 aktif oturumunuz olabilir. Yeni girişte en eski oturum otomatik olarak silinir."
+        }
+      }
+    },
+    "category-tickets": {
+      "title": "{categoryName} Talepler",
+      "no-category": "Kategorisiz"
+    },
+    "theme-settings": {
+      "tabs": {
+        "general": "Genel",
+        "logo": "Logo",
+        "cover": "Kapak",
+        "navbar": "Navigasyon Barı",
+        "sidebar": "Yan Bar",
+        "post-card": "Yazı Kartı",
+        "footer": "Alt Bilgi",
+        "play-card": "Oyna Kartı",
+        "advanced": "Gelişmiş"
+      },
+      "general": {
+        "theme-color": "Tema Rengi",
+        "breadcrumb": "Yol İzini (Breadcrumb) Göster",
+        "colors": {
+          "dark": "Koyu",
+          "light": "Açık",
+          "copper": "Bakır",
+          "emerald": "Zümrüt",
+          "midnight": "Gece Yarısı",
+          "crimson": "Kızıl"
+        },
+        "bg-color": "Arka Plan Rengi",
+        "bg-image": "Arka Plan Resmi",
+        "bg-image-placement": "Arka Plan Resmi Yerleşimi",
+        "placements": {
+          "left-top": "Sol Üst",
+          "center": "Ortala",
+          "right-bottom": "Sağ Alt"
+        },
+        "bg-image-repeat": "Arka Plan Resmi Tekrarla",
+        "repeats": {
+          "repeat": "Döşe",
+          "no-repeat": "Tek Görsel",
+          "repeat-x": "Yatay Döşe",
+          "repeat-y": "Dikey Döşe"
+        },
+        "bg-image-size": "Arka Plan Resmi Boyutu",
+        "sizes": {
+          "auto": "Orijinal Boyut",
+          "cover": "Doldur",
+          "contain": "Sığdır",
+          "stretch": "Genişlet"
+        }
+      },
+      "logo": {
+        "visibility": "Görünürlük",
+        "position": "Pozisyon",
+        "positions": {
+          "top-start": "Üst Sol",
+          "top": "Üst Orta",
+          "top-end": "Üst Sağ",
+          "center-start": "Orta Sol",
+          "center": "Orta",
+          "center-end": "Orta Sağ",
+          "bottom-start": "Alt Sol",
+          "bottom": "Alt Orta",
+          "bottom-end": "Alt Sağ"
+        },
+        "height": "Yükseklik (px)",
+        "width": "Genişlik (px)",
+        "animation": "Animasyon",
+        "animations": {
+          "off": "Kapalı",
+          "zoom": "Zoom",
+          "floating": "Aşağı Yukarı"
+        }
+      },
+      "cover": {
+        "default-bg": "Varsayılan Arkaplan Resmi",
+        "bg-image": "Arka Plan Resmi",
+        "bg-color": "Arka Plan Rengi",
+        "height": "Yükseklik (px)",
+        "width": "Genişlik",
+        "width-options": {
+          "by-content": "İçeriğe Göre",
+          "full-size": "Tam Genişlik"
+        },
+        "nav-gap": "Navigasyon Menü Aralığı"
+      },
+      "navbar": {
+        "width": "Genişlik",
+        "bg-color": "Arka Plan Rengi",
+        "border-radius": "Kenar Yuvarlaması",
+        "links-visibility": "Bağlantılar Görünürlüğü",
+        "links": "Bağlantılar",
+        "home": "Ana Sayfa",
+        "rules": "Kurallar",
+        "support": "Destek",
+        "drag-drop-hint": "Linkleri sürükleyip bırakarak sıralayabilirsiniz."
+      },
+      "sidebar": {
+        "visibility": "Görünürlük",
+        "position": "Konum",
+        "positions": {
+          "left": "Sol",
+          "right": "Sağ"
+        },
+        "last-registrants": "Son Kayıt Olanlar Kartı",
+        "online-admins": "Çevrimiçi Yöneticiler Kartı (Destek)",
+        "play-card-style": "Kart Stili",
+        "play-card-styles": {
+          "style-1": "Legacy",
+          "style-2": "Modern"
+        },
+        "play-card-bg-image": "Arka Plan Resmi",
+        "play-card-default-bg": "Varsayılan Arka Plan Resmi",
+        "play-card-bg-opacity": "Arka Plan Opaklığı",
+        "play-card-bg-effect": "Efekt Stili",
+        "play-card-bg-effects": {
+          "solid": "Düz Renk",
+          "gradient": "Renk Gradyanı"
+        },
+        "play-card-ip-color": "IP Bağlantı Rengi",
+        "play-card-border-color": "Çerçeve Rengi",
+        "play-card-ip-text": "IP Yazısı",
+        "play-card-ip-text-hint": "Varsayılan IP için boş bırakın.",
+        "play-card-status-badge": "Durum Rozeti",
+        "play-card-player-count": "Oyuncu Sayısı",
+        "play-card-version-info": "Sürüm Bilgisi",
+        "default": "Varsayılan"
+      },
+      "post-card": {
+        "visibility": "Görünürlük",
+        "cover-image": "Kapak Resmi",
+        "read-more": "Devamını Oku Butonu",
+        "author-image": "Yazar Kafa Resmi",
+        "views": "Görüntülenme",
+        "previous-post": "Önceki Yazı Butonu",
+        "next-post": "Sonraki Yazı Butonu"
+      },
+      "footer": {
+        "visibility": "Görünürlük",
+        "logo-visibility": "Logo Görünürlüğü",
+        "title": "Site Başlığı",
+        "title-visibility": "Site Başlığı Görünürlüğü",
+        "content": "Site Açıklaması",
+        "content-visibility": "Site Açıklaması Görünürlüğü",
+        "links": "Bağlantılar",
+        "links-visibility": "Bağlantılar Görünürlüğü",
+        "plugin-links-visibility": "Eklenti Linklerini Göster"
+      },
+      "advanced": {
+        "custom-css": "Custom CSS"
+      }
+    }
+  },
+  "page-errors": {
+    "404": "Aradığınız sayfa bulunamadı!",
+    "404-description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+    "need-help": "Bunun bir hata olduğunu düşünüyorsanız, lütfen destek ile iletişime geçin."
+  },
+  "ticket-statuses": {
+    "new": "Yeni",
+    "replied": "Yanıtlandı",
+    "closed": "Kapalı"
+  },
+  "notifications": {
+    "AN_ADMIN_CLOSED_TICKET": "Bir yönetici destek talebinizi kapattı (<b>#{id}</b>).",
+    "AN_ADMIN_REPLIED_TICKET": "Bir yönetici destek talebinize yanıt verdi (<b>#{id}</b>)."
+  },
+  "errors": {
+    "NETWORK_ERROR": "Ağ hatası, lütfen bağlantınızı kontrol edin!",
+    "INTERNAL_SERVER_ERROR": "Bir hata oluştu, lütfen raporlayın.",
+    "DISABLED_FOR_DEMO": "Bu özellik demo modunda devre dışı bırakılmıştır.",
+    "LOGIN_IS_INVALID": "Giriş yapılamadı, bilgilerinizi kontrol edin!",
+    "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "E-posta değiştirilemez, 15 dakika bekleyin.",
+    "CANT_RESET_PASSWORD_WAIT5MINUTES": "Şifre sıfırlanamaz, 5 dakika bekleyin.",
+    "CATEGORY_NOT_EXISTS": "Bu kategori bulunamadı!",
+    "CURRENT_PASSWORD_NOT_CORRECT": "Mevcut şifre doğru değil!",
+    "INVALID_DATA": "Geçersiz veri!",
+    "INVALID_EMAIL": "Geçersiz e-posta!",
+    "INVALID_IP_ADDRESS": "Geçersiz IP adresi!",
+    "INVALID_LINK": "Geçersiz bağlantı!",
+    "LOGIN_EMAIL_NOT_VERIFIED": "E-posta adresiniz ({email}) henüz doğrulanmamış! Lütfen gelen kutunuzu ve spam klasörünüzü kontrol ederek hesabınızı doğrulayın.",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY": "Hesabınız kalıcı olarak yasaklanmış!",
+    "LOGIN_USER_IS_BANNED_PERMANENTLY_WITH_REASON": "Hesabınız kalıcı olarak yasaklanmış! Sebep: {reason}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY": "Hesabınız geçici olarak yasaklanmış! Şu zamana kadar: {untilTime}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON": "Hesabınız geçici olarak yasaklanmış! Sebep: {reason}, Şu zamana kadar: {untilTime}",
+    "MESSAGE_CANT_BE_EMPTY": "Mesaj boş olamaz!",
+    "NEW_EMAIL_EXISTS": "Bu e-posta kullanılamaz!",
+    "NEW_PASSWORD_EMPTY": "Yeni şifre boş olamaz!",
+    "NEW_PASSWORD_REPEAT_DOESNT_MATCH": "Yeni şifre tekrarı eşleşmiyor!",
+    "NEW_PASSWORD_TOO_LONG": "Yeni şifre çok uzun!",
+    "NEW_PASSWORD_TOO_SHORT": "Yeni şifre çok kısa!",
+    "NO_PERMISSION": "Bu işlem için izniniz yok!",
+    "NOT_EXISTS": "Mevcut değil!",
+    "NOT_FOUND": "Bulunamadı!",
+    "NOT_LOGGED_IN": "Giriş yapılmamış!",
+    "PAGE_NOT_FOUND": "Sayfa bulunamadı!",
+    "PASSWORD_EMPTY": "Şifre boş olamaz!",
+    "PASSWORD_TOO_LONG": "Şifre çok uzun!",
+    "PASSWORD_TOO_SHORT": "Şifre çok kısa!",
+    "POST_NOT_FOUND": "Bu gönderi bulunamadı!",
+    "REGISTER_EMAIL_EMPTY": "E-posta boş olamaz!",
+    "REGISTER_EMAIL_NOT_AVAILABLE": "E-posta kullanılamaz!",
+    "REGISTER_INVALID_EMAIL": "E-posta geçersiz.",
+    "REGISTER_INVALID_USERNAME": "Kullanıcı adı geçersiz.",
+    "REGISTER_NOT_ACCEPTED_AGREEMENT": "Sözleşme kabul edilmedi!",
+    "REGISTER_PASSWORD_AND_PASSWORD_REPEAT_NOT_SAME": "Şifre ve şifre tekrarı eşleşmiyor!",
+    "REGISTER_USERNAME_EMPTY": "Kullanıcı adı boş olamaz!",
+    "REGISTER_USERNAME_NOT_AVAILABLE": "Kullanıcı adı kullanılamaz!",
+    "REGISTER_USERNAME_TOO_LONG": "Kullanıcı adı çok uzun!",
+    "REGISTER_USERNAME_TOO_SHORT": "Kullanıcı adı çok kısa!",
+    "TICKET_IS_CLOSED": "Destek talebi kapatılmış!",
+    "REGISTER_LINK_CODE_INVALID": "Girdiğiniz link kodu hatalı veya süresi dolmuş!",
+    "CANT_CHANGE_EMAIL_WAIT15MINUTES": "E-mail değiştirmeden önce 15 dakika bekleyin.",
+    "USERNAME_REQUIRED": "Devam etmek için yeni bir kullanıcı adı belirlemeniz gerekiyor.",
+    "PLUGIN_DENIED_LOGIN": "Giriş reddedildi.",
+    "INVALID_TOKEN": "Bağlantı süresi dolmuş veya geçersiz."
+  },
+  "successes": {
+    "REGISTER_SUCCESSFUL": "Kayıt başarıyla tamamlandı! E-postanızı doğrulamak için bir e-posta gönderildi.",
+    "VALIDATION_SUCCESSFUL": "E-posta başarıyla doğrulandı! Artık giriş yapabilirsiniz.",
+    "RENEW_PASSWORD_SUCCESSFUL": "Şifre başarıyla değiştirildi!",
+    "RESET_PASSWORD_SUCCESSFUL": "Şifrenizi sıfırlamak için bir e-posta gönderildi.",
+    "LOGIN_SUCCESSFUL": "Başarıyla giriş yapıldı!"
+  }
+}
