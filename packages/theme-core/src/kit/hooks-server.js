@@ -100,14 +100,27 @@ const IMPORT_MAP_PLACEHOLDER_LEN = IMPORT_MAP_PLACEHOLDER.length;
  * @param {string} opts.internalLibsHash  content hash from the generated $lib/internalLibs.js
  * @param {string} opts.runtimeShimsHash  content hash from the generated $lib/runtimeShims.js
  * @param {object} [opts.licenseConstants]  the generated license constants module (premium builds);
- *   pass the whole module namespace — free builds no-op automatically
+ *   pass the whole module namespace — free builds no-op automatically. Panel profile: omit.
  * @param {(html: string) => string} [opts.transformHtml]  optional extra page-chunk transform
+ * @param {string} [opts.base]  URL prefix for /lib and /runtime shim URLs ("" for themes,
+ *   "/panel" for panel-ui — must match kit.paths.base)
+ * @param {(ctx: {event: any, locals: object, jwt: string|undefined, csrfToken: string|undefined,
+ *   pathname: string}) => Promise<void>} [opts.resolveLocals]  profile-specific locals resolution.
+ *   Default (theme profile): locals.user via getCredentialsServerSide guarded against /api and
+ *   /auth paths. Panel passes its basicData-based resolver instead.
+ * @param {(locals: object) => void} [opts.applyExtraEnv]  hook for profile-specific env vars
+ *   (panel: PANO_WEBSITE_API_URL → updatePanoWebsiteApiUrl)
+ * @param {boolean} [opts.suppressNoisyErrors]  prod-suppress 405/no-form-action logs (theme default)
  */
 export function createThemeHooks({
   internalLibsHash,
   runtimeShimsHash,
   licenseConstants = null,
   transformHtml = null,
+  base = "",
+  resolveLocals = null,
+  applyExtraEnv = null,
+  suppressNoisyErrors = true,
 }) {
   const license = createLicenseRuntime(licenseConstants);
 
@@ -121,8 +134,8 @@ export function createThemeHooks({
   // /lib?v= scheme, because a shim served for a stale ?v is still just a re-export of
   // whatever runtime the host page actually loaded, never a mismatched second bundle.
   // libBase (content-hashed, bin/bundle-internal-libs.js) still serves bootstrap.
-  const libBase = `/lib/${internalLibsHash}`;
-  const runtimeShim = (file) => `/runtime/${file}?v=${runtimeShimsHash}`;
+  const libBase = `${base}/lib/${internalLibsHash}`;
+  const runtimeShim = (file) => `${base}/runtime/${file}?v=${runtimeShimsHash}`;
   const importMapEntries = Object.entries(RUNTIME_SPECIFIERS)
     .map(([specifier, file]) => `      "${specifier}": "${runtimeShim(file)}"`)
     .join(",\n");
@@ -202,6 +215,10 @@ ${importMapEntries}
       locals.panoWebsiteUrlEnv = panoWebsiteUrlEnv;
     }
 
+    if (applyExtraEnv) {
+      applyExtraEnv(locals);
+    }
+
     const jwt = getCookieWithHttpFallback(
       cookies,
       COOKIE_PREFIX + JWT_COOKIE_NAME,
@@ -211,12 +228,17 @@ ${importMapEntries}
       COOKIE_PREFIX + CSRF_TOKEN_COOKIE_NAME,
     );
 
-    locals.user =
-      jwt &&
-      csrfToken &&
-      !pathname.startsWith("/api/") &&
-      !pathname.startsWith("/auth/") &&
-      (await getCredentialsServerSide(jwt));
+    if (resolveLocals) {
+      // Profile-specific (panel: /api/panel/basicData → locals.basicData/jwt).
+      await resolveLocals({ event, locals, jwt, csrfToken, pathname });
+    } else {
+      locals.user =
+        jwt &&
+        csrfToken &&
+        !pathname.startsWith("/api/") &&
+        !pathname.startsWith("/auth/") &&
+        (await getCredentialsServerSide(jwt));
+    }
 
     locals.csrfToken = csrfToken;
 
@@ -251,7 +273,7 @@ ${importMapEntries}
 
   /** @type {import('@sveltejs/kit').HandleServerError} */
   function handleError({ error, event }) {
-    if (!shouldSuppressServerErrorLog(error)) {
+    if (!suppressNoisyErrors || !shouldSuppressServerErrorLog(error)) {
       console.log("!!! [GLOBAL ERROR EVENT]:", event.url.href);
       console.error("!!! [GLOBAL ERROR CONTENT]:", error);
     }
