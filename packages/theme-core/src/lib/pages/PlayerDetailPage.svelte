@@ -1,35 +1,29 @@
-<!-- Statistics -->
-<div class="vstack gap-3">
-  <div class="card">
-    <div class="card-header">
-      {$_("pages.player-profile.title")}
-    </div>
-    <table class="table">
-    <tbody>
-      <tr>
-        <td>{$_("pages.player-profile.register-date")}</td>
-        <td><Date time={data.registerDate} /></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-</div>
+<svelte:component this={data.View} {data} />
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/page-logics/PlayerDetailPageLogics";
+  import { resolveView } from "$pano/registry/index.js";
 
   /**
    * @type {import('@sveltejs/kit').Load}
    */
   export async function load(event) {
-    return processLoad(event);
+    // Resolved in load (not {#await} in markup): universal load data is not
+    // serialized, so the component class can travel in it, and SSR renders the
+    // view instead of an await-pending branch.
+    const viewPromise = resolveView(
+      "PlayerDetailView",
+      () => import("../views/PlayerDetailView.svelte"),
+    );
+
+    const loadData = await processLoad(event);
+
+    return { ...loadData, View: await viewPromise };
   }
 </script>
 
 <script>
   import { getContext } from "svelte";
-  import { _ } from "svelte-i18n";
-  import Date from "$pano/lib/components/Date.svelte";
 
   export let data;
 </script>

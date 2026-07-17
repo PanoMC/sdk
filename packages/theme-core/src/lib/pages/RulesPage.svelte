@@ -1,26 +1,23 @@
-<div class="vstack gap-3">
-  <div class="alert alert-secondary mb-0" role="alert">
-    <i class="fas fa-gavel me-2"></i>
-    {$_("pages.rules.warning")}
-  </div>
+<svelte:component this={data.View} {data} />
 
-  <div class="card">
-    <div class="card-body">
-      {@html data.registerAgreement}
-    </div>
-  </div>
-</div>
-
-<!-- Pagination End -->
 <script context="module">
   import { error } from "@sveltejs/kit";
 
   import ApiUtil from "$pano/lib/api.util";
+  import { resolveView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").PageLoad}
    */
   export async function load(event) {
+    // Resolved in load (not {#await} in markup): universal load data is not
+    // serialized, so the component class can travel in it, and SSR renders the
+    // view instead of an await-pending branch.
+    const viewPromise = resolveView(
+      "RulesView",
+      () => import("../views/RulesView.svelte"),
+    );
+
     const parentData = await event.parent();
     const session = parentData.session;
 
@@ -41,12 +38,15 @@
       throw error(404);
     }
 
-    return { ...parentData, pageTitle: "pages.rules.title", registerAgreement };
+    return {
+      ...parentData,
+      pageTitle: "pages.rules.title",
+      registerAgreement,
+      View: await viewPromise
+    };
   }
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
-
   export let data;
 </script>

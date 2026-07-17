@@ -1,11 +1,10 @@
-<App>
-  <slot></slot>
-</App>
-
-<ToastContainer />
+<svelte:component this={data.View} {data} {session} {pageTitle} {getTitle}>
+  <slot />
+</svelte:component>
 
 <script context="module">
   import { processLoad, processServerLoad } from "$pano/lib/ui-logics/layout-logics/AppLayoutLogics";
+  import { resolveView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").LayoutServerLoad}
@@ -18,15 +17,23 @@
    * @type {import("@sveltejs/kit").LayoutLoad}
    */
   export async function load(event) {
-    return await processLoad(event);
+    // Resolved in load (not {#await} in markup): universal load data is not
+    // serialized, so the component class can travel in it, and SSR renders the
+    // view instead of an await-pending branch.
+    const viewPromise = resolveView(
+      "AppLayoutView",
+      () => import("../views/AppLayoutView.svelte"),
+    );
+
+    const data = await processLoad(event);
+
+    return { ...data, View: await viewPromise };
   }
 </script>
 
 <script>
   import { _ } from "svelte-i18n";
   import { init } from "$pano/lib/ui-logics/layout-logics/AppLayoutLogics";
-  import App from "$pano/lib/components/App.svelte";
-  import ToastContainer from "$pano/lib/components/ToastContainer.svelte";
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { avatarVersion } from "$pano/lib/Store.js";
@@ -43,8 +50,3 @@
     return `${titleStr} \u2014 ${siteName}`;
   }
 </script>
-
-<svelte:head>
-  <link href="/api/favicon?hash={$session.siteInfo.faviconHash}" rel="icon" />
-  <title>{getTitle($pageTitle, $session.siteInfo.websiteName)}</title>
-</svelte:head>

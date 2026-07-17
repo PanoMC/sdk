@@ -1,84 +1,46 @@
-<svelte:head>
-  <meta content={$session.siteInfo.keywords.join(", ")} name="keywords" />
-  <meta content={$session.siteInfo.websiteDescription} name="description" />
-
-  <meta content={themeSettings.themeColor || "dark"} name="x-theme" />
-
-  {@html `<style>;</style>`.replace(";", styles)}
-</svelte:head>
-
-<Hook name="theme:top" />
-
-<div class="vstack gap-3 min-vh-100">
-  <div class="vstack gap-{themeSettings.headerNavBarGap || '3'} flex-grow-0">
-    <Header />
-
-    <Navbar />
-  </div>
-
-  <Hook name="page:top" />
-  {#if breadcrumbEnabled}
-    <Breadcrumb />
-  {/if}
-
-  <div class="flex-grow-1">
-    <Main>
-      <slot />
-    </Main>
-  </div>
-
-  {#if typeof themeSettings.footerEnabled === "undefined" ? true : themeSettings.footerEnabled}
-    <Footer />
-  {/if}
-</div>
-  
-<NotificationContainer />
-
-<!-- Modals End -->
+<svelte:component this={View} data={viewData} {themeSettings} {session}>
+  <slot />
+</svelte:component>
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/layout-logics/MainLayoutLogics";
+  import { resolveView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").LayoutLoad}
    */
   export async function load(event) {
-    return await processLoad(event);
+    // Resolved in load (not {#await} in markup): universal load data is not
+    // serialized, so the component class can travel in it, and SSR renders the
+    // view instead of an await-pending branch.
+    const viewPromise = resolveView(
+      "MainLayoutView",
+      () => import("../views/MainLayoutView.svelte"),
+    );
+
+    const data = await processLoad(event);
+
+    // `mainLayoutView` alias: this load's result is merged into the ROOT
+    // layout data (routes/root-layout-load.js), and RootLayout mounts this
+    // layout WITHOUT a data prop, so the instance script falls back to
+    // $page.data — where the generic `View` key is clobbered by every split
+    // page's own view. The unique key survives that merge.
+    const View = await viewPromise;
+    return { ...data, View, mainLayoutView: View };
   }
 </script>
 
 <script>
   import { getContext } from "svelte";
+  import { page } from "$app/stores";
 
-  import Header from "$pano/lib/components/Header.svelte";
-  import Navbar from "$pano/lib/components/Navbar.svelte";
-  import Main from "$pano/lib/components/Main.svelte";
-  import Footer from "$pano/lib/components/Footer.svelte";
-  import NotificationContainer from "$pano/lib/components/NotificationContainer.svelte";
-  import Hook from "$pano/lib/components/Hook.svelte";
-  import Breadcrumb from "$pano/lib/components/Breadcrumb.svelte";
+  // RootLayout renders <MainLayout><slot /></MainLayout> with no data prop;
+  // fall back to the root-merged $page.data (see the alias note in load above).
+  export let data = undefined;
 
   const themeSettings = getContext("themeSettings");
   const session = getContext("session");
 
-  // Global kill-switch from theme settings. Individual pages opt in to
-  // the breadcrumb by returning a `breadcrumbs` array from their load();
-  // the Breadcrumb component renders nothing when no items are provided.
-  $: breadcrumbEnabled =
-    typeof themeSettings.breadcrumbEnabled === "undefined"
-      ? true
-      : themeSettings.breadcrumbEnabled;
-
-  const styles = `
-    body {
-      min-height: 100vh;
-      ${themeSettings.backgroundColor ? `background-color: ${themeSettings.backgroundColor} !important;` : ""}
-      ${themeSettings.files?.backgroundImage ? `background-image: url(/api/theme/file/${themeSettings.files.backgroundImage}) !important;` : ""}
-      ${themeSettings.bgImagePosition ? `background-position: ${themeSettings.bgImagePosition} !important;` : ""}
-      ${themeSettings.bgImageRepeat ? `background-repeat: ${themeSettings.bgImageRepeat} !important;` : ""}
-      ${themeSettings.bgImageSize ? `background-size: ${themeSettings.bgImageSize} !important;` : ""}
-    }
-
-    ${themeSettings.customCss || ""}
-  `;
+  $: View = data?.View ?? $page.data.mainLayoutView;
+  $: viewData = data ?? $page.data;
 </script>
