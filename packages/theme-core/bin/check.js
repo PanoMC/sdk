@@ -70,7 +70,11 @@ for (const name of registered) {
   for (const m of dv.matchAll(/<Hook[^>]*name="([^"]+)"/g)) wanted.add(`hook:${m[1]}`);
   const ov = readFileSync(overridePath, "utf-8");
   for (const item of wanted) {
-    const [kind, id] = item.split(":");
+    // hook ids themselves contain ':' (e.g. "page:top") — split on the FIRST
+    // colon only.
+    const sep = item.indexOf(":");
+    const kind = item.slice(0, sep);
+    const id = item.slice(sep + 1);
     const present =
       kind === "slot"
         ? new RegExp(`<ViewComponent[^>]*id="${id}"`).test(ov)
