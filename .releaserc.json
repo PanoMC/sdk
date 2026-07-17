@@ -11,7 +11,13 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/npm",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "node scripts/set-version.js ${nextRelease.version}",
+        "publishCmd": "cd packages/theme-core && bun publish --access public --no-git-checks && cd ../sdk && bun publish --access public --no-git-checks"
+      }
+    ],
     [
       "@semantic-release/github",
       {
