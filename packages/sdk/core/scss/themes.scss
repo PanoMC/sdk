@@ -24,15 +24,15 @@
   [data-bs-theme='#{$name}'] {
     @extend [data-bs-theme='dark'];
 
-    $body-bg: shade-color($primary, 90%);
+    $body-bg: shade-color($primary, 90%) !default;
     --bs-body-bg: #{$body-bg};
     --bs-body-bg-rgb: #{to-rgb($body-bg)};
 
-    $secondary-bg: shade-color($primary, 85%);
+    $secondary-bg: shade-color($primary, 85%) !default;
     --bs-secondary-bg: #{$secondary-bg};
     --bs-secondary-bg-rgb: #{to-rgb($secondary-bg)};
 
-    $tertiary-bg: shade-color($primary, 82%);
+    $tertiary-bg: shade-color($primary, 82%) !default;
     --bs-tertiary-bg: #{$tertiary-bg};
     --bs-tertiary-bg-rgb: #{to-rgb($tertiary-bg)};
 
@@ -47,8 +47,8 @@
     --bs-link-color-rgb: #{to-rgb($primary)};
 
     // Hover dark tones
-    $primary-hover: shade-color($primary, 15%);
-    $secondary-hover: shade-color($secondary, 15%);
+    $primary-hover: shade-color($primary, 15%) !default;
+    $secondary-hover: shade-color($secondary, 15%) !default;
     --bs-link-hover-color: #{$primary-hover};
     --bs-link-hover-color-rgb: #{to-rgb($primary-hover)};
 

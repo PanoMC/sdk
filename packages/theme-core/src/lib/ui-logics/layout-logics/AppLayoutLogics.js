@@ -1,6 +1,7 @@
 import { onDestroy, onMount, setContext } from "svelte";
 import { get, writable } from "svelte/store";
 import { setPanoContext } from "@panomc/sdk/internal";
+import { resolveView } from "$pano/registry/index.js";
 import { _ } from "svelte-i18n";
 import copy from "copy-to-clipboard";
 
@@ -131,6 +132,22 @@ export async function processLoad(event) {
     checkDomainRedirection();
   }
 
+  const [
+    ResolvedDate,
+    ResolvedPagination,
+    ResolvedNoContent,
+    ResolvedPageActions,
+    ResolvedPageTitle,
+    ResolvedPlayerHead,
+  ] = await Promise.all([
+    resolveView("Date", async () => DateComponent),
+    resolveView("Pagination", async () => Pagination),
+    resolveView("NoContent", async () => NoContent),
+    resolveView("PageActions", async () => PageActions),
+    resolveView("PageTitle", async () => PageTitle),
+    resolveView("PlayerHead", async () => PlayerHead),
+  ]);
+
   setPanoContext({
     page,
     base,
@@ -140,12 +157,12 @@ export async function processLoad(event) {
     error,
     redirect,
     components: {
-      Date: DateComponent,
-      Pagination,
-      NoContent,
-      PageActions,
-      PageTitle,
-      PlayerHead,
+      Date: ResolvedDate,
+      Pagination: ResolvedPagination,
+      NoContent: ResolvedNoContent,
+      PageActions: ResolvedPageActions,
+      PageTitle: ResolvedPageTitle,
+      PlayerHead: ResolvedPlayerHead,
     },
     utils: {
       api: {

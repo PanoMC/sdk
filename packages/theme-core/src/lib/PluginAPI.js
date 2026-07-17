@@ -342,8 +342,13 @@ export const panoApi = {
         // mount this Svelte component so their pages look identical to the theme's /login form.
         form: {
           async get() {
-            const m = await import("$pano/lib/components/LoginFormBody.svelte");
-            return m.default;
+            // Registry-resolved: a theme overriding LoginFormBody restyles the
+            // form everywhere plugins mount it, too.
+            const { resolveView } = await import("$pano/registry/index.js");
+            return resolveView(
+              "LoginFormBody",
+              () => import("$pano/lib/components/LoginFormBody.svelte"),
+            );
           },
         },
       },
@@ -393,8 +398,11 @@ export const panoApi = {
         // Theme-provided register form body. See login.form for rationale.
         form: {
           async get() {
-            const m = await import("$pano/lib/components/RegisterForm.svelte");
-            return m.default;
+            const { resolveView } = await import("$pano/registry/index.js");
+            return resolveView(
+              "RegisterForm",
+              () => import("$pano/lib/components/RegisterForm.svelte"),
+            );
           },
         },
       },

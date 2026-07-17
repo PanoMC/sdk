@@ -66,5 +66,8 @@
     "svelte-i18n": "^4.0.1",
     "svelte-preprocess": "^6.0.3",
     "vite": "^8.0.9"
+  },
+  "bin": {
+    "theme-core": "./bin/theme-core.js"
   }
 }
