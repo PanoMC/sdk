@@ -37,7 +37,6 @@
     // page's own view. The unique key survives that merge.
     return {
       ...data,
-      View,
       mainLayoutView: View,
       mainLayoutChrome: { Navbar: NavbarC, Header: HeaderC, Footer: FooterC },
     };
@@ -55,7 +54,7 @@
   const themeSettings = getContext("themeSettings");
   const session = getContext("session");
 
-  $: View = data?.View ?? $page.data.mainLayoutView;
+  $: View = data?.mainLayoutView ?? $page.data.mainLayoutView;
   $: viewData = data ?? $page.data;
   $: chrome = viewData?.mainLayoutChrome ?? $page.data.mainLayoutChrome;
 </script>

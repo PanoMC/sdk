@@ -1,4 +1,4 @@
-<svelte:component this={data.View} {data}><slot /></svelte:component>
+<svelte:component this={layoutView} data={viewData}><slot /></svelte:component>
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/layout-logics/TicketsLayoutLogics";
@@ -15,10 +15,17 @@
 
     const loadData = await processLoad(event);
 
-    return { ...loadData, View: await viewPromise };
+    return { ...loadData, ticketsLayoutView: await viewPromise };
   }
 </script>
 
 <script>
-  export let data;
+  import { page } from "$app/stores";
+  export let data = undefined;
+
+  // Layout view resolution: every layout uses a UNIQUE data key (ticketsLayoutView)
+  // because SvelteKit merges all layout+page load results into one bag —
+  // a generic `View` key gets clobbered by deeper layouts/pages.
+  $: viewData = data ?? $page.data;
+  $: layoutView = viewData?.ticketsLayoutView ?? $page.data.ticketsLayoutView;
 </script>

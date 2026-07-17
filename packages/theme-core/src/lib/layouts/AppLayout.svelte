@@ -1,4 +1,4 @@
-<svelte:component this={data.View} {data} {session} {pageTitle} {getTitle}>
+<svelte:component this={layoutView} data={viewData} {session} {pageTitle} {getTitle}>
   <slot />
 </svelte:component>
 
@@ -27,18 +27,19 @@
 
     const data = await processLoad(event);
 
-    return { ...data, View: await viewPromise };
+    return { ...data, appLayoutView: await viewPromise };
   }
 </script>
 
 <script>
+  import { page } from "$app/stores";
   import { _ } from "svelte-i18n";
   import { init } from "$pano/lib/ui-logics/layout-logics/AppLayoutLogics";
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { avatarVersion } from "$pano/lib/Store.js";
 
-  export let data;
+  export let data = undefined;
 
   const { session, pageTitle } = init(data);
 
@@ -49,4 +50,10 @@
       : (pt.title ? $_(pt.title, { values: pt.titleValues || {} }) : "");
     return `${titleStr} \u2014 ${siteName}`;
   }
+
+  // Layout view resolution: every layout uses a UNIQUE data key (appLayoutView)
+  // because SvelteKit merges all layout+page load results into one bag —
+  // a generic `View` key gets clobbered by deeper layouts/pages.
+  $: viewData = data ?? $page.data;
+  $: layoutView = viewData?.appLayoutView ?? $page.data.appLayoutView;
 </script>

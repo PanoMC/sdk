@@ -1,4 +1,4 @@
-<svelte:component this={data.View} {data}><slot /></svelte:component>
+<svelte:component this={layoutView} data={viewData}><slot /></svelte:component>
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/layout-logics/AuthLayoutLogics";
@@ -13,10 +13,17 @@
       () => import("../views/AuthLayoutView.svelte"),
     );
     const data = await processLoad(event);
-    return { ...data, View: await viewPromise };
+    return { ...data, authLayoutView: await viewPromise };
   }
 </script>
 
 <script>
-  export let data;
+  import { page } from "$app/stores";
+  export let data = undefined;
+
+  // Layout view resolution: every layout uses a UNIQUE data key (authLayoutView)
+  // because SvelteKit merges all layout+page load results into one bag —
+  // a generic `View` key gets clobbered by deeper layouts/pages.
+  $: viewData = data ?? $page.data;
+  $: layoutView = viewData?.authLayoutView ?? $page.data.authLayoutView;
 </script>

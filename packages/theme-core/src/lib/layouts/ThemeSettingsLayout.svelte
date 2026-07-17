@@ -1,4 +1,4 @@
-<svelte:component this={data.View} {data} {hidden}><slot /></svelte:component>
+<svelte:component this={layoutView} data={viewData} {hidden}><slot /></svelte:component>
 
 <script context="module">
   import { processLoadServer, processLoad } from "$pano/lib/ui-logics/layout-logics/ThemeSettingsLayoutLogics";
@@ -17,14 +17,21 @@
       () => import("../views/ThemeSettingsLayoutView.svelte"),
     );
     const data = await processLoad(event);
-    return { ...data, View: await viewPromise };
+    return { ...data, themeSettingsLayoutView: await viewPromise };
   }
 </script>
 
 <script>
+  import { page } from "$app/stores";
   import { init } from "$pano/lib/ui-logics/layout-logics/ThemeSettingsLayoutLogics";
 
-  export let data;
+  export let data = undefined;
 
   const hidden = init();
+
+  // Layout view resolution: every layout uses a UNIQUE data key (themeSettingsLayoutView)
+  // because SvelteKit merges all layout+page load results into one bag —
+  // a generic `View` key gets clobbered by deeper layouts/pages.
+  $: viewData = data ?? $page.data;
+  $: layoutView = viewData?.themeSettingsLayoutView ?? $page.data.themeSettingsLayoutView;
 </script>
