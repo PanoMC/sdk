@@ -319,7 +319,10 @@
   "NoContent",
   "PageActions",
   "PageTitle",
-  "PlayerHead"
+  "PlayerHead",
+  "Navbar",
+  "Header",
+  "Footer"
  ],
  "view_slots": [
   "login-content",

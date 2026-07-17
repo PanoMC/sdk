@@ -1,4 +1,4 @@
-<svelte:component this={View} data={viewData} {themeSettings} {session}>
+<svelte:component this={View} data={viewData} {themeSettings} {session} {chrome}>
   <slot />
 </svelte:component>
 
@@ -20,13 +20,27 @@
 
     const data = await processLoad(event);
 
+    // Chrome components resolve through the registry too: forks restyle the
+    // navbar/header/footer far more often than whole layouts, so overriding
+    // just `Navbar` must not require ejecting MainLayoutView.
+    const [View, NavbarC, HeaderC, FooterC] = await Promise.all([
+      viewPromise,
+      resolveView("Navbar", () => import("../components/Navbar.svelte")),
+      resolveView("Header", () => import("../components/Header.svelte")),
+      resolveView("Footer", () => import("../components/Footer.svelte")),
+    ]);
+
     // `mainLayoutView` alias: this load's result is merged into the ROOT
     // layout data (routes/root-layout-load.js), and RootLayout mounts this
     // layout WITHOUT a data prop, so the instance script falls back to
     // $page.data — where the generic `View` key is clobbered by every split
     // page's own view. The unique key survives that merge.
-    const View = await viewPromise;
-    return { ...data, View, mainLayoutView: View };
+    return {
+      ...data,
+      View,
+      mainLayoutView: View,
+      mainLayoutChrome: { Navbar: NavbarC, Header: HeaderC, Footer: FooterC },
+    };
   }
 </script>
 
@@ -43,4 +57,5 @@
 
   $: View = data?.View ?? $page.data.mainLayoutView;
   $: viewData = data ?? $page.data;
+  $: chrome = viewData?.mainLayoutChrome ?? $page.data.mainLayoutChrome;
 </script>

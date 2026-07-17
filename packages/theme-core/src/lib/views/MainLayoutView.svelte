@@ -22,9 +22,9 @@
 
 <div class="vstack gap-3 min-vh-100">
   <div class="vstack gap-{themeSettings.headerNavBarGap || '3'} flex-grow-0">
-    <Header />
+    <svelte:component this={chrome.Header} />
 
-    <Navbar />
+    <svelte:component this={chrome.Navbar} />
   </div>
 
   <Hook name="page:top" />
@@ -39,7 +39,7 @@
   </div>
 
   {#if typeof themeSettings.footerEnabled === "undefined" ? true : themeSettings.footerEnabled}
-    <Footer />
+    <svelte:component this={chrome.Footer} />
   {/if}
 </div>
 
@@ -48,10 +48,7 @@
 <!-- Modals End -->
 
 <script>
-  import Header from "$pano/lib/components/Header.svelte";
-  import Navbar from "$pano/lib/components/Navbar.svelte";
   import Main from "$pano/lib/components/Main.svelte";
-  import Footer from "$pano/lib/components/Footer.svelte";
   import NotificationContainer from "$pano/lib/components/NotificationContainer.svelte";
   import Hook from "$pano/lib/components/Hook.svelte";
   import Breadcrumb from "$pano/lib/components/Breadcrumb.svelte";
@@ -62,6 +59,9 @@
   export let data;
   export let themeSettings;
   export let session;
+  // Registry-resolved chrome: { Navbar, Header, Footer } — override any of
+  // them from theme.config.js without ejecting this layout view.
+  export let chrome;
 
   // Global kill-switch from theme settings. Individual pages opt in to
   // the breadcrumb by returning a `breadcrumbs` array from their load();
