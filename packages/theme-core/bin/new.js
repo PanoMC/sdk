@@ -136,7 +136,7 @@ export default {
           "vite build && node node_modules/@panomc/theme-core/bin/license/finalize-fingerprint.js",
         package: "bun node_modules/@panomc/theme-core/bin/package-zip.js",
         postinstall:
-          "bun node_modules/@panomc/theme-core/bin/bundle-internal-libs.js && bun node_modules/@panomc/theme-core/bin/generate-runtime-shims.js",
+          "bun node_modules/@panomc/theme-core/bin/bundle-internal-libs.js && bun node_modules/@panomc/theme-core/bin/generate-runtime-shims.js && bun node_modules/@panomc/theme-core/bin/sync.js && node node_modules/@panomc/theme-core/bin/license/generate-license-constants.js",
       },
       devDependencies: {
         "@fortawesome/fontawesome-free": "^6.7.2",

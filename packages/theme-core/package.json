@@ -39,7 +39,9 @@
   },
   "files": [
     "src",
-    "bin"
+    "bin",
+    "lang",
+    "skin-contract.json"
   ],
   "publishConfig": {
     "access": "public"
