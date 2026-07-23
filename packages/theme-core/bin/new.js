@@ -24,9 +24,10 @@ const require = createRequire(import.meta.url);
 const args = process.argv.slice(2);
 const name = args.find((a) => !a.startsWith("-"));
 const local = args.includes("--local") || corePkg.version === "0.0.0-development";
+const skin = args.includes("--skin");
 
 if (!name || !/^[a-z][a-z0-9-]*$/.test(name)) {
-  console.error("usage: theme-core new <kebab-case-name> [--local]");
+  console.error("usage: theme-core new <kebab-case-name> [--skin] [--local]");
   process.exit(1);
 }
 
@@ -40,6 +41,86 @@ const title = name
   .split("-")
   .map((w) => w[0].toUpperCase() + w.slice(1))
   .join(" ");
+
+// ---- Tier-0 skin: CSS only, NO build, NO dependencies ------------------------
+// The zip ships a ~140-line launcher that executes the SYSTEM vanilla build
+// (guaranteed present on every Pano server, auto-updated by the platform) and
+// injects skin/tokens.css into every page. A skin is never rebuilt: it keeps
+// receiving core/login-flow updates through the platform's own vanilla upgrades.
+if (skin) {
+  const SKIN_FILES = {
+    "manifest.json": JSON.stringify(
+      {
+        id: name,
+        title,
+        version: "1.0.0",
+        author: "CHANGE-ME",
+        description: `${title} skin for Pano`,
+        panoVersion: "1.0.0",
+        screenshots: [],
+        premium: false,
+      },
+      null,
+      2,
+    ) + "\n",
+    "core-meta.json": JSON.stringify({ tier: 0 }, null, 2) + "\n",
+    "skin/tokens.css": `/* ${title} — Pano skin.
+ *
+ * This file is injected into every page ON TOP of the default (vanilla) look.
+ * Override the CSS variables the engine exposes, or write any CSS you like.
+ * No build step, no dependencies, nothing to update — ever.
+ */
+
+:root,
+[data-bs-theme] {
+  /* --bs-primary: #7c3aed; */
+  /* --bs-secondary: #fbbf24; */
+  /* --bs-border-radius: 1.25rem; */
+  /* --bs-body-font-family: "Nunito", sans-serif; */
+}
+
+/* Example: give every card a stronger shadow
+.card {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25) !important;
+}
+*/
+`,
+    ".gitignore": ".DS_Store\n.claude/\n.idea\n.vscode\n",
+    "README.md": `# ${title}
+
+A **Tier-0 Pano skin**: pure CSS on top of the built-in vanilla theme.
+No build, no dependencies — the launcher runs the server's own vanilla
+build and injects \`skin/tokens.css\` into every page. The skin keeps
+working (and keeps receiving Pano updates) without ever being rebuilt.
+
+Edit \`skin/tokens.css\`, then package:
+
+\`\`\`sh
+bunx theme-core package
+\`\`\`
+
+Test locally by copying this folder into a Pano install's \`themes/\`
+directory and activating it from the panel. (It needs a Pano server —
+the skin runs the server's vanilla; there is nothing to run standalone.)
+`,
+  };
+  for (const [rel, content] of Object.entries(SKIN_FILES)) {
+    const target = join(dir, rel);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, content);
+  }
+  copyFileSync(join(corePkgDir, "skin-runtime", "launcher.js"), join(dir, "index.js"));
+  mkdirSync(join(dir, "screenshots"), { recursive: true });
+  writeFileSync(join(dir, "screenshots", ".gitkeep"), "");
+
+  console.log(`[theme-core] scaffolded SKIN ${name}/ (CSS-only, no build, no install)
+
+Edit skin/tokens.css — that's the whole job.
+Package with:  cd ${name} && bunx theme-core package
+Install the zip from the Pano panel; the skin rides the server's built-in
+vanilla theme and never needs rebuilding.`);
+  process.exit(0);
+}
 
 // ---- dependency sources -----------------------------------------------------
 // Local mode links straight into the workspace checkout so the scaffold works
