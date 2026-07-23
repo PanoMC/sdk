@@ -30,9 +30,29 @@ function run(script, extra = []) {
 }
 
 switch (cmd) {
+  case "new":
+    run("new.js", args);
+    break;
   case "sync":
     run("sync.js");
     break;
+  case "list-views": {
+    const contract = JSON.parse(
+      readFileSync(join(binDir, "..", "skin-contract.json"), "utf-8"),
+    );
+    console.log("Overridable views (theme.config.js → views):\n");
+    for (const [name, def] of Object.entries(contract.views)) {
+      const props = Object.keys(def.props ?? {});
+      console.log(`  ${name.padEnd(26)} props: ${props.join(", ") || "—"}`);
+    }
+    console.log(
+      `\nRegistry components (chrome + plugin-facing):\n  ${contract.registry_components.join(", ")}`,
+    );
+    console.log(
+      "\nEject one with:  bunx theme-core eject-view <ViewName>\n(the file's header documents every prop in detail)",
+    );
+    break;
+  }
   case "check":
     run("check.js", args);
     break;
@@ -78,6 +98,6 @@ switch (cmd) {
     break;
   }
   default:
-    console.error("usage: theme-core <sync|check|eject-view|package>");
+    console.error("usage: theme-core <new|sync|check|list-views|eject-view|package>");
     process.exit(1);
 }

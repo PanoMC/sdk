@@ -231,6 +231,8 @@ export function createViteConfig(opts = {}) {
           "copy-to-clipboard",
           "@jill64/universal-sanitizer",
           "mime-types",
+          "tippy.js",
+          "adm-zip",
         ],
       },
       build: {
