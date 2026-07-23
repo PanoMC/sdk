@@ -2,16 +2,15 @@
 /**
  * theme-core CLI — the theme author's single entry point.
  *
- *   bunx theme-core sync           regenerate route shims + host-provides stubs
- *   bunx theme-core eject-view <ViewName>
+ *   bunx @panomc/theme-core sync           regenerate route shims + host-provides stubs
+ *   bunx @panomc/theme-core eject-view <ViewName>
  *                                  copy a core default view into src/views/ and
  *                                  register it in theme.config.js
- *   bunx theme-core check          contract lint (view registry, svelte pin,
+ *   bunx @panomc/theme-core check          contract lint (view registry, svelte pin,
  *                                  settings keys, mandatory slots)
- *   bunx theme-core package        reproducible zip of build/ (the zip sha256
+ *   bunx @panomc/theme-core package        reproducible zip of build/ (the zip sha256
  *                                  is the premium license identity)
  *
- * Scaffolding a NEW theme lives in `bunx @panomc/create-pano-theme` (P4).
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync, copyFileSync, mkdirSync } from "node:fs";
@@ -49,7 +48,7 @@ switch (cmd) {
       `\nRegistry components (chrome + plugin-facing):\n  ${contract.registry_components.join(", ")}`,
     );
     console.log(
-      "\nEject one with:  bunx theme-core eject-view <ViewName>\n(the file's header documents every prop in detail)",
+      "\nEject one with:  bunx @panomc/theme-core eject-view <ViewName>\n(the file's header documents every prop in detail)",
     );
     break;
   }
@@ -62,7 +61,7 @@ switch (cmd) {
   case "eject-view": {
     const name = args[0];
     if (!name || !/^[A-Z][A-Za-z0-9]*View$/.test(name)) {
-      console.error("usage: theme-core eject-view <ViewName>  (e.g. LoginView)");
+      console.error("usage: bunx @panomc/theme-core eject-view <ViewName>  (e.g. LoginView)");
       process.exit(1);
     }
     const source = join(binDir, "..", "src", "lib", "views", `${name}.svelte`);
@@ -98,6 +97,6 @@ switch (cmd) {
     break;
   }
   default:
-    console.error("usage: theme-core <new|sync|check|list-views|eject-view|package>");
+    console.error("usage: bunx @panomc/theme-core <new|sync|check|list-views|eject-view|package>");
     process.exit(1);
 }

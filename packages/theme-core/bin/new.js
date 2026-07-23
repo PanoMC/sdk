@@ -2,8 +2,8 @@
 /**
  * theme-core new — scaffold a working Pano theme.
  *
- *   bunx theme-core new my-theme            npm-published core (default)
- *   bunx theme-core new my-theme --local    file: links into a local theme-core
+ *   bunx @panomc/theme-core new my-theme            npm-published core (default)
+ *   bunx @panomc/theme-core new my-theme --local    file: links into a local theme-core
  *                                           checkout (this workspace)
  *
  * The result runs immediately and looks like vanilla; the author's job starts
@@ -26,7 +26,7 @@ const name = args.find((a) => !a.startsWith("-"));
 const local = args.includes("--local") || corePkg.version === "0.0.0-development";
 
 if (!name || !/^[a-z][a-z0-9-]*$/.test(name)) {
-  console.error("usage: theme-core new <kebab-case-name> [--local]");
+  console.error("usage: bunx @panomc/theme-core new <kebab-case-name> [--local]");
   process.exit(1);
 }
 
@@ -46,7 +46,7 @@ const title = name
 // Local mode links straight into the workspace checkout so the scaffold works
 // before the packages exist on npm; published mode uses semver ranges.
 let coreDep = `^${corePkg.version}`;
-let sdkDep = "*";
+let sdkDep = `^${corePkg.version}`;
 if (local) {
   const sdkDir = dirname(require.resolve("@panomc/sdk/package.json"));
   coreDep = `file:${corePkgDir}`;
@@ -107,7 +107,7 @@ const FILES = {
  *
  * Tier 1: edit src/styles/tokens.scss and ship — this file stays empty.
  * Tier 2: eject a view, register it here:
- *   bunx theme-core eject-view LoginView
+ *   bunx @panomc/theme-core eject-view LoginView
  * Extra settings your views edit are declared in settingsSchema (see the
  * theme-core author guide).
  */
@@ -255,7 +255,7 @@ bun run build && bun run package
 \`\`\`
 
 - Tier 1: edit \`src/styles/tokens.scss\`.
-- Tier 2: \`bunx theme-core eject-view <ViewName>\` (see \`theme-core list-views\`).
+- Tier 2: \`bunx @panomc/theme-core eject-view <ViewName>\` (see \`theme-core list-views\`).
 `,
 };
 
@@ -277,5 +277,5 @@ Next steps:
 
 Make it yours:
   src/styles/tokens.scss           colors / fonts / radius (Tier 1)
-  bunx theme-core list-views       what you can override
-  bunx theme-core eject-view HomeView   own a page's markup (Tier 2)`);
+  bunx @panomc/theme-core list-views       what you can override
+  bunx @panomc/theme-core eject-view HomeView   own a page's markup (Tier 2)`);
