@@ -1,77 +1,15 @@
 {
-  "name": "@panomc/sdk",
-  "version": "0.0.0-development",
-  "author": "PanoMC",
+  "name": "pano-theme-core-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "url": "https://github.com/PanoMC/sdk"
   },
-  "dependencies": {
-    "svelte": "5.55.4"
-  },
   "devDependencies": {
-    "svelte": "5.55.4"
-  },
-  "exports": {
-    ".": {
-      "svelte": "./src/index.js",
-      "default": "./src/index.js"
-    },
-    "./components/panel": {
-      "svelte": "./src/components/panel.js",
-      "default": "./src/components/panel.js"
-    },
-    "./components/theme": {
-      "svelte": "./src/components/theme.js",
-      "default": "./src/components/theme.js"
-    },
-    "./internal": {
-      "svelte": "./src/internal/index.js",
-      "default": "./src/internal/index.js"
-    },
-    "./toasts": {
-      "svelte": "./src/toasts/index.js",
-      "default": "./src/toasts/index.js"
-    },
-    "./utils/api": {
-      "svelte": "./src/utils/api.js",
-      "default": "./src/utils/api.js"
-    },
-    "./utils/auth": {
-      "svelte": "./src/utils/auth.js",
-      "default": "./src/utils/auth.js"
-    },
-    "./utils/tooltip": {
-      "svelte": "./src/utils/tooltip.js",
-      "default": "./src/utils/tooltip.js"
-    },
-    "./utils/language": {
-      "svelte": "./src/utils/language.js",
-      "default": "./src/utils/language.js"
-    },
-    "./utils/component": {
-      "svelte": "./src/utils/component.js",
-      "default": "./src/utils/component.js"
-    },
-    "./utils/text": {
-      "svelte": "./src/utils/text.js",
-      "default": "./src/utils/text.js"
-    },
-    "./variables": {
-      "svelte": "./src/variables.js",
-      "default": "./src/variables.js"
-    },
-    "./svelte": {
-      "svelte": "./src/svelte.js",
-      "default": "./src/svelte.js"
-    }
-  },
-  "files": [
-    "src"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {},
-  "svelte": "./src/index.js",
-  "type": "module"
+    "semantic-release": "^24.2.6",
+    "@semantic-release/exec": "^7.1.0"
+  }
 }

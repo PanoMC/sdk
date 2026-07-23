@@ -1,0 +1,368 @@
+{
+ "$schema_note": "Machine-readable Pano theme contract, generated from the controller/view split. Consumed by 'theme-core check' and store-side CI.",
+ "views": {
+  "HomeView": {
+   "props": {
+    "data": "object — load result (posts, postCount, page, totalPage, category, categoryUrl, sidebar, hookProps) plus View",
+    "themeSettings": "plain object — from getContext('themeSettings') in the controller; postsEnabled gates the post list and pagination",
+    "onPageClick": "function(data, page) — pagination navigation handler imported from HomePageLogics"
+   }
+  },
+  "LoginView": {
+   "props": {
+    "data": "object — page data (initialError, pageTitle, View)",
+    "session": "store — session context from getContext('session') (siteInfo, user, csrfToken)",
+    "contentItems": "store — plugin-registered login content items (panoApiClient.ui.auth.login.content)",
+    "altMethods": "store — plugin-registered alternative login methods",
+    "viewState": "writable store — 'LOGIN' | 'LINK_CODE' | 'REGISTER' | 'SET_USERNAME'",
+    "usernameOrEmail": "writable store — username/email field value",
+    "password": "writable store — password field value",
+    "email": "writable store — register email field value",
+    "passwordRepeat": "writable store — register password-repeat field value",
+    "agreement": "writable store — register agreement checkbox value",
+    "newUsername": "writable store — new username field value (SET_USERNAME state)",
+    "linkCode": "writable store — 6-digit link code value",
+    "loading": "writable store — request in-flight flag",
+    "error": "writable store — current error (string or {key, props})",
+    "passwordVisible": "writable store — whether the password field is shown",
+    "emailRequired": "writable store — backend requested a register email",
+    "emailVerificationSent": "writable store — verification-email-sent notice shown",
+    "autoVerifyDone": "writable store — link code auto-verify already attempted",
+    "usernameRequiredUserId": "writable store — user id pending username selection",
+    "onSubmit": "function — submit the login / set-username form",
+    "onVerifyLink": "function — verify the entered link code",
+    "onCompleteRegister": "function — complete the register-with-link flow",
+    "onUsernameOrEmailFieldInput": "function — input handler for the username/email field",
+    "onRegisterEmailFieldInput": "function — input handler for the register email field",
+    "onNewUsernameFieldInput": "function — input handler for the new username field"
+   }
+  },
+  "RegisterView": {
+   "props": {
+    "data": "object — SvelteKit page data (initialError, initialUsername, pageTitle, View)",
+    "contentItems": "store<Array> — plugin-extensible register page content items ({ id, priority, component }) from panoApiClient.ui.auth.register.content",
+    "altMethods": "store<Array> — alternative registration methods injected by plugins",
+    "onSubmit": "function — submits the register form (validation, session update, redirect)",
+    "loading": "writable store<boolean> — true while the register request is in flight",
+    "error": "writable store<string|null> — error key rendered by ErrorAlert",
+    "successMessage": "writable store<string|null> — success key rendered by SuccessAlert",
+    "username": "writable store<string> — two-way bound username field value",
+    "email": "writable store<string> — two-way bound email field value",
+    "password": "writable store<string> — two-way bound password field value",
+    "passwordRepeat": "writable store<string> — two-way bound password confirmation value",
+    "agreement": "writable store<boolean> — two-way bound register-agreement checkbox value"
+   }
+  },
+  "NotificationsView": {
+   "props": {
+    "data": "object — full load data (notifications, notificationCount, sidebar config), forwarded per recipe",
+    "notifications": "store — currently loaded notification list (writable from init())",
+    "count": "store — total notification count on the server",
+    "page": "store — zero-based load-more page index",
+    "loadMoreLoading": "store — true while the next page of notifications is fetching",
+    "checkTime": "store — tick counter passed BARE (no $) to getTime so relative timestamps refresh",
+    "avatarVersion": "store — cache-busting version appended to profile picture URLs",
+    "currentLanguage": "store — active language object; .dateFnsCode selects the date-fns locale",
+    "locales": "object — date-fns locale namespace (import * as locales stays in controller, passed as a plain value)",
+    "onNotificationClick": "function — notification row click handler (from NotificationManager)",
+    "onDeleteNotificationClick": "function — deletes a single notification",
+    "getTime": "function — relative 'time ago' formatter",
+    "loadMore": "function — fetches next page; markup calls it with the notifications and loadMoreLoading store objects",
+    "sanitizeObject": "function — escapes notification detail values before {@html} i18n interpolation"
+   }
+  },
+  "PlayerDetailView": {
+   "props": {
+    "data": "PageData — SvelteKit load result; the markup reads data.registerDate (epoch timestamp of the player's registration, rendered via the Date component)"
+   }
+  },
+  "PostDetailView": {
+   "props": {
+    "data": "load data — post ({title, text, category, writer, thumbnailUrl, views, date}), previousPost/nextPost (object or \"-\"), hookProps, View",
+    "themeSettings": "plain object (getContext(\"themeSettings\") in controller) — post* visibility toggles read directly, not as a store",
+    "avatarVersion": "store object (writable from $pano/lib/Store) — view auto-subscribes via $avatarVersion for profile-picture cache busting"
+   }
+  },
+  "PreviewPostView": {
+   "props": {
+    "data": "object — full load result (post, previousPost, nextPost, View); passed per view contract, markup does not read it directly",
+    "post": "object — the post being previewed (title, category.title, writer.username, text, date, views, thumbnailUrl); originates from the shim prop post={data.post}",
+    "themeSettings": "object — getContext('themeSettings') resolved in the controller (postCoverImageEnabled, postViewCountEnabled)",
+    "avatarVersion": "store — store object from $pano/lib/Store; view auto-subscribes as $avatarVersion for avatar cache-busting"
+   }
+  },
+  "SupportView": {
+   "props": {
+    "data": "object — page load data, forwarded verbatim to plugin ViewComponents",
+    "session": "store — session context store; markup reads $session.siteInfo.supportEmail and .websiteName",
+    "items": "store — plugin view entries registered for the 'support-content' slot (from panoApi.ui.view.get)",
+    "optionItems": "store — plugin view entries registered for the 'support-options' slot (from panoApi.ui.view.get)"
+   }
+  },
+  "ActivateEmailView": {
+   "props": {
+    "data": "object — SvelteKit page data (data.token = activation token from URL, consumed by verifyEmail; data.View = resolved view class)",
+    "error": "writable store — error code rendered by ErrorAlert (e.g. \"INVALID_LINK\"); passed as store object, view reads $error",
+    "successMessage": "writable store — success code rendered by SuccessAlert (\"VALIDATION_SUCCESSFUL\")",
+    "loading": "writable store — true while the verification request is in flight (spinner + disabled button)",
+    "activateContentItems": "readable store — plugin-injected content items for the activate page (panoApiClient.ui.auth.activate.content.get())",
+    "verifyEmail": "function(error, successMessage, loading, data) — runs the e-mail verification request; called from the button on:click with the raw store objects"
+   }
+  },
+  "ConfirmNewEmailView": {
+   "props": {
+    "data": "object — merged load data (token, pageTitle, session, View, …)",
+    "activateNewEmailContentItems": "store<item[]> — plugin-injected content items for the activate-new-email slot (from panoApiClient.ui.auth.activateNewEmail.content.get())",
+    "loading": "writable store<boolean> — true while the activation request is in flight",
+    "error": "writable store<string|null> — error code shown in ErrorAlert (e.g. \"INVALID_LINK\")",
+    "successMessage": "writable store<string|null> — success code shown in SuccessAlert after activation",
+    "verifyEmail": "function — (error, successMessage, loading, data) sends the email-activation request; markup passes the store objects themselves"
+   }
+  },
+  "RenewPasswordView": {
+   "props": {
+    "data": "object — page data from load; forwarded to onSubmit (also carries data.View)",
+    "error": "writable store — error shown by ErrorAlert; set by onSubmit",
+    "message": "writable store — success message shown by SuccessAlert; set by onSubmit",
+    "loading": "writable store<boolean> — true while the change-password request is in flight; disables inputs/button",
+    "newPassword": "writable store<string> — bound value of the new password input",
+    "newPasswordRepeat": "writable store<string> — bound value of the repeat password input",
+    "renewPasswordContentItems": "store<Array<{id, component}>> — plugin-injected content items from panoApiClient.ui.auth.renewPassword.content.get()",
+    "onSubmit": "function — (error, message, loading, newPassword, newPasswordRepeat, data) form submit handler from RenewPasswordPageLogics"
+   }
+  },
+  "ResetPasswordView": {
+   "props": {
+    "data": "object — merged page data from $page.data (session, pageTitle, View); not read by the default markup but part of the view contract",
+    "error": "writable store — error code rendered by ErrorAlert",
+    "message": "writable store — success message code rendered by SuccessAlert",
+    "loading": "writable store — true while the reset-password request is in flight",
+    "usernameOrEmail": "writable store — bound value of the email/username input (view also calls .set() in oninput)",
+    "resetPasswordContentItems": "readable store — plugin-registered content items rendered inside the form via ViewComponent",
+    "onSubmit": "function(error, message, loading, usernameOrEmail) — logic import passed through; sends the reset-password request",
+    "stripIdentifierWhitespace": "function(value) — logic import passed through; strips whitespace in the input's oninput handler"
+   }
+  },
+  "ErrorView": {
+   "props": {
+    "data": "object|undefined — always undefined today (SvelteKit runs no load for +error.svelte); kept for the shared controller contract and forwarded as {data}",
+    "page": "reactive object (store-like prop) — SvelteKit page state from $app/state; page.status selects the 404 vs internal-error subtitle"
+   }
+  },
+  "ThemeSettingsView": {
+   "props": {
+    "data": "object — page data (themeSettings, View)",
+    "themeSettings": "writable store — live theme settings object being edited; markup reads/mutates via $themeSettings",
+    "session": "store — session context from getContext(\"session\") (siteInfo: serverIp, websiteName, websiteDescription)",
+    "activeTab": "writable store — selected settings tab id (\"general\", \"logo\", \"header\", ...)",
+    "saving": "writable store — save request in-flight flag",
+    "resetting": "writable store — tab reset in-flight flag",
+    "resettingAll": "writable store — full reset in-flight flag",
+    "backgroundImageFiles": "writable store — FileList of the picked page background image (bind:files)",
+    "headerBackgroundImageFiles": "writable store — FileList of the picked header background image (bind:files)",
+    "playCardBackgroundImageFiles": "writable store — FileList of the picked play-card background image (bind:files)",
+    "currentThemeDefault": "writable store (derived via $:) — default navbar/header colors for the selected theme color",
+    "defaultHeaderBg": "writable store (derived via $:) — whether the default header background is active",
+    "orderedNavLinks": "writable store — nav links (native + plugin) in saved order",
+    "orderedFooterLinks": "writable store — footer links (native + plugin) in saved order",
+    "draggingItemIndex": "writable store — index of link row being dragged (or null)",
+    "dragOverItemIndex": "writable store — index of link row dragged over (or null)",
+    "tabChanged": "writable store (derived via $:) — active tab has unsaved changes",
+    "tabResetVisible": "writable store (derived via $:) — reset-tab button visibility",
+    "allResetVisible": "writable store (derived via $:) — reset-all button visibility",
+    "onThemeColorChange": "function — theme color select handler (also applies default navbar/header colors)",
+    "onBackgroundImageChange": "function — page background image file-input change handler",
+    "onRemoveBackgroundImageClick": "function — remove the saved page background image",
+    "onHeaderBackgroundImageChange": "function — header background image file-input change handler",
+    "onRemoveHeaderBackgroundImageClick": "function — remove the saved header background image",
+    "onPlayCardBackgroundImageChange": "function — play-card background image file-input change handler",
+    "onRemovePlayCardBackgroundImageClick": "function — remove the saved play-card background image",
+    "onDragStart": "function — dragstart handler for link reordering (event, index)",
+    "onDragOver": "function — dragover handler for link reordering (event, index)",
+    "onDragEnd": "function — dragend handler for link reordering",
+    "onDrop": "function — drop handler for link reordering (event, index, \"nav\" | \"footer\")",
+    "toggleLink": "function — enable/disable a navbar link (id, checked)",
+    "toggleFooterLink": "function — enable/disable a footer link (id, checked)",
+    "save": "function — save the active tab's settings",
+    "resetTab": "function — reset the active tab's settings (with confirm modal)",
+    "resetAll": "function — reset all theme settings (with confirm modal)"
+   }
+  },
+  "ProfileView": {
+   "props": {
+    "data": "object — page data from load (registerDate, lastLoginDate, pageTitle, sidebar, View)",
+    "contentItems": "store<Array> — plugin-extendable profile page content blocks from panoApiClient.ui.profile.content.get()",
+    "cardRowItems": "store<Array> — plugin-extendable profile card table rows from panoApiClient.ui.profile.cardRows.get()"
+   }
+  },
+  "SettingsView": {
+   "props": {
+    "data": "object — page data (sessions, sidebar, pageTitle, View)",
+    "session": "store — session context from getContext(\"session\") (siteInfo, user, csrfToken)",
+    "contentItems": "store — plugin-registered settings content items (panoApiClient.ui.settings.content)",
+    "cardRowItems": "store — plugin-registered settings card rows (panoApiClient.ui.settings.cardRows)",
+    "Languages": "store — available UI languages keyed by id ({ code, name })",
+    "resetPasswordError": "writable store — error key of the reset-password action",
+    "resetPasswordLoading": "writable store — reset-password request in-flight flag",
+    "resetPasswordSuccess": "writable store — reset-password link sent flag",
+    "currentPassword": "writable store — current password field value (change-email step 1)",
+    "newEmail": "writable store — new email field value (change-email step 2)",
+    "changingEmail": "writable store — change-email flow open flag",
+    "changingEmail2ndStep": "writable store — change-email flow is on the new-email step",
+    "changingEmailError": "writable store — error key of the change-email flow",
+    "changingEmailLoading": "writable store — change-email request in-flight flag",
+    "changingEmailSuccess": "writable store — change-email confirmation link sent flag",
+    "userLocale": "writable store — selected display-language code (bind:value target)",
+    "loadingSessionId": "writable store — id of the session whose logout is in flight",
+    "saveButtonVisible": "derived store — whether the save button is rendered",
+    "saveButtonDisabled": "derived store — whether the save button is disabled",
+    "sendResetPasswordLink": "function — request a reset-password email",
+    "sendChangeEmailLink": "function — request the change-email confirmation email",
+    "startChangingEmail": "function — open the change-email flow",
+    "startChangingEmail2ndStep": "function — advance the change-email flow to the new-email step",
+    "stopChangingEmail": "function — cancel the change-email flow",
+    "stopChangingEmail2ndStep": "function — go back to the current-password step",
+    "onLogoutSession": "function — log out another session by id",
+    "registerPlugin": "function — register/unregister a plugin row's save state",
+    "handleSave": "function — save locale change + dirty plugin rows",
+    "logout": "function — log out the current session (passed the session store)",
+    "showToast": "function — show a toast notification (ToastContainer module export)",
+    "invalidateAll": "function — SvelteKit invalidateAll (refresh load data)",
+    "parseUserAgent": "function — user-agent string to short browser label",
+    "stripIdentifierWhitespace": "function — strip whitespace from identifier input"
+   }
+  },
+  "TicketsView": {
+   "props": {
+    "data": "object — page load data (pageType, page, totalPage, ticketCount, category, categoryUrl, View)",
+    "contentItems": "store — plugin-extendable content item list from panoApiClient.ui.tickets.content.get(); markup iterates $contentItems",
+    "tickets": "store — tickets list store produced by init(data) in the controller; markup reads $tickets and hands the raw store back to onCloseTicketClick",
+    "PageTypes": "object — ticket filter enum (ALL/CLOSED) from TicketsPageLogics, used for the header button active states",
+    "onCloseTicketClick": "function — (ticketsStore, ticket) close-ticket handler from TicketsPageLogics",
+    "onPageClick": "function — (data, page) pagination navigation handler from TicketsPageLogics"
+   }
+  },
+  "TicketDetailView": {
+   "props": {
+    "data": "object — page data from load (ticket, messages, sidebar config); also carries View",
+    "ticket": "store — the ticket being viewed (id, title, category, status, date, messageCount)",
+    "messages": "store — currently loaded ticket messages, oldest first",
+    "message": "store — current text of the reply textarea (bind:value={$message})",
+    "messageSendLoading": "store — true while a reply is being sent",
+    "messagesSectionDiv": "store — holds the message-list element, set via bind:this={$messagesSectionDiv}; logic scrolls it",
+    "loadMoreLoading": "store — true while older messages are being fetched",
+    "shouldScroll": "store — whether the message list should scroll down after sending",
+    "sentMessageCount": "store — messages sent this session, offsets the 'previous messages' count",
+    "avatarVersion": "store — cache-busting version appended to profile picture URLs",
+    "loadMore": "function — fetches the previous page of messages (called with loadMoreLoading, messages, data)",
+    "sendMessage": "function — sends the reply (called with messageSendLoading, sentMessageCount, shouldScroll, messages, message, data)"
+   }
+  },
+  "CreateTicketView": {
+   "props": {
+    "data": "object — page load data (categories, sidebar, pageTitle, View)",
+    "error": "writable store — submit error rendered by ErrorAlert",
+    "title": "writable store — ticket title input value (bind:value={$title})",
+    "message": "writable store — ticket message textarea value (bind:value={$message})",
+    "categoryId": "writable store — selected category id, -1 = no category (bind:value={$categoryId})",
+    "loading": "writable store — request in-flight flag, disables the submit button",
+    "submit": "function — (error, loading, title, message, categoryId) sends the create-ticket request; view passes the store objects, not their values"
+   }
+  },
+  "AppLayoutView": {
+   "props": {
+    "data": "object — full layout load data (session payload, _pageTitleStore, View); passed for contract completeness, unused by the stock view markup",
+    "session": "store — writable session store ({ user, csrfToken, siteInfo }) returned by init(data); view reads $session.siteInfo for favicon hash and website name",
+    "pageTitle": "store — current page title descriptor (null | i18n key string | { title, titleValues }); view reads $pageTitle for the document title",
+    "getTitle": "function — (pageTitle, siteName) => formatted document <title> string; stays in the controller because it closes over the controller's $_ (svelte-i18n) subscription"
+   }
+  },
+  "MainLayoutView": {
+   "props": {
+    "data": "object — controller load data (hookProps, View, mainLayoutView); unused by the default markup but kept for the view contract",
+    "themeSettings": "object — the 'themeSettings' context object (theme color, header/navbar gap, footer & breadcrumb toggles, background/custom CSS settings)",
+    "session": "store — the 'session' context store passed as a store object; view auto-subscribes via $session for the head meta tags"
+   }
+  },
+  "AuthLayoutView": {
+   "props": {
+    "data": "object — layout load data returned by processLoad (AuthLayoutLogics), plus View"
+   }
+  },
+  "ProfileLayoutView": {
+   "props": {
+    "data": "object — layout load data from ProfileLayoutLogics.processLoad (includes data.View, the resolved view component)"
+   }
+  },
+  "ThemeSettingsLayoutView": {
+   "props": {
+    "data": "object — merged layout load data from processLoad (ThemeSettingsLayoutLogics), also carries View; unused by the trivial markup but kept per contract",
+    "hidden": "store<boolean> — store returned by ThemeSettingsLayoutLogics init(); drives the hidden attribute on the wrapper div"
+   }
+  },
+  "TicketsLayoutView": {
+   "props": {
+    "data": "object — layout load data (parent data merged by processLoad, plus View); the view markup itself does not read it, kept for contract completeness"
+   }
+  },
+  "RulesView": {
+   "props": {
+    "data": "object — load result; data.registerAgreement: sanitized HTML of the register agreement"
+   }
+  }
+ },
+ "settings_tabs": {
+  "_note": "Base ThemeSettingsPage tab → settings-key map, mirrored from the controller's baseTabKeys. A theme.config.js settingsSchema may APPEND keys/tabs; the checker uses this to reject a key that a theme puts in a different tab than the base does (save/reset are per-tab, so that would be ambiguous).",
+  "general": ["themeColor", "backgroundColor", "bgImagePosition", "bgImageRepeat", "bgImageSize", "backgroundImage"],
+  "logo": ["logoVisibility", "logoPosition", "logoHeight", "logoWidth", "logoAnimation"],
+  "header": ["defaultHeaderBg", "headerBgColor", "headerHeight", "headerWidthOption", "headerNavBarGap", "headerBgImagePosition", "headerBgImageRepeat", "headerBgImageSize", "headerBackgroundImage"],
+  "navbar": ["navbarWidthOption", "navbarBgColor", "navRoundLevel", "navLinksEnabled", "navLinksEnableStatus", "navLinksOrder"],
+  "sidebar": ["sidebarEnabled", "sidebarPosition", "sidebarCarts"],
+  "play-card": ["playCardStyle", "defaultPlayCardBg", "playCardBgOpacity", "playCardBgEffect", "playCardBackgroundImage", "playCardIpText", "playCardStatusBadge", "playCardPlayerCount", "playCardVersionInfo", "playCardIpColor", "playCardBorderColor"],
+  "post-card": ["postsEnabled", "postCoverImageEnabled", "postReadMoreButtonEnabled", "postAuthorImageEnabled", "postViewCountEnabled", "postPreviousPageEnabled", "postNextPageEnabled"],
+  "footer": ["footerEnabled", "footerLogoEnabled", "footerTitleEnabled", "footerTitle", "footerContentEnabled", "footerContent", "footerLinksEnabled", "footerPluginLinksEnabled", "footerLinksEnableStatus", "footerLinksOrder"],
+  "advanced": ["customCss"]
+ },
+ "registry_components": [
+  "LoginFormBody",
+  "RegisterForm",
+  "Date",
+  "Pagination",
+  "NoContent",
+  "PageActions",
+  "PageTitle",
+  "PlayerHead",
+  "Navbar",
+  "Header",
+  "Footer"
+ ],
+ "view_slots": [
+  "login-content",
+  "login-alt-methods",
+  "register-content",
+  "profile-content",
+  "profile-card-rows",
+  "settings-content",
+  "settings-card-rows",
+  "tickets-content",
+  "navbar-right",
+  "navbar-profile-dropdown",
+  "support-content",
+  "support-options",
+  "reset-password-content",
+  "renew-password-content",
+  "activate-content"
+ ],
+ "hooks": [
+  "theme:top",
+  "page:top",
+  "page:home:top",
+  "theme:post-detail:bottom",
+  "theme:support:content"
+ ],
+ "route_groups_contractual": [
+  "(theme)",
+  "(theme-settings)",
+  "(plugin-ui)"
+ ]
+}

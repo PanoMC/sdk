@@ -1,0 +1,77 @@
+{
+  "name": "@panomc/theme-core",
+  "version": "0.0.0-development",
+  "description": "The Pano theme engine: hooks factories, plugin engine, headless page controllers, default views and the theme CLI. Themes depend on this package instead of forking vanilla-theme.",
+  "author": "PanoMC",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/PanoMC/sdk"
+  },
+  "svelte": "./src/index.js",
+  "exports": {
+    ".": {
+      "svelte": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json",
+    "./registry": {
+      "svelte": "./src/registry/index.js",
+      "default": "./src/registry/index.js"
+    },
+    "./kit/*": {
+      "svelte": "./src/kit/*.js",
+      "default": "./src/kit/*.js"
+    },
+    "./plugin-engine/*": {
+      "svelte": "./src/plugin-engine/*",
+      "default": "./src/plugin-engine/*"
+    },
+    "./lib/*": {
+      "svelte": "./src/lib/*",
+      "default": "./src/lib/*"
+    },
+    "./routes/*": {
+      "svelte": "./src/routes/*",
+      "default": "./src/routes/*"
+    },
+    "./bin/*": "./bin/*"
+  },
+  "files": [
+    "src",
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "svelte": "5.55.4",
+    "mime-types": "^3.0.2",
+    "date-fns": "^4.1.0",
+    "copy-to-clipboard": "^3.3.3",
+    "@jill64/universal-sanitizer": "^1.4.6"
+  },
+  "peerDependencies": {
+    "@panomc/sdk": "*",
+    "@sveltejs/adapter-node": "^5.5.4",
+    "@sveltejs/kit": "^2.57.1",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "sass": "^1.99.0",
+    "svelte-i18n": "^4.0.1",
+    "svelte-preprocess": "^6.0.3",
+    "vite": "^8.0.9"
+  },
+  "devDependencies": {
+    "@panomc/sdk": "file:../sdk",
+    "@sveltejs/adapter-node": "^5.5.4",
+    "@sveltejs/kit": "^2.57.1",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "sass": "^1.99.0",
+    "svelte-i18n": "^4.0.1",
+    "svelte-preprocess": "^6.0.3",
+    "vite": "^8.0.9"
+  },
+  "bin": {
+    "theme-core": "./bin/theme-core.js"
+  }
+}

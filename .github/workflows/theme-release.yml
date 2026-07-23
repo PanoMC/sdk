@@ -1,0 +1,120 @@
+# Reusable release workflow for Pano THEMES built on @panomc/theme-core.
+#
+# A theme repo's .github/workflows/release.yml shrinks to:
+#
+#   name: Release
+#   on:
+#     push:
+#       branches: [ "dev", "master" ]
+#   jobs:
+#     release:
+#       uses: PanoMC/sdk/.github/workflows/theme-release.yml@master
+#       with:
+#         theme-id: my-theme
+#       secrets:
+#         TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
+#
+# Centralizing this kills the CI-drift class: the version-override and
+# license-server switches live here once, and the zip step is the
+# DETERMINISTIC packager (zip sha256 = premium license identity).
+name: Pano Theme Release (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      theme-id:
+        required: true
+        type: string
+    secrets:
+      TOKEN_GITHUB:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  get-next-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+      - name: Dry run to get next release version
+        id: get-next-version
+        run: |
+          export NEXT_TAG_VERSION=$(npx semantic-release --dry-run --force | grep 'next release version is ' | awk -F"next release version is " '{print $2}')
+          echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+    outputs:
+      new_tag_version: ${{ steps.get-next-version.outputs.new_tag_version }}
+
+  build-and-release:
+    runs-on: ubuntu-latest
+    needs: get-next-version
+    if: ${{ needs.get-next-version.outputs.new_tag_version != '' }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          token: ${{ secrets.TOKEN_GITHUB }}
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: Install
+        run: bun install
+
+      - name: Create .env.local if branch is dev
+        run: |
+          if [[ "${{ steps.extract_branch.outputs.branch }}" == "dev" ]]; then
+            echo "VITE_PANO_WEBSITE_URL=https://dev.panomc.com" > .env.local
+          fi
+
+      - name: Sync + contract check
+        run: |
+          bun node_modules/@panomc/theme-core/bin/sync.js
+          bun node_modules/@panomc/theme-core/bin/check.js
+
+      - name: Build
+        # PANO_LICENSE_SERVER selects the panomc.com license server the prebuild
+        # fetches the verification public key from (free themes ignore it).
+        # PANO_THEME_VERSION_OVERRIDE embeds semantic-release's next tag so the
+        # runtime's expected `ver` matches the JWT claim panomc.com signs.
+        env:
+          PANO_LICENSE_SERVER: ${{ steps.extract_branch.outputs.branch == 'master' && 'prod' || 'dev' }}
+          PANO_THEME_VERSION_OVERRIDE: ${{ needs.get-next-version.outputs.new_tag_version }}
+        run: bun run build
+
+      - name: Update manifest.json version
+        run: |
+          sed -i 's/"version": *"[^"]*"/"version": "v${{ needs.get-next-version.outputs.new_tag_version }}"/' build/manifest.json
+
+      - name: Package (deterministic zip)
+        run: |
+          bun node_modules/@panomc/theme-core/bin/package-zip.js \
+            ${{ inputs.theme-id }}-v${{ needs.get-next-version.outputs.new_tag_version }}.zip
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        run: npx semantic-release@24.2.6 --force
