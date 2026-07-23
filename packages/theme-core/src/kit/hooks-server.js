@@ -24,6 +24,7 @@ import {
   updateApiUrl,
   updatePanoWebsiteUrl,
 } from "../lib/variables.js";
+import { dev } from "$app/environment";
 import { getCredentialsServerSide } from "../lib/services/auth.js";
 import { createLicenseRuntime } from "./license-runtime.js";
 import { RUNTIME_SPECIFIERS } from "./specifiers.js";
@@ -153,8 +154,20 @@ ${importMapEntries}
   // PANO_LICENSE_JWT before spawning bun; the runtime helper verifies the RS256 signature
   // + claim checks against the panomc.com public key embedded at build time. Free builds
   // no-op everything.
+  //
+  // `dev` is SvelteKit's COMPILE-TIME flag: true only under `vite dev`, false in
+  // every production build (baked into the bundle — cannot be spoofed with
+  // NODE_ENV at runtime). Premium authors can develop locally without a license;
+  // shipped zips keep enforcing.
+  const licenseEnforced = license.isPremiumBuild() && !dev;
+  if (license.isPremiumBuild() && dev) {
+    console.log(
+      "[pano-license] dev server — premium license gate skipped (enforced in production builds)",
+    );
+  }
+
   let bootLicenseError = null;
-  if (license.isPremiumBuild()) {
+  if (licenseEnforced) {
     try {
       license.verifyLicenseFromEnv();
       console.log("[pano-license] startup verification passed");
@@ -180,8 +193,8 @@ ${importMapEntries}
     resolve,
   }) {
     // License gate: every request to a premium theme has to pass the cached check. Free
-    // builds short-circuit because isPremiumBuild() is false.
-    if (license.isPremiumBuild()) {
+    // builds and `vite dev` short-circuit (licenseEnforced is compile-time false in dev).
+    if (licenseEnforced) {
       if (bootLicenseError) {
         return renderLicenseBlocked(
           bootLicenseError.reason ?? "unknown",
