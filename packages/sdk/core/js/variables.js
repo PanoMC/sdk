@@ -16,34 +16,31 @@ export const CSRF_HEADER = 'X-CSRF-Token';
 export function checkDomainRedirection() {
   if (typeof window === 'undefined' || !API_URL || API_URL.startsWith('/')) return;
 
+  // In production API_URL is the Pano host's internal backend address (loopback or
+  // server.host:internal-port) — never a browser-reachable origin, so redirecting on it
+  // would bounce reverse-proxied visitors to the internal port. Canonical-host redirects
+  // are owned by the backend (WebsiteUrlRedirectHandler); this helper only smooths the
+  // dev workflow: hitting a vite dev port directly bounces you into the Pano dev server.
+  if (!import.meta.env.DEV) return;
+
   try {
     const apiUrl = new URL(API_URL);
     const currentUrl = new URL(window.location.href);
 
-    const isDev = import.meta.env.DEV;
+    if (
+      currentUrl.hostname !== apiUrl.hostname ||
+      currentUrl.port !== apiUrl.port ||
+      currentUrl.protocol !== apiUrl.protocol
+    ) {
+      const basePath = UI_URL || PANEL_URL || SETUP_URL || '/';
+      let pathname = currentUrl.pathname;
 
-    if (isDev) {
-      if (
-        currentUrl.hostname !== apiUrl.hostname ||
-        currentUrl.port !== apiUrl.port ||
-        currentUrl.protocol !== apiUrl.protocol
-      ) {
-        const basePath = UI_URL || PANEL_URL || SETUP_URL || '/';
-        let pathname = currentUrl.pathname;
-
-        if (basePath !== '/' && !pathname.startsWith(basePath)) {
-          pathname = basePath + (pathname === '/' ? '' : pathname);
-        }
-
-        const targetUrl = new URL(pathname + currentUrl.search + currentUrl.hash, apiUrl.origin);
-        window.location.href = targetUrl.toString();
+      if (basePath !== '/' && !pathname.startsWith(basePath)) {
+        pathname = basePath + (pathname === '/' ? '' : pathname);
       }
-    } else {
-      if (currentUrl.port !== apiUrl.port) {
-        const targetUrl = new URL(window.location.href);
-        targetUrl.port = apiUrl.port;
-        window.location.href = targetUrl.toString();
-      }
+
+      const targetUrl = new URL(pathname + currentUrl.search + currentUrl.hash, apiUrl.origin);
+      window.location.href = targetUrl.toString();
     }
   } catch (e) {
     console.error('Failed to check domain redirection:', e);
