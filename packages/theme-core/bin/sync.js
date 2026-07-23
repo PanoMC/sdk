@@ -13,7 +13,7 @@
  *
  * Run from the THEME's root: bun node_modules/@panomc/theme-core/bin/sync.js
  */
-import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, statSync, rmSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, statSync, rmSync, copyFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -333,6 +333,56 @@ function backfillTokens() {
   console.log("theme-core sync: filled in the token menu in src/styles/tokens.scss");
 }
 
+/**
+ * Static assets the engine's components and SCSS reference by absolute URL
+ * (/assets/img/logo.svg, quicksand fonts, FontAwesome webfonts). A thin theme
+ * doesn't carry them in git — they're synced into static/assets/ here.
+ * Existing files are NEVER overwritten, so a theme can brand its own
+ * logo.svg (or any other asset) by simply replacing the file.
+ */
+function syncStaticAssets() {
+  const themeRequire = createRequire(join(process.cwd(), "package.json"));
+  const staticDir = join(process.cwd(), "static");
+  let copied = 0;
+
+  const copyTree = (fromDir, toDir) => {
+    if (!existsSync(fromDir)) return;
+    mkdirSync(toDir, { recursive: true });
+    for (const entry of readdirSync(fromDir)) {
+      const from = join(fromDir, entry);
+      const to = join(toDir, entry);
+      if (statSync(from).isDirectory()) {
+        copyTree(from, to);
+      } else if (!existsSync(to)) {
+        copyFileSync(from, to);
+        copied++;
+      }
+    }
+  };
+
+  const engineAssets = join(dirname(fileURLToPath(import.meta.url)), "..", "assets");
+  copyTree(join(engineAssets, "img"), join(staticDir, "assets", "img"));
+  if (existsSync(join(engineAssets, "robots.txt")) && !existsSync(join(staticDir, "robots.txt"))) {
+    copyFileSync(join(engineAssets, "robots.txt"), join(staticDir, "robots.txt"));
+    copied++;
+  }
+
+  try {
+    const sdkDir = dirname(themeRequire.resolve("@panomc/sdk/package.json"));
+    copyTree(join(sdkDir, "core", "fonts"), join(staticDir, "assets", "fonts"));
+  } catch {
+    /* sdk not installed yet — next sync run picks the fonts up */
+  }
+  try {
+    const faDir = dirname(themeRequire.resolve("@fortawesome/fontawesome-free/package.json"));
+    copyTree(join(faDir, "webfonts"), join(staticDir, "assets", "webfonts"));
+  } catch {
+    /* fontawesome not installed yet — next sync run picks the webfonts up */
+  }
+
+  return copied;
+}
+
 const routesDir = join(process.cwd(), "src", "routes");
 let written = 0;
 let ejected = 0;
@@ -385,7 +435,8 @@ sweep(routesDir);
 
 const langMerged = syncLang();
 backfillTokens();
+const assetsCopied = syncStaticAssets();
 
 console.log(
-  `${pc.green("✓")} ${pc.bold("theme-core sync")} — ${written} shims written, ${ejected} ejected (kept), ${removed} stale removed, ${langMerged} lang files merged`,
+  `${pc.green("✓")} ${pc.bold("theme-core sync")} — ${written} shims written, ${ejected} ejected (kept), ${removed} stale removed, ${langMerged} lang files merged, ${assetsCopied} assets copied`,
 );

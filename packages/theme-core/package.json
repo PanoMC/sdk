@@ -41,6 +41,7 @@
     "src",
     "bin",
     "lang",
+    "assets",
     "skin-contract.json"
   ],
   "publishConfig": {

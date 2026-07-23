@@ -265,6 +265,7 @@ build/
 plugins/
 static/runtime/
 static/lib/
+static/assets/
 src/lib/server/license-constants.generated.js
 `,
 
