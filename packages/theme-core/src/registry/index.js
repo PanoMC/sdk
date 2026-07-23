@@ -30,6 +30,8 @@ export function getSettingsSchemaExtension() {
   return themeConfig.settingsSchema ?? null;
 }
 
+import { dev } from "$app/environment";
+
 const overrideCache = new Map();
 
 /**
@@ -41,6 +43,25 @@ export async function resolveView(name, defaultThunk) {
   const override = themeConfig.views?.[name];
 
   if (override) {
+    // Never cache in dev: the cache would pin the module instance from the
+    // first request, so view-file edits (and core fixes) would silently not
+    // apply until a full dev-server restart. Vite already dedupes and
+    // HMR-invalidates the underlying import() calls.
+    if (dev) {
+      return Promise.resolve(
+        typeof override === "function" ? override() : override,
+      ).then(
+        (mod) => mod?.default ?? mod,
+        (e) => {
+          console.error(
+            `[theme-core] view override '${name}' failed to load; falling back to the default view`,
+            e,
+          );
+          return defaultThunk().then((m) => m?.default ?? m);
+        },
+      );
+    }
+
     let cached = overrideCache.get(name);
     if (!cached) {
       cached = Promise.resolve(
