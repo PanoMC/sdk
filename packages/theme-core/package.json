@@ -78,5 +78,10 @@
   },
   "bin": {
     "theme-core": "./bin/theme-core.js"
+  },
+  "peerDependenciesMeta": {
+    "@panomc/sdk": {
+      "optional": true
+    }
   }
 }

@@ -18,8 +18,18 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { pc, version, DOCS_URL, brandIntro, outro, note } from "./ui.js";
 
-const binDir = dirname(fileURLToPath(import.meta.url));
+let binDir = dirname(fileURLToPath(import.meta.url));
 const [cmd, ...args] = process.argv.slice(2);
+
+// Inside a theme, always drive the THEME's own installed engine, not whatever
+// version bunx happened to fetch (a stale `latest` here would desync the CLI
+// from the code the theme actually runs). `new` is exempt — it creates themes.
+{
+  const localBin = join(process.cwd(), "node_modules", "@panomc", "theme-core", "bin");
+  if (cmd !== "new" && existsSync(join(localBin, "theme-core.js")) && localBin !== binDir) {
+    binDir = localBin;
+  }
+}
 
 function run(script, extra = []) {
   const r = spawnSync("bun", [join(binDir, script), ...extra], {
