@@ -40,7 +40,7 @@
   Override from a theme:
     theme.config.js → views: { ThemeSettingsView: () => import("./src/views/ThemeSettingsView.svelte") }
 -->
-<!-- Tema ayarları -->
+<!-- Theme settings -->
 <div class="card">
   <div class="card-header">
     <ul
