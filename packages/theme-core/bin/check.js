@@ -87,6 +87,35 @@ for (const name of registered) {
   }
 }
 
+// 3b. no hook may be mounted in MORE than one effective view (override when
+// registered, default otherwise): a duplicated hook renders every plugin
+// mounted there twice on the same page (e.g. page:home:top in both a
+// MainLayoutView override and HomeView).
+{
+  const defaultViewsDir = join(pkgDir, "src", "lib", "views");
+  const hookOwners = {};
+  for (const file of readdirSync(defaultViewsDir)) {
+    if (!file.endsWith(".svelte")) continue;
+    const name = file.slice(0, -7);
+    const overridePath = join(themeDir, "src", "views", file);
+    const effective =
+      registered.includes(name) && existsSync(overridePath)
+        ? { path: overridePath, label: `src/views/${file}` }
+        : { path: join(defaultViewsDir, file), label: `${file} (default)` };
+    const src = readFileSync(effective.path, "utf-8");
+    for (const m of src.matchAll(/<Hook[^>]*name="([^"]+)"/g)) {
+      (hookOwners[m[1]] ??= []).push(effective.label);
+    }
+  }
+  for (const [hook, owners] of Object.entries(hookOwners)) {
+    if (new Set(owners).size > 1) {
+      problems.push(
+        `hook '${hook}' is mounted in multiple views (${[...new Set(owners)].join(", ")}) — plugins there render twice on the same page`,
+      );
+    }
+  }
+}
+
 // 4. lang-overrides sanity
 const langOverrides = join(themeDir, "lang-overrides");
 if (existsSync(langOverrides)) {
