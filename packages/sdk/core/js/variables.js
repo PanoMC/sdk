@@ -1,12 +1,15 @@
 export let API_URL = import.meta.env.VITE_API_URL;
-export const UI_URL = import.meta.env.VITE_UI_URL;
-export const PANEL_URL = import.meta.env.VITE_PANEL_URL;
-export const SETUP_URL = import.meta.env.VITE_SETUP_URL;
+export const UI_URL = import.meta.env.VITE_UI_URL ?? '/';
+export const PANEL_URL = import.meta.env.VITE_PANEL_URL ?? '/panel';
+export const SETUP_URL = import.meta.env.VITE_SETUP_URL ?? '/';
 export let PANO_WEBSITE_URL = import.meta.env.VITE_PANO_WEBSITE_URL;
 export let PANO_WEBSITE_API_URL = import.meta.env.VITE_PANO_WEBSITE_API_URL;
 export const PRERELEASE = import.meta.env.VITE_PRERELEASE;
 
-export const COOKIE_PREFIX = import.meta.env.VITE_COOKIE_PREFIX;
+// Default matches the Pano backend's cookie prefix — a theme without an explicit
+// VITE_COOKIE_PREFIX would otherwise look up 'undefinedauth_token' and treat every
+// logged-in visitor as anonymous on SSR navigations.
+export const COOKIE_PREFIX = import.meta.env.VITE_COOKIE_PREFIX ?? 'pano_';
 
 export const CSRF_TOKEN_COOKIE_NAME = 'csrf_token';
 export const JWT_COOKIE_NAME = 'auth_token';

@@ -251,7 +251,11 @@ export default await createSvelteConfig(import.meta.url);
 export default createViteConfig();
 `,
 
-  ".env": "VITE_API_URL=http://localhost:8088/api\n",
+  ".env": "# Your running Pano API address (--dev port is 8088; default install is port 80)\n"
+    + "VITE_API_URL=http://localhost:8088/api\n\n"
+    + "# Must match the Pano backend cookie prefix (leave as-is unless you changed it there)\n"
+    + "VITE_COOKIE_PREFIX=pano_\n\n"
+    + "VITE_UI_URL=/\nVITE_PANEL_URL=/panel\nVITE_SETUP_URL=/\n",
 
   ".gitignore": `node_modules/
 build/
