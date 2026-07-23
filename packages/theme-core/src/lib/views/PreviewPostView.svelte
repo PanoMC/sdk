@@ -52,7 +52,7 @@
     </div>
   {/if}
 
-  <!-- Kapak görseli + gradient + footer -->
+  <!-- Cover image + gradient + footer -->
   {#if (typeof themeSettings.postCoverImageEnabled === "undefined" ? true : themeSettings.postCoverImageEnabled) && post.thumbnailUrl}
     <div class="post-detail-cover rounded shadow-sm">
       <div class="ratio ratio-16x9">
@@ -64,7 +64,7 @@
           title={post.title} />
       </div>
 
-      <!-- Footer bilgileri -->
+      <!-- Footer info -->
       <div class="post-detail-cover__overlay rounded">
         <div class="d-flex flex-lg-row align-items-end justify-content-between">
           <div

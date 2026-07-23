@@ -30,10 +30,10 @@ Array.prototype.remove = function(index) {
 };
 
 /**
- * Panel ile aynı: satırda kısa süre "okunmamış" vurgusu, 3 sn sonra yerelde READ (API ayrı).
+ * Same as the panel: a brief "unread" highlight on the row, then locally marked READ after 3s (API is separate).
  * @param {import('svelte/store').Writable} notificationsStore
  * @param {unknown[] | null | undefined} sourceList
- * @param {number | null} limit - ilk N (panel load: 5); `null` = tüm liste (WS yenilemesi)
+ * @param {number | null} limit - first N (panel load: 5); `null` = full list (WS refresh)
  */
 export function scheduleMarkReadVisualEffects(notificationsStore, sourceList, limit) {
   if (!browser || !sourceList?.length) {

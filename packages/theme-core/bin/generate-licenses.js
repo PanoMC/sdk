@@ -49,7 +49,7 @@ export function collectLicenses(outputDir = null) {
   const packageJson = readPackageJson(packageJsonPath);
 
   if (!packageJson) {
-    throw new Error("package.json bulunamadı!");
+    throw new Error("package.json not found!");
   }
 
   const allDependencies = {
@@ -65,7 +65,7 @@ export function collectLicenses(outputDir = null) {
     const packageJsonPath = join(packagePath, "package.json");
 
     if (!existsSync(packageJsonPath)) {
-      console.warn(`Paket bulunamadı: ${packageName}`);
+      console.warn(`Package not found: ${packageName}`);
       continue;
     }
 
@@ -92,30 +92,30 @@ export function collectLicenses(outputDir = null) {
     });
   }
 
-  // Lisanslara göre sırala
+  // Sort by license
   licenses.sort((a, b) => a.name.localeCompare(b.name));
 
-  // Output path'i belirle
+  // Determine the output path
   let outputPath;
   if (outputDir) {
-    // Build klasörüne kaydet (sadece build sırasında)
+    // Save to the build folder (only during build)
     if (!existsSync(outputDir)) {
       mkdirSync(outputDir, { recursive: true });
     }
     outputPath = join(outputDir, "licenses.json");
   } else {
-    // Ana dizine kaydet (npm run generate-licenses için)
+    // Save to the root directory (for npm run generate-licenses)
     outputPath = join(projectRoot, "licenses.json");
   }
 
   writeFileSync(outputPath, JSON.stringify(licenses, null, 2), "utf-8");
 
-  console.log(`✅ ${licenses.length} paketin lisans bilgisi toplandı ve ${outputPath} dosyasına kaydedildi.`);
+  console.log(`✅ Collected license info for ${licenses.length} packages and saved it to ${outputPath}.`);
 }
 
-// Eğer direkt çalıştırılıyorsa (npm run generate-licenses)
-// Sadece script direkt çalıştırıldığında çalış, import edildiğinde çalışma
-// import.meta.url'yi file:// ile karşılaştırarak kontrol et
+// If run directly (npm run generate-licenses)
+// Only run when the script is executed directly, not when imported
+// Check by comparing import.meta.url against file://
 const isMainModule = import.meta.url === `file://${process.argv[1]}` ||
   (process.argv[1] && process.argv[1].endsWith("generate-licenses.js"));
 
