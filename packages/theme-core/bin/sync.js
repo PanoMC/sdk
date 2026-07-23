@@ -266,6 +266,24 @@ function syncLang() {
     );
     merged++;
   }
+
+  // Extra locales: an override file with no matching core base (e.g. de.json)
+  // becomes a NEW language. Its base is core en-US, so untranslated keys fall
+  // back to English instead of rendering as raw keys. The locale only shows up
+  // on the site if an admin has defined a locale with the same code in the
+  // panel — the theme file alone doesn't add it to the language picker.
+  if (existsSync(overrideDir)) {
+    const enBase = JSON.parse(readFileSync(join(coreLangDir, "en-US.json"), "utf-8"));
+    for (const file of readdirSync(overrideDir)) {
+      if (!file.endsWith(".json") || existsSync(join(coreLangDir, file))) continue;
+      const overlay = JSON.parse(readFileSync(join(overrideDir, file), "utf-8"));
+      writeFileSync(
+        join(outDir, file),
+        JSON.stringify(deepMerge(enBase, overlay), null, 2) + "\n",
+      );
+      merged++;
+    }
+  }
   return merged;
 }
 
