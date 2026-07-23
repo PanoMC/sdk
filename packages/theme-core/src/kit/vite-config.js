@@ -166,7 +166,6 @@ export function createViteConfig(opts = {}) {
             ],
             quietDeps: true,
             silenceDeprecations: [
-              "mixed-decls",
               "color-functions",
               "global-builtin",
               "import",
@@ -182,6 +181,19 @@ export function createViteConfig(opts = {}) {
           "svelte",
           ...(opts.extraOptimizeExclude ?? []),
         ],
+        // When the engine is a real node_modules install (registry, not a
+        // file:/workspace link), vite's dependency scanner cannot resolve the
+        // engine's .svelte glob imports and aborts with a scary "Failed to run
+        // dependency scan" wall of errors. The scan is only a warm-up — skip
+        // it there; the `include` list above is still pre-bundled.
+        ...(function () {
+          try {
+            const p = path.join(process.cwd(), "node_modules", "@panomc", "theme-core");
+            return fs.existsSync(p) && !fs.lstatSync(p).isSymbolicLink() ? { entries: [] } : {};
+          } catch {
+            return {};
+          }
+        })(),
       },
       server: {
         proxy: {
