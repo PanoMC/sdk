@@ -12,7 +12,6 @@ build pipeline) arrives as a package and updates with `bun update`.
 | 2 — Views | + `src/views/*.svelte` overrides (typed props) | Minors: zero. Majors: only the views you overrode |
 | 3 — Eject | + owned route files (`@theme-core-eject`) | Ejected files are yours to maintain |
 
-There is also **Tier 0** (a skin: no build at all, rides the SYSTEM vanilla —
 see `skin-runtime/launcher.js`), for pure-CSS restyles that must never rebuild.
 
 ## Anatomy of a theme

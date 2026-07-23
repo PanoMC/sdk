@@ -16,24 +16,10 @@ import { join, resolve } from "node:path";
 
 const ROOT = process.cwd();
 
-// Tier-0 skins have no build step: the zip IS the source folder (manifest,
-// launcher index.js, skin/, screenshots, core-meta). Detect via core-meta.json.
-let tier = null;
-if (existsSync(join(ROOT, "core-meta.json"))) {
-  try {
-    tier = JSON.parse(readFileSync(join(ROOT, "core-meta.json"), "utf-8")).tier ?? null;
-  } catch {
-    /* fall through to build mode */
-  }
-}
-const BUILD = tier === 0 ? ROOT : join(ROOT, "build");
+const BUILD = join(ROOT, "build");
 
 if (!existsSync(join(BUILD, "manifest.json"))) {
-  console.error(
-    tier === 0
-      ? "[theme-core] manifest.json missing in the skin folder"
-      : "[theme-core] build/manifest.json missing — run `bun run build` first",
-  );
+  console.error("[theme-core] build/manifest.json missing — run `bun run build` first");
   process.exit(1);
 }
 
@@ -43,8 +29,7 @@ const out = resolve(ROOT, process.argv[2] ?? `${manifest.id}-${manifest.version}
 // Fixed mtime: any constant works; changing it changes every future zip hash,
 // so treat it as frozen.
 const EPOCH = new Date("2026-01-01T00:00:00Z");
-// Never ship repo internals (relevant in tier-0 mode, where the source folder
-// itself is zipped).
+// Safety: never let repo internals or a previous zip leak into the artifact.
 const EXCLUDE = new Set([".git", ".gitignore", ".claude", "node_modules", ".DS_Store"]);
 
 const files = [];

@@ -39,8 +39,7 @@
   },
   "files": [
     "src",
-    "bin",
-    "skin-runtime"
+    "bin"
   ],
   "publishConfig": {
     "access": "public"
