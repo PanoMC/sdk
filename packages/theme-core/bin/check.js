@@ -178,6 +178,44 @@ if (existsSync(themeConfigPath) && contract.settings_tabs) {
   }
 }
 
+// 7. i18n keys used by overridden views must exist in the MERGED lang tree
+// (lang/ is generated: core base + lang-overrides). A missing key renders raw
+// on screen ("components.header.status"). WARNING not FAIL: some keys may be
+// served by the backend's dynamic THEME translations at runtime.
+const viewsDir = join(themeDir, "src", "views");
+const mergedLangPath = join(themeDir, "lang", "en-US.json");
+if (existsSync(viewsDir) && existsSync(mergedLangPath)) {
+  const lang = JSON.parse(readFileSync(mergedLangPath, "utf-8"));
+  const hasKey = (dotted) => {
+    let node = lang;
+    for (const part of dotted.split(".")) {
+      if (node == null || typeof node !== "object" || !(part in node)) return false;
+      node = node[part];
+    }
+    return true;
+  };
+  const scan = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const p = join(dir, entry.name);
+      if (entry.isDirectory()) scan(p);
+      else if (entry.name.endsWith(".svelte")) {
+        const src = readFileSync(p, "utf-8");
+        // static literals only: $_("a.b.c") / $_('a.b.c') — the closing quote
+        // must be followed by ')' or ',' so concatenated dynamic keys like
+        // $_("errors." + code) are skipped
+        for (const m of src.matchAll(/\$_\(\s*["']([\w.-]+)["']\s*[),]/g)) {
+          if (!hasKey(m[1])) {
+            warnings.push(
+              `src/views/${p.slice(viewsDir.length + 1)} uses i18n key '${m[1]}' missing from the merged lang tree — it will render raw; add it to lang-overrides/`,
+            );
+          }
+        }
+      }
+    }
+  };
+  scan(viewsDir);
+}
+
 for (const w of warnings) console.log(`[check] warn: ${w}`);
 if (problems.length) {
   for (const p of problems) console.error(`[check] FAIL: ${p}`);

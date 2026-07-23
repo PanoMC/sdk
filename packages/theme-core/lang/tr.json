@@ -159,7 +159,9 @@
       "demo-mode-alert": "Şu an demo modundasınız. \"demo\" kullanıcı adı ve \"123456\" şifresi ile giriş yapabilirsiniz.",
       "register-email-required-info": "Giriş işlemini tamamlamak için e-posta adresinizi kaydetmeniz gerekmektedir.",
       "email-verification-sent-info": "E-posta adresiniz başarıyla kaydedildi. Giriş yapabilmek için lütfen e-postanızı doğrulayın. Gelen kutunuzu ve spam klasörünüzü kontrol etmeyi unutmayın.",
-      "or": "veya"
+      "or": "veya",
+      "set-username-title": "Kullanıcı adı seç",
+      "set-username-description": "Sitede diğer oyuncuların göreceği kullanıcı adını belirle."
     },
     "homepage": {
       "title": "Haberler"

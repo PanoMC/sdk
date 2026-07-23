@@ -159,7 +159,9 @@
       "demo-mode-alert": "You are in demo mode. You can log in with the username \"demo\" and the password \"123456\".",
       "register-email-required-info": "You need to register your email address to complete the login process.",
       "email-verification-sent-info": "Your email address has been successfully saved. Please verify your email to log in. Don't forget to check your inbox and spam folder.",
-      "or": "or"
+      "or": "or",
+      "set-username-title": "Choose a username",
+      "set-username-description": "Pick the username other players will see on the site."
     },
     "homepage": {
       "title": "News"
