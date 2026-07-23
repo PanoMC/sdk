@@ -47,13 +47,26 @@
   import { hasPermission } from "$pano/lib/auth.util.js";
 
 
-  const layouts = import.meta.glob('$pano/lib/layouts/*.svelte', { eager: true });
+  // Static imports instead of import.meta.glob: the glob's transform emits
+  // relative specifiers that vite's dependency scanner cannot resolve when the
+  // engine is a registry install, killing pre-bundling with a wall of
+  // UNRESOLVED_IMPORT errors on every fresh theme. The layout set is part of
+  // the theme contract, so enumerating it is safe.
+  import * as AppLayout from "$pano/lib/layouts/AppLayout.svelte";
+  import * as AuthLayout from "$pano/lib/layouts/AuthLayout.svelte";
+  import * as MainLayout from "$pano/lib/layouts/MainLayout.svelte";
+  import * as ProfileLayout from "$pano/lib/layouts/ProfileLayout.svelte";
+  import * as ThemeSettingsLayout from "$pano/lib/layouts/ThemeSettingsLayout.svelte";
+  import * as TicketsLayout from "$pano/lib/layouts/TicketsLayout.svelte";
 
-  const layoutMap = Object.keys(layouts).reduce((acc, path) => {
-    const name = path.split('/').pop().replace('.svelte', '');
-    acc[name] = layouts[path];
-    return acc;
-  }, {});
+  const layoutMap = {
+    AppLayout,
+    AuthLayout,
+    MainLayout,
+    ProfileLayout,
+    ThemeSettingsLayout,
+    TicketsLayout,
+  };
 
   function removePrefix(str, prefix) {
     return str.startsWith(prefix) ? str.slice(prefix.length) : str;

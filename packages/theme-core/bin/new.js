@@ -206,9 +206,9 @@ export default {
         dev: "vite dev --host=0.0.0.0 --port 3000",
         "dev:ui": 'concurrently "bun run watch:ui" "bun run dev"',
         "watch:ui":
-          "sass src/styles/style.scss static/style.css --watch --load-path=. --load-path=node_modules --quiet-deps --no-source-map",
+          "sass src/styles/style.scss static/style.css --watch --load-path=. --load-path=node_modules --quiet-deps --silence-deprecation=import --no-source-map",
         "build:ui":
-          "sass src/styles/style.scss static/style.css --load-path=. --load-path=node_modules --quiet-deps --no-source-map",
+          "sass src/styles/style.scss static/style.css --load-path=. --load-path=node_modules --quiet-deps --silence-deprecation=import --no-source-map",
         sync: "bun node_modules/@panomc/theme-core/bin/sync.js",
         check: "bun node_modules/@panomc/theme-core/bin/check.js",
         prebuild:
