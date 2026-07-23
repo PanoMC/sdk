@@ -4,29 +4,56 @@
  * Wraps @clack/prompts + picocolors so every command speaks the same visual
  * language (styled intro/outro, spinners, prompts) and shares the TTY/CI
  * detection that keeps sync/check/package safe to run non-interactively.
+ *
+ * Both packages are OPTIONAL at runtime: a consumer whose installer skipped
+ * the engine's transitive dependencies (bun does this for file:-linked
+ * submodule setups with a stale lockfile) must still be able to run
+ * sync/check/package — they just get plain, unstyled output. Only the
+ * interactive wizard genuinely needs @clack and says so when it's missing.
  */
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as clack from "@clack/prompts";
-import pc from "picocolors";
+
+let clack;
+try {
+  // computed specifier: keeps bun from resolving the import eagerly at load
+  clack = await import("@clack/" + "prompts");
+} catch {
+  const line = (msg = "") => console.log(msg);
+  const missing = () => {
+    console.error(
+      "the interactive wizard needs @clack/prompts (run bun install in the theme, or pass arguments instead)",
+    );
+    process.exit(1);
+  };
+  clack = {
+    intro: line,
+    outro: line,
+    note: (msg, title) => line(title ? `\n${title}\n${msg}` : msg),
+    log: { info: line, warn: line, error: line, success: line, step: line, message: line },
+    cancel: line,
+    isCancel: () => false,
+    spinner: () => ({ start: line, stop: line, message: line }),
+    text: missing,
+    confirm: missing,
+    select: missing,
+  };
+}
+
+let pc;
+try {
+  pc = (await import("pico" + "colors")).default;
+} catch {
+  pc = new Proxy({}, { get: () => (s) => String(s) });
+}
 
 export { clack, pc };
 
 // Re-export the clack primitives the commands reach for, so callers import
 // from one place instead of poking at the namespace.
-export const {
-  intro,
-  outro,
-  text,
-  confirm,
-  select,
-  spinner,
-  cancel,
-  isCancel,
-  note,
-  log,
-} = clack;
+export const { intro, outro, text, confirm, select, spinner, cancel, isCancel, note, log } =
+  clack;
 
 const binDir = dirname(fileURLToPath(import.meta.url));
 export const corePkg = JSON.parse(
