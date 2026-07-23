@@ -15,7 +15,7 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "node scripts/set-version.js ${nextRelease.version}",
-        "publishCmd": "cd packages/theme-core && bun publish --access public --no-git-checks && cd ../sdk && bun publish --access public --no-git-checks"
+        "publishCmd": "cd packages/theme-core && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../sdk && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks"
       }
     ],
     [
