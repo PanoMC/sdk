@@ -69,6 +69,7 @@
   import { saveThemeSettings } from "$pano/lib/services/theme-setting";
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
   import { orderLinksBySavedOrder } from "$pano/lib/orderNavLinks.util.js";
+  import { getSettingsSchemaExtension } from "$pano/registry/index.js";
 
   export let data;
 
@@ -76,10 +77,16 @@
   const originalThemeSettings = writable(JSON.parse(JSON.stringify(data.themeSettings)));
   const session = getContext("session");
 
+  // Theme-declared settings-schema extension (theme.config.js → settingsSchema).
+  // Additive only: it appends keys/tabs to the base tab map below so a fork's
+  // ThemeSettingsView can edit extra keys/tabs and still get save / reset /
+  // dirty-check coverage. Populated on both server and client before load runs.
+  const settingsSchemaExtension = getSettingsSchemaExtension();
+
   const saving = writable(false);
   const resetting = writable(false);
   const resettingAll = writable(false);
-  const activeTab = writable("general");
+  const activeTab = writable(settingsSchemaExtension?.defaultTab ?? "general");
   const backgroundImageFiles = writable(null);
   const headerBackgroundImageFiles = writable(null);
   const playCardBackgroundImageFiles = writable(null);
@@ -214,7 +221,7 @@
     $themeSettings = $themeSettings;
   }
 
-  const tabKeys = {
+  const baseTabKeys = {
     general: [
       "themeColor",
       "backgroundColor",
@@ -286,6 +293,28 @@
     ],
     advanced: ["customCss"]
   };
+
+  // Effective tab → settings-key map: the base map with the theme's
+  // settingsSchema extension merged in. ADDITIVE ONLY — extension keys are
+  // appended to their tab (deduped), tabs absent from the base are appended
+  // AFTER the base tabs, and nothing the base defines is ever removed. Every
+  // consumer below (save / reset / dirty-check) iterates this merged map.
+  const tabKeys = (() => {
+    const merged = {};
+    for (const tab in baseTabKeys) merged[tab] = [...baseTabKeys[tab]];
+
+    const extTabs = settingsSchemaExtension?.tabs;
+    if (extTabs) {
+      for (const tab in extTabs) {
+        if (!merged[tab]) merged[tab] = [];
+        for (const key of extTabs[tab]) {
+          if (!merged[tab].includes(key)) merged[tab].push(key);
+        }
+      }
+    }
+
+    return merged;
+  })();
 
   const checkTabChanged = (tab, current, original) => {
     return tabKeys[tab]?.some((key) => {

@@ -12,11 +12,13 @@
  *      (plugin injection points must not be lost by a restyle)
  *   4. lang-overrides files are valid JSON and only add/replace keys
  *   5. manifest.json carries the required keys
+ *   6. settingsSchema (theme.config.js) is shape-valid, appends only, puts no
+ *      key in a different tab than the base does, and its defaultTab exists
  * Exit code 1 on any violation.
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const themeDir = process.cwd();
@@ -110,6 +112,70 @@ if (existsSync(manifestPath)) {
   }
 } else {
   problems.push("manifest.json missing");
+}
+
+// 6. settings-schema extension (theme.config.js → settingsSchema)
+// Imported (not regex-scanned): the schema is a nested object literal, and the
+// view thunks stay lazy, so importing the config runs no Svelte code.
+if (existsSync(themeConfigPath) && contract.settings_tabs) {
+  let settingsSchema;
+  try {
+    const mod = await import(pathToFileURL(themeConfigPath).href);
+    settingsSchema = (mod.default ?? mod)?.settingsSchema ?? null;
+  } catch (e) {
+    problems.push(`theme.config.js could not be imported to validate settingsSchema: ${e.message}`);
+    settingsSchema = null;
+  }
+
+  if (settingsSchema != null) {
+    if (typeof settingsSchema !== "object" || Array.isArray(settingsSchema)) {
+      problems.push("theme.config.js: settingsSchema must be an object ({ tabs?, defaultTab? })");
+    } else {
+      // base tab → keys, dropping the "_note" doc string (non-array values)
+      const baseTabs = {};
+      for (const tab in contract.settings_tabs) {
+        if (Array.isArray(contract.settings_tabs[tab])) baseTabs[tab] = contract.settings_tabs[tab];
+      }
+
+      // key → the single tab it may live in; base first, extension appends.
+      // A key mapped to two different tabs is a save conflict (save/reset are
+      // per-tab), so cross-tab duplicates FAIL; same-tab duplicates just dedupe.
+      const keyToTab = {};
+      for (const tab in baseTabs) for (const key of baseTabs[tab]) keyToTab[key] = tab;
+      const tabSet = new Set(Object.keys(baseTabs));
+
+      const extTabs = settingsSchema.tabs;
+      if (extTabs != null) {
+        if (typeof extTabs !== "object" || Array.isArray(extTabs)) {
+          problems.push("theme.config.js: settingsSchema.tabs must be an object mapping tabId → string[]");
+        } else {
+          for (const tab in extTabs) {
+            tabSet.add(tab);
+            const keys = extTabs[tab];
+            if (!Array.isArray(keys) || keys.some((k) => typeof k !== "string")) {
+              problems.push(`theme.config.js: settingsSchema.tabs['${tab}'] must be an array of setting-key strings`);
+              continue;
+            }
+            for (const key of keys) {
+              const owner = keyToTab[key];
+              if (owner === undefined) keyToTab[key] = tab;
+              else if (owner !== tab)
+                problems.push(`settingsSchema key '${key}' is declared in tab '${tab}' but already belongs to tab '${owner}' — the same key in two tabs makes save/reset ambiguous`);
+              // owner === tab → harmless duplicate, deduped at runtime
+            }
+          }
+        }
+      }
+
+      if (settingsSchema.defaultTab != null) {
+        if (typeof settingsSchema.defaultTab !== "string") {
+          problems.push("theme.config.js: settingsSchema.defaultTab must be a string");
+        } else if (!tabSet.has(settingsSchema.defaultTab)) {
+          problems.push(`settingsSchema.defaultTab '${settingsSchema.defaultTab}' is not a known tab (base tabs + your settingsSchema.tabs) — the settings page would open on an empty tab`);
+        }
+      }
+    }
+  }
 }
 
 for (const w of warnings) console.log(`[check] warn: ${w}`);

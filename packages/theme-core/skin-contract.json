@@ -311,6 +311,18 @@
    }
   }
  },
+ "settings_tabs": {
+  "_note": "Base ThemeSettingsPage tab → settings-key map, mirrored from the controller's baseTabKeys. A theme.config.js settingsSchema may APPEND keys/tabs; the checker uses this to reject a key that a theme puts in a different tab than the base does (save/reset are per-tab, so that would be ambiguous).",
+  "general": ["themeColor", "backgroundColor", "bgImagePosition", "bgImageRepeat", "bgImageSize", "backgroundImage"],
+  "logo": ["logoVisibility", "logoPosition", "logoHeight", "logoWidth", "logoAnimation"],
+  "header": ["defaultHeaderBg", "headerBgColor", "headerHeight", "headerWidthOption", "headerNavBarGap", "headerBgImagePosition", "headerBgImageRepeat", "headerBgImageSize", "headerBackgroundImage"],
+  "navbar": ["navbarWidthOption", "navbarBgColor", "navRoundLevel", "navLinksEnabled", "navLinksEnableStatus", "navLinksOrder"],
+  "sidebar": ["sidebarEnabled", "sidebarPosition", "sidebarCarts"],
+  "play-card": ["playCardStyle", "defaultPlayCardBg", "playCardBgOpacity", "playCardBgEffect", "playCardBackgroundImage", "playCardIpText", "playCardStatusBadge", "playCardPlayerCount", "playCardVersionInfo", "playCardIpColor", "playCardBorderColor"],
+  "post-card": ["postsEnabled", "postCoverImageEnabled", "postReadMoreButtonEnabled", "postAuthorImageEnabled", "postViewCountEnabled", "postPreviousPageEnabled", "postNextPageEnabled"],
+  "footer": ["footerEnabled", "footerLogoEnabled", "footerTitleEnabled", "footerTitle", "footerContentEnabled", "footerContent", "footerLinksEnabled", "footerPluginLinksEnabled", "footerLinksEnableStatus", "footerLinksOrder"],
+  "advanced": ["customCss"]
+ },
  "registry_components": [
   "LoginFormBody",
   "RegisterForm",

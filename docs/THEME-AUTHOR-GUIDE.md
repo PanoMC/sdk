@@ -81,6 +81,37 @@ bunx theme-core check
 bunx theme-core package   # deterministic zip — its sha256 is the license identity
 ```
 
+## Extending theme settings
+
+The theme-settings page (`ThemeSettingsView`) is driven by a tab → settings-key
+map in the core controller. If your override renders extra inputs — new keys, or
+even a whole new tab — declare them in `theme.config.js` so the controller
+**saves and resets** them (otherwise they render but never persist):
+
+```js
+// theme.config.js
+export default {
+  views: { ThemeSettingsView: () => import("./src/views/ThemeSettingsView.svelte") },
+  settingsSchema: {
+    // Additive only: keys are APPENDED to the tab (a new tab is created if
+    // absent). You cannot remove or move a base key.
+    tabs: {
+      header: ["heroSubtitle", "heroSubtitleVisibility"],
+      "support-page": ["supportPageDiscordLink"],
+    },
+    // Optional: the tab the page opens on. Required only when your view does
+    // not render the base default tab ("general").
+    defaultTab: "logo",
+  },
+};
+```
+
+Rules: a key may live in exactly one tab — declaring a base key under a
+different tab fails the checker (save/reset are per-tab). `defaultTab` must be a
+real tab (a base tab or one of yours). A key that is only *read* in markup (no
+input in the settings view) needs no schema entry — just leave a code comment
+noting it.
+
 ## Rules the checker enforces
 
 - `svelte` pinned exactly to core's version (plugins share the host runtime;
@@ -88,6 +119,8 @@ bunx theme-core package   # deterministic zip — its sha256 is the license iden
 - every registered view exists and is a known contract name
 - overridden views keep every plugin slot/hook the default mounts
 - `lang-overrides/*.json` parse; merging is additive (you cannot delete a key)
+- `settingsSchema` (when present) is shape-valid, appends only, puts no key in a
+  different tab than the base does, and its `defaultTab` is a real tab
 - `manifest.json` carries the required keys; `id` ≠ `vanilla-theme`
 
 The machine-readable contract lives in `skin-contract.json` inside the package.
