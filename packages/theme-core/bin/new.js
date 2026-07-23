@@ -2,6 +2,7 @@
 /**
  * theme-core new — scaffold a working Pano theme.
  *
+ *   bunx @panomc/theme-core new                     interactive wizard (TTY only)
  *   bunx @panomc/theme-core new my-theme            npm-published core (default)
  *   bunx @panomc/theme-core new my-theme --local    file: links into a local theme-core
  *                                           checkout (this workspace)
@@ -12,9 +13,22 @@
  * theme and it carries repo-specific baggage — this scaffolder is the entry.
  */
 import { existsSync, mkdirSync, writeFileSync, readFileSync, copyFileSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
+import { join, dirname, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import {
+  pc,
+  isInteractive,
+  cancelGuard,
+  brandIntro,
+  text,
+  confirm,
+  spinner,
+  outro,
+  note,
+  DOCS_URL,
+} from "./ui.js";
 
 const binDir = dirname(fileURLToPath(import.meta.url));
 const corePkgDir = join(binDir, "..");
@@ -22,25 +36,92 @@ const corePkg = JSON.parse(readFileSync(join(corePkgDir, "package.json"), "utf-8
 const require = createRequire(import.meta.url);
 
 const args = process.argv.slice(2);
-const name = args.find((a) => !a.startsWith("-"));
+const nameArg = args.find((a) => !a.startsWith("-"));
 const local = args.includes("--local") || corePkg.version === "0.0.0-development";
 
-if (!name || !/^[a-z][a-z0-9-]*$/.test(name)) {
-  console.error("usage: bunx @panomc/theme-core new <kebab-case-name> [--local]");
-  process.exit(1);
+const KEBAB = /^[a-z][a-z0-9-]*$/;
+const titleFrom = (name) =>
+  name
+    .split("-")
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+
+// ---- resolve inputs ---------------------------------------------------------
+// Prompt for EVERYTHING before a single file is written, so a Ctrl+C never
+// leaves a half-created theme on disk.
+let name, dir, title, author, doInstall;
+const interactive = isInteractive() && !nameArg;
+
+if (interactive) {
+  brandIntro();
+
+  const where = cancelGuard(
+    await text({
+      message: "Where should we create your theme?",
+      placeholder: "./my-theme",
+      defaultValue: "./my-theme",
+      validate(value) {
+        const v = (value || "./my-theme").trim();
+        const base = basename(resolve(process.cwd(), v));
+        if (!KEBAB.test(base))
+          return "The folder name must be kebab-case (a-z, 0-9, dashes).";
+        if (existsSync(resolve(process.cwd(), v)))
+          return `${v} already exists — pick a path that doesn't exist yet.`;
+      },
+    }),
+  );
+  const rel = (where || "./my-theme").trim();
+  dir = resolve(process.cwd(), rel);
+  name = basename(dir);
+
+  title = cancelGuard(
+    await text({
+      message: "Theme title?",
+      placeholder: titleFrom(name),
+      defaultValue: titleFrom(name),
+    }),
+  );
+  title = (title || titleFrom(name)).trim();
+
+  author = cancelGuard(
+    await text({
+      message: "Author?",
+      placeholder: "CHANGE-ME",
+      defaultValue: "CHANGE-ME",
+    }),
+  );
+  author = (author || "CHANGE-ME").trim() || "CHANGE-ME";
+
+  doInstall = cancelGuard(
+    await confirm({
+      message: "Install dependencies with bun now?",
+      initialValue: true,
+    }),
+  );
+} else {
+  // Non-interactive: a name argument is mandatory. No prompts, no install.
+  if (!nameArg || !KEBAB.test(nameArg)) {
+    if (!nameArg && !process.stdout.isTTY) {
+      console.error(
+        `${pc.red("✗")} a theme name is required in non-interactive mode\n  usage: ${pc.cyan("bunx @panomc/theme-core new <kebab-case-name> [--local]")}\n  ${pc.dim("(run it in a terminal with no name for the interactive wizard)")}`,
+      );
+    } else {
+      console.error(
+        `${pc.red("✗")} usage: ${pc.cyan("bunx @panomc/theme-core new <kebab-case-name> [--local]")}`,
+      );
+    }
+    process.exit(1);
+  }
+  name = nameArg;
+  dir = resolve(process.cwd(), name);
+  if (existsSync(dir)) {
+    console.error(`${pc.red("✗")} ${dir} already exists — refusing to overwrite`);
+    process.exit(1);
+  }
+  title = titleFrom(name);
+  author = "CHANGE-ME";
+  doInstall = false;
 }
-
-const dir = resolve(process.cwd(), name);
-if (existsSync(dir)) {
-  console.error(`[theme-core] ${dir} already exists — refusing to overwrite`);
-  process.exit(1);
-}
-
-const title = name
-  .split("-")
-  .map((w) => w[0].toUpperCase() + w.slice(1))
-  .join(" ");
-
 
 // ---- dependency sources -----------------------------------------------------
 // Local mode links straight into the workspace checkout so the scaffold works
@@ -90,7 +171,7 @@ const FILES = {
       id: name,
       title,
       version: "1.0.0",
-      author: "CHANGE-ME",
+      author,
       description: `${title} theme for Pano`,
       panoVersion: "1.0.0",
       screenshots: [],
@@ -247,9 +328,8 @@ ${collectTokens()}`,
 A Pano theme built on [@panomc/theme-core](https://github.com/PanoMC/sdk).
 
 \`\`\`sh
-bun install
-bun run sync     # generate routes / lang / lib bridges
-bun run dev      # against a local Pano backend (VITE_API_URL in .env)
+bun install      # also generates routes / lang / lib bridges
+bun run dev:ui   # against a local Pano backend (VITE_API_URL in .env)
 bun run check    # contract lint
 bun run build && bun run package
 \`\`\`
@@ -259,23 +339,73 @@ bun run build && bun run package
 `,
 };
 
-
-for (const [rel, content] of Object.entries(FILES)) {
-  const target = join(dir, rel);
-  mkdirSync(dirname(target), { recursive: true });
-  writeFileSync(target, content);
+// ---- scaffold ---------------------------------------------------------------
+function scaffold() {
+  for (const [rel, content] of Object.entries(FILES)) {
+    const target = join(dir, rel);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, content);
+  }
+  copyFileSync(join(binDir, "templates", "app.html"), join(dir, "src", "app.html"));
+  return Object.keys(FILES).length + 1;
 }
-copyFileSync(join(binDir, "templates", "app.html"), join(dir, "src", "app.html"));
 
-console.log(`[theme-core] scaffolded ${name}/ (${Object.keys(FILES).length + 1} files, ${local ? "local workspace links" : `core ^${corePkg.version}`})
+const depLabel = local ? "local workspace links" : `core ^${corePkg.version}`;
 
-Next steps:
-  cd ${name}
-  bun install          # if it hangs at "Resolving": bun install --backend=copyfile
-  bun run sync         # generates src/routes, src/lib bridges, lang/
-  bun run dev          # needs a Pano backend (VITE_API_URL in .env)
+if (interactive) {
+  const s = spinner();
+  s.start(`Scaffolding ${name}…`);
+  const count = scaffold();
+  s.stop(`Scaffolded ${count} files ${pc.dim(`(${depLabel})`)}`);
 
-Make it yours:
-  src/styles/tokens.scss           colors / fonts / radius (Tier 1)
-  bunx @panomc/theme-core list-views       what you can override
-  bunx @panomc/theme-core eject-view HomeView   own a page's markup (Tier 2)`);
+  if (doInstall) {
+    const s2 = spinner();
+    s2.start("Installing dependencies (bun install)…");
+    const r = spawnSync("bun", ["install", "--backend=copyfile"], {
+      cwd: dir,
+      stdio: "ignore",
+    });
+    if (r.status === 0) {
+      s2.stop("Installed dependencies");
+    } else {
+      s2.stop(`${pc.yellow("▲")} bun install did not complete — run it yourself`);
+      note(
+        `${pc.dim("cd")} ${name}\n${pc.dim("run")} ${pc.cyan("bun install --backend=copyfile")}`,
+        "Finish setup manually",
+      );
+    }
+  }
+
+  outro(
+    [
+      pc.bold("Your theme is ready!"),
+      "",
+      "Next steps:",
+      `  ${pc.cyan(`cd ${name}`)}`,
+      doInstall ? null : `  ${pc.cyan("bun install --backend=copyfile")}`,
+      `  ${pc.cyan("bun run dev:ui")}`,
+      "",
+      `Then browse through your Pano's address ${pc.dim("(e.g. http://localhost:8088)")}.`,
+      `Docs: ${pc.cyan(DOCS_URL)}`,
+    ]
+      .filter((l) => l !== null)
+      .join("\n"),
+  );
+} else {
+  const count = scaffold();
+  console.log(
+    [
+      `${pc.green("✓")} scaffolded ${pc.bold(`${name}/`)} ${pc.dim(`(${count} files, ${depLabel})`)}`,
+      "",
+      pc.bold("Next steps:"),
+      `  ${pc.cyan(`cd ${name}`)}`,
+      `  ${pc.cyan("bun install")}          ${pc.dim('# also generates routes/lang/bridges; if it hangs: bun install --backend=copyfile')}`,
+      `  ${pc.cyan("bun run dev:ui")}       ${pc.dim("# needs a Pano backend (VITE_API_URL in .env)")}`,
+      "",
+      pc.bold("Make it yours:"),
+      `  ${pc.cyan("src/styles/tokens.scss")}                    ${pc.dim("colors / fonts / radius (Tier 1)")}`,
+      `  ${pc.cyan("bunx @panomc/theme-core list-views")}        ${pc.dim("what you can override")}`,
+      `  ${pc.cyan("bunx @panomc/theme-core eject-view HomeView")} ${pc.dim("own a page's markup (Tier 2)")}`,
+    ].join("\n"),
+  );
+}

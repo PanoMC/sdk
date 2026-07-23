@@ -13,6 +13,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync, utimesSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { pc } from "./ui.js";
 
 const ROOT = process.cwd();
 
@@ -53,5 +54,7 @@ execFileSync("zip", ["-X", "-q", out, "-@"], {
 });
 
 const hash = execFileSync("sha256sum", [out]).toString().split(" ")[0];
-console.log(`[theme-core] ${out}`);
-console.log(`[theme-core] ${files.length} entries, sha256 ${hash} (this hash is the premium license identity)`);
+console.log(`${pc.green("✓")} ${pc.bold("packaged")} ${pc.cyan(out)}`);
+console.log(
+  `  ${pc.dim(`${files.length} entries, sha256`)} ${hash}\n  ${pc.dim("(this hash is the premium license identity)")}`,
+);

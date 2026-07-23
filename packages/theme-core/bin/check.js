@@ -19,6 +19,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { pc } from "./ui.js";
 
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const themeDir = process.cwd();
@@ -245,9 +246,18 @@ if (existsSync(viewsDir) && existsSync(mergedLangPath)) {
   scan(viewsDir);
 }
 
-for (const w of warnings) console.log(`[check] warn: ${w}`);
+console.log(pc.dim(`theme-core check — validating against core ${corePkg.version}`));
+
+for (const w of warnings) console.log(`  ${pc.yellow("▲")} ${w}`);
 if (problems.length) {
-  for (const p of problems) console.error(`[check] FAIL: ${p}`);
+  for (const p of problems) console.error(`  ${pc.red("✗")} ${p}`);
+  console.error(
+    pc.red(
+      `\n${problems.length} problem${problems.length === 1 ? "" : "s"} must be fixed before this theme ships.`,
+    ),
+  );
   process.exit(1);
 }
-console.log(`[check] OK — ${registered.length} view overrides validated against core ${corePkg.version}`);
+console.log(
+  `  ${pc.green("✓")} ${pc.bold("OK")} — ${registered.length} view override${registered.length === 1 ? "" : "s"} validated against core ${corePkg.version}`,
+);
