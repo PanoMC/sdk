@@ -183,11 +183,16 @@ export async function onLogoutSession(sessionId, loadingSessionId, showToast, in
       loadingSessionId.set(null);
 
       if (body.error) {
-        await showToast('errors.' + body.error);
+        // The variant rides on `show`'s options argument rather than a separate
+        // showError parameter: onLogoutSession receives the toast function from the
+        // view, and widening that signature would be a breaking controller-props change.
+        await showToast('errors.' + body.error, {}, undefined, { variant: 'danger' });
         return;
       }
 
-      await showToast('toasts.session-logged-out-successful');
+      await showToast('toasts.session-logged-out-successful', {}, undefined, {
+        variant: 'success',
+      });
       invalidateAll();
     },
   });

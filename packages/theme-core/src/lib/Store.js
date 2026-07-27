@@ -3,7 +3,7 @@ import { writable } from "svelte/store";
 import { sendLogout } from "$pano/lib/services/auth.js";
 import { goto } from "$app/navigation";
 import { redirect } from "@sveltejs/kit";
-import { show as showToast } from "$pano/lib/components/ToastContainer.svelte";
+import { showSuccess as showSuccessToast } from "$pano/lib/components/ToastContainer.svelte";
 
 export const notificationsCount = writable(0);
 export const quickNotifications = writable([]);
@@ -25,7 +25,7 @@ export async function logout(session) {
       });
     }
 
-    await showToast("toasts.session-logged-out-successful");
+    await showSuccessToast("toasts.session-logged-out-successful");
     await goto("/");
   });
 }

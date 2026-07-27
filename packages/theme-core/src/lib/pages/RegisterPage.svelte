@@ -56,7 +56,7 @@
   import { NETWORK_ERROR } from "$pano/lib/api.util";
 
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
-  import { show as showToast } from "$pano/lib/components/ToastContainer.svelte";
+  import { showSuccess as showSuccessToast } from "$pano/lib/components/ToastContainer.svelte";
 
   import { sendRegister, getCredentials } from "$pano/lib/services/auth.js";
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
@@ -115,7 +115,7 @@
               return data;
             });
 
-            await showToast("successes.LOGIN_SUCCESSFUL");
+            await showSuccessToast("successes.LOGIN_SUCCESSFUL");
             await goto("/");
             loading.set(false);
             return;

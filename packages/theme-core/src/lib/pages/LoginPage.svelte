@@ -68,7 +68,7 @@
   import { currentLanguage } from "$pano/lib/language.util";
 
   import { getCredentials, sendLogin, sendRegister, verifyLinkCode } from "$pano/lib/services/auth.js";
-  import { show as showToast } from "$pano/lib/components/ToastContainer.svelte";
+  import { showSuccess as showSuccessToast } from "$pano/lib/components/ToastContainer.svelte";
 
   import { stripIdentifierWhitespace } from "$pano/lib/loginInput.util.js";
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
@@ -232,7 +232,7 @@
           return data;
         });
 
-        await showToast("successes.LOGIN_SUCCESSFUL");
+        await showSuccessToast("successes.LOGIN_SUCCESSFUL");
         await goto("/");
         return;
       }
@@ -247,7 +247,7 @@
         return;
       }
 
-      await showToast("successes.REGISTER_SUCCESSFUL");
+      await showSuccessToast("successes.REGISTER_SUCCESSFUL");
 
       const loginBody = await sendLogin({ usernameOrEmail: $usernameOrEmail, password: $password });
       if (loginBody.result !== "ok") {
@@ -408,7 +408,7 @@
             return data;
           });
 
-          await showToast("successes.LOGIN_SUCCESSFUL");
+          await showSuccessToast("successes.LOGIN_SUCCESSFUL");
 
           await goto("/");
 

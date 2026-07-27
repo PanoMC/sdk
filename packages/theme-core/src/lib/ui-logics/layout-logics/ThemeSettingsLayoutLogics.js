@@ -21,8 +21,21 @@ function postReady() {
   window.parent.postMessage({ type: "theme-settings-ready" }, "*");
 }
 
-export function showToast(text, params = {}, toastComponent) {
-  window.parent.postMessage({ type: "show-toast", text, params, toastComponent }, "*");
+// The theme settings UI runs inside an iframe in the panel, so its toasts are posted to
+// the parent instead of rendered here. `variant` ('success' | 'danger') rides along so the
+// panel can colour the toast — without it the panel has no way to tell an outcome from a
+// failure and has to fall back to a neutral toast. A panel build that predates the field
+// simply ignores it.
+export function showToast(text, params = {}, toastComponent, variant = null) {
+  window.parent.postMessage({ type: "show-toast", text, params, toastComponent, variant }, "*");
+}
+
+export function showSuccessToast(text, params = {}) {
+  showToast(text, params, undefined, "success");
+}
+
+export function showErrorToast(text, params = {}) {
+  showToast(text, params, undefined, "danger");
 }
 
 const confirmCallbacks = new Map();

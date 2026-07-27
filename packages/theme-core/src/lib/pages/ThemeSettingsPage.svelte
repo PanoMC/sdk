@@ -62,7 +62,8 @@
 <script>
   import { _ } from "svelte-i18n";
   import {
-    showToast,
+    showSuccessToast,
+    showErrorToast,
     showConfirm
   } from "$pano/lib/ui-logics/layout-logics/ThemeSettingsLayoutLogics";
   import { getContext } from "svelte";
@@ -479,7 +480,7 @@
     $themeSettings = newSettings;
     originalThemeSettings.set(structuredClone($themeSettings));
 
-    showToast(
+    showSuccessToast(
       $_("messages.settings-save-success") || "Ayarlar başarıyla kaydedildi!"
     );
     $saving = false;
@@ -516,7 +517,7 @@
       $themeSettings = newSettings;
       originalThemeSettings.set(structuredClone($themeSettings));
 
-      showToast(
+      showSuccessToast(
         $_("messages.settings-reset-tab-success") ||
         "Sekme ayarları sıfırlandı!"
       );
@@ -539,10 +540,10 @@
         $themeSettings = newSettings;
         originalThemeSettings.set(structuredClone($themeSettings));
 
-        showToast($_("messages.settings-reset-all-success"));
+        showSuccessToast($_("messages.settings-reset-all-success"));
       } catch (error) {
         console.error("Failed to reset all settings:", error);
-        showToast($_("messages.settings-reset-all-error"));
+        showErrorToast($_("messages.settings-reset-all-error"));
       } finally {
         $resettingAll = false;
       }
