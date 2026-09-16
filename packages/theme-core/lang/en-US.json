@@ -446,6 +446,7 @@
     "title": "Error: {status}",
     "404": "The page is not found!",
     "404-description": "The page you're looking for doesn't exist or has been moved.",
+    "assets-failed": "Some of the page's files could not be loaded. Please refresh the page; if it keeps happening, contact support.",
     "need-help": "If you believe this is an error, please contact support."
   },
   "ticket-statuses": {

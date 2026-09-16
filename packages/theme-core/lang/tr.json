@@ -446,6 +446,7 @@
     "title": "Hata: {status}",
     "404": "Aradığınız sayfa bulunamadı!",
     "404-description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+    "assets-failed": "Sayfanın bazı dosyaları yüklenemedi. Lütfen sayfayı yenileyin; devam ederse destek ile iletişime geçin.",
     "need-help": "Bunun bir hata olduğunu düşünüyorsanız, lütfen destek ile iletişime geçin."
   },
   "ticket-statuses": {

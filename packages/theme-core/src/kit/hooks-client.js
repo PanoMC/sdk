@@ -127,6 +127,41 @@ export function markAppBooted() {
   }
 }
 
+/** Matches every browser's wording for a script chunk that could not be fetched/parsed. */
+const MODULE_LOAD_ERROR =
+  /(failed to fetch dynamically imported module|error loading dynamically imported module|importing a module script failed|failed to load module script|failed to resolve module specifier)/i;
+
+/**
+ * Client-side error hook. SvelteKit's default only prints the error; this one also names the
+ * page and the status, flags chunk-load failures (the classic "SSR fine, hydration dead"
+ * symptom: a proxy/CDN served HTML or a 5xx for a JS module) and hands the error page a code
+ * so it can tell the visitor to refresh instead of "report this".
+ *
+ * A theme's src/hooks.client.js exports it as:
+ *
+ *   export const handleError = createClientHandleError();
+ */
+export function createClientHandleError() {
+  /** @type {import('@sveltejs/kit').HandleClientError} */
+  return function handleError({ error, event, status, message }) {
+    const text = String(error?.message ?? error ?? "");
+    const moduleLoadFailed = MODULE_LOAD_ERROR.test(text);
+    const where = `${event?.url?.pathname ?? location.pathname} (status ${status})`;
+
+    console.error(
+      moduleLoadFailed
+        ? `[pano] a script chunk failed to load on ${where}; the page cannot hydrate:`
+        : `[pano] client error on ${where}:`,
+      error,
+    );
+
+    return {
+      message: moduleLoadFailed ? "Page files could not be loaded" : message,
+      code: moduleLoadFailed ? "MODULE_LOAD_FAILED" : error?.code,
+    };
+  };
+}
+
 export function createClientInit() {
   /** @type {import('@sveltejs/kit').ClientInit} */
   return async function init() {

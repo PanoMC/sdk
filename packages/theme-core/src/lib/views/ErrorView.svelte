@@ -3,7 +3,7 @@
   Controller: $pano/lib/pages/ErrorPage.svelte
   Props:
     data  object|undefined — undefined when rendered as +error.svelte (no load runs); kept for the shared controller contract
-    page  object — SvelteKit's reactive page state ($app/state); page.status drives the title and the 404 vs. internal-error message
+    page  object — SvelteKit's reactive page state ($app/state); page.status drives the title; page.status / page.error.code pick the 404, chunk-load or internal-error message
   Override from a theme:
     theme.config.js → views: { ErrorView: () => import("./src/views/ErrorView.svelte") }
 -->
@@ -12,7 +12,9 @@
     title={$_("page-errors.title", { values: { status: page.status }, default: `Error: ${page.status}` })}
     subtitle={page.status === 404
       ? $_("page-errors.404-description")
-      : $_("errors.INTERNAL_SERVER_ERROR")} />
+      : page.error?.code === "MODULE_LOAD_FAILED"
+        ? $_("page-errors.assets-failed")
+        : $_("errors.INTERNAL_SERVER_ERROR")} />
 
   <div class="text-center mb-3">
     <img src="/assets/img/404.png" alt="Error" width="256" height="auto" />

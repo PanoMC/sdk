@@ -288,11 +288,13 @@ export const { handle, handleError, handleFetch } = createThemeHooks({
   "src/hooks.client.js": `import {
   installRuntimeRegistry,
   createClientInit,
+  createClientHandleError,
 } from "$pano/kit/hooks-client.js";
 
 installRuntimeRegistry();
 
 export const init = createClientInit();
+export const handleError = createClientHandleError();
 `,
 
   "src/styles/tokens.scss": `// Design tokens — imported FIRST by style.scss, so anything you set here
