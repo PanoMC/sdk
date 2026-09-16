@@ -101,20 +101,37 @@ export function installRuntimeRegistry() {
   g.__PANO_RT_RESOLVE__?.(g.__PANO_RUNTIME__);
 }
 
+const HYDRATION_RELOAD_KEY = "pano:hydration-reload";
+
+/**
+ * Tells the hydration watchdog in app.html that this document booted. Until this runs, a
+ * failed module fetch (a chunk 502'd behind a proxy/CDN, a stale hash after an update) makes
+ * the watchdog reload the page once with a cache-busting query; afterwards a failing import is
+ * a plugin's own runtime problem and must not reload.
+ *
+ * Call it once the root layout has hydrated WITHOUT an error page — not from the SvelteKit
+ * `init` hook. `init` runs before hydration, before the route chunks are even requested, so a
+ * flag set there disarmed the watchdog exactly when it was needed and left visitors on a dead
+ * error page.
+ */
+export function markAppBooted() {
+  if (!browser) return;
+
+  globalThis.__PANO_APP_BOOTED__ = true;
+
+  try {
+    // Re-arm the one-shot reload guard for the NEXT document.
+    sessionStorage.removeItem(HYDRATION_RELOAD_KEY);
+  } catch {
+    /* sessionStorage unavailable (e.g. blocked); the watchdog degrades gracefully */
+  }
+}
+
 export function createClientInit() {
   /** @type {import('@sveltejs/kit').ClientInit} */
   return async function init() {
-    // Hydration succeeded far enough to run app code: disarm the watchdog for this
-    // document (post-boot module failures must not reload), re-arm the one-shot
-    // reload guard for the NEXT document, and drop the cache-busting marker.
-    globalThis.__PANO_APP_BOOTED__ = true;
-
-    try {
-      sessionStorage.removeItem("pano:hydration-reload");
-    } catch {
-      /* sessionStorage unavailable (e.g. blocked); the watchdog degrades gracefully */
-    }
-
+    // Only cosmetic cleanup belongs here: `init` runs before hydration, so it must NOT mark the
+    // app as booted — see markAppBooted(), called from RootLayout after a successful mount.
     try {
       const url = new URL(location.href);
       if (url.searchParams.has("pano-rl")) {
