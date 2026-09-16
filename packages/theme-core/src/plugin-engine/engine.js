@@ -205,7 +205,17 @@ export function createHookEngine() {
         const raw = entry.component || entry;
         let module = raw;
         if (typeof raw === "function" && !raw.prototype) {
-          module = await raw();
+          try {
+            module = await raw();
+          } catch (e) {
+            // One plugin's chunk failing to load (a 502 behind a proxy/CDN, a stale hash after
+            // an update) must cost that plugin its slot, not the whole page: a throw here
+            // propagates out of the page's universal load and SvelteKit renders a 500. Leave
+            // the entry unresolved so Hook.svelte skips it, and keep the result aligned with
+            // the hook list (hookProps is indexed by position).
+            console.error(`[Hook:${name}] Failed to load plugin module`, e);
+            return {};
+          }
           // Cache the resolved module back into the hooks store
           hooks.update((h) => {
             if (h[name]) {
