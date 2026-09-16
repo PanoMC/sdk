@@ -3,13 +3,13 @@
   Controller: $pano/lib/pages/ErrorPage.svelte
   Props:
     data  object|undefined — undefined when rendered as +error.svelte (no load runs); kept for the shared controller contract
-    page  object — SvelteKit's reactive page state ($app/state); page.status picks the 404 vs. internal-error message
+    page  object — SvelteKit's reactive page state ($app/state); page.status drives the title and the 404 vs. internal-error message
   Override from a theme:
     theme.config.js → views: { ErrorView: () => import("./src/views/ErrorView.svelte") }
 -->
 <div class="vstack gap-3">
   <PageTitle
-    title="Hata: 404"
+    title={$_("page-errors.title", { values: { status: page.status }, default: `Error: ${page.status}` })}
     subtitle={page.status === 404
       ? $_("page-errors.404-description")
       : $_("errors.INTERNAL_SERVER_ERROR")} />

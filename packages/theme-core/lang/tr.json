@@ -443,6 +443,7 @@
     }
   },
   "page-errors": {
+    "title": "Hata: {status}",
     "404": "Aradığınız sayfa bulunamadı!",
     "404-description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
     "need-help": "Bunun bir hata olduğunu düşünüyorsanız, lütfen destek ile iletişime geçin."
