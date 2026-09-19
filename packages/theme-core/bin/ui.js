@@ -90,4 +90,4 @@ export function brandIntro() {
 }
 
 /** Docs entry point, referenced by help/new/eject next-steps. */
-export const DOCS_URL = "https://panocms.com/docs/theme/getting-started/";
+export const DOCS_URL = "https://panomc.com/docs/theme/getting-started/";
