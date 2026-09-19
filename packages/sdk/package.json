@@ -6,12 +6,12 @@
     "url": "https://github.com/PanoMC/sdk"
   },
   "dependencies": {
-    "svelte": "5.55.4",
+    "svelte": "5.55.9",
     "tippy.js": "^6.3.7",
-    "adm-zip": "^0.5.17"
+    "adm-zip": "^0.6.1"
   },
   "devDependencies": {
-    "svelte": "5.55.4"
+    "svelte": "5.55.9"
   },
   "exports": {
     ".": {
