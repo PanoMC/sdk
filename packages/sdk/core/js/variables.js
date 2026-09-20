@@ -30,11 +30,13 @@ export function checkDomainRedirection() {
     const apiUrl = new URL(API_URL);
     const currentUrl = new URL(window.location.href);
 
-    if (
-      currentUrl.hostname !== apiUrl.hostname ||
-      currentUrl.port !== apiUrl.port ||
-      currentUrl.protocol !== apiUrl.protocol
-    ) {
+    // Only bounce when the page was opened on the vite port of the SAME machine
+    // (localhost:3000 -> localhost:8088). Reaching the Pano dev server through another
+    // hostname — a LAN address, ngrok, cloudflared — is legitimate: Pano already proxies vite
+    // for that visitor, and API_URL's host means nothing on their machine.
+    if (!isSameDevHost(currentUrl.hostname, apiUrl.hostname)) return;
+
+    if (currentUrl.port !== apiUrl.port || currentUrl.protocol !== apiUrl.protocol) {
       const basePath = UI_URL || PANEL_URL || SETUP_URL || '/';
       let pathname = currentUrl.pathname;
 
@@ -48,6 +50,16 @@ export function checkDomainRedirection() {
   } catch (e) {
     console.error('Failed to check domain redirection:', e);
   }
+}
+
+function isLoopbackHost(hostname) {
+  const h = hostname.toLowerCase();
+  return h === 'localhost' || h.endsWith('.localhost') || h === '[::1]' || h.startsWith('127.');
+}
+
+function isSameDevHost(a, b) {
+  const norm = (h) => (isLoopbackHost(h) ? 'localhost' : h.toLowerCase());
+  return norm(a) === norm(b);
 }
 
 export function updateApiUrl(apiUrl) {
