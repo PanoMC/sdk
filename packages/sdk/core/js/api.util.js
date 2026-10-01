@@ -9,6 +9,12 @@ import { show } from "$lib/components/ToastContainer.svelte";
 export const NETWORK_ERROR = 'NETWORK_ERROR';
 export const networkErrorBody = { result: 'error', error: NETWORK_ERROR };
 
+const NETWORK_RETRY_DELAY_MS = 400;
+
+function isIdempotent(method) {
+  return !method || ['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase());
+}
+
 // Function to build query parameters from an object
 export function buildQueryParams(params) {
   const queryString = Object.keys(params)
@@ -222,8 +228,24 @@ const ApiUtil = {
       }
 
       // Perform fetch request
-      const fetchMethod =
+      const doFetch = () =>
         request && request.fetch ? request.fetch(path, options) : fetch(path, options);
+
+      // A request that never got a response (fetch rejected) is retried ONCE before the
+      // offline splash: browsers reuse a pooled HTTP/3 connection that the peer may have
+      // just idled out (Firefox: 30 s), and the request on it fails instantly although the
+      // server is fine. A new connection succeeds. Only idempotent methods, so a POST/PUT
+      // is never sent twice; HTTP error responses are not retried (fetch resolves them).
+      const fetchMethod =
+        browser && isIdempotent(data.method)
+          ? doFetch().catch((err) => {
+              if (err?.name === 'AbortError') throw err;
+
+              return new Promise((resolve) => setTimeout(resolve, NETWORK_RETRY_DELAY_MS)).then(
+                doFetch,
+              );
+            })
+          : doFetch();
 
       // Handle response
       return fetchMethod
