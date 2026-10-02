@@ -312,7 +312,33 @@ ${importMapEntries}
       request.headers.set("Origin", API_URL);
     }
 
+    // The visit is recorded from SSR, so the backend's peer is this server: without the
+    // visitor's address every visit counted as 127.0.0.1 and the panel showed one visitor a
+    // day. Only this request carries it, so rate limits keep bucketing SSR as before.
+    if (new URL(request.url).pathname.endsWith("/api/visitorVisit")) {
+      const clientAddress = getVisitorAddress(event);
+
+      if (clientAddress) {
+        request.headers.set("X-Forwarded-For", clientAddress);
+      }
+    }
+
     return fetch(request);
+  }
+
+  /**
+   * Cloudflare's header first (Pano Host sits behind it), then the first hop a reverse proxy
+   * declared (Pano's own UI proxy always fills one), then the socket peer.
+   */
+  function getVisitorAddress(event) {
+    const headers = event.request.headers;
+    const forwardedFor = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+
+    try {
+      return headers.get("cf-connecting-ip")?.trim() || forwardedFor || event.getClientAddress();
+    } catch {
+      return forwardedFor || null;
+    }
   }
 
   return { handle, handleError, handleFetch };
