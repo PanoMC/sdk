@@ -11,7 +11,7 @@ export async function processLoad(event) {
 
   const { session } = parentData;
 
-  requireNotLogin(session);
+  requireNotLogin(session, event);
 
   await executeLifecycle("theme:reset-password:load", {}, event);
   await executeViewLoad("reset-password-content", event);

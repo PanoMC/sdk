@@ -99,7 +99,7 @@ export async function processLoad(event) {
 
   const { session } = parentData;
 
-  requireLogin(session);
+  requireLogin(session, event);
 
   // if (event.stuff.NETWORK_ERROR) {
   //   output.props.data.NETWORK_ERROR = true;

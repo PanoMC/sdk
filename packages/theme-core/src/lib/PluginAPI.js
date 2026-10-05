@@ -1,9 +1,11 @@
-import { baseAPI, pageAPI } from "@panomc/sdk/core/js/PluginAPI";
+import { baseAPI, createFeatureSet, pageAPI } from "@panomc/sdk/core/js/PluginAPI";
 import { get, writable } from "svelte/store";
-import { plugins } from "@panomc/sdk/core/js/PluginManager.js";
+import * as pluginManager from "@panomc/sdk/core/js/PluginManager.js";
 import { sortSiteNavLinks } from "./orderNavLinks.util.js";
 import { avatarVersion } from "./Store.js";
 import { browser } from "$app/environment";
+import { redirect } from "@sveltejs/kit";
+import { buildLoginUrl, returnToFromUrl } from "$pano/lib/returnTo.util.js";
 import {
   createHookEngine,
   createLifecycleRegistry,
@@ -16,7 +18,7 @@ import {
 const lifecycle = createLifecycleRegistry();
 const hooks = createHookEngine();
 const slots = createSlotRegistry({
-  getPlugins: () => get(plugins),
+  getPlugins: () => get(pluginManager.plugins),
   browser,
   executeLifecycle: lifecycle.executeLifecycle,
   lifecyclePrefix: "theme",
@@ -37,8 +39,27 @@ export const executeSidebarLoad = slots.executeSidebarLoad;
 export const executeViewLoad = slots.executeViewLoad;
 export const executeHookLoad = hooks.executeHookLoad;
 
+// Capability ids this theme announces through `pano.features` (see the feature table of the
+// market plugin spec). Plugins test `pano.features?.has(id)`.
+export const THEME_FEATURE_IDS = ["login-return-url", "layout-route-params"];
+
 export const panoApi = {
   ...baseAPI,
+  features: createFeatureSet(THEME_FEATURE_IDS),
+  // Login return URL for plugin pages: `pano.auth.loginUrl("/store/checkout")`. `pano.ui.auth`
+  // (the login / register view slots) is a different namespace and is untouched.
+  auth: {
+    loginUrl: buildLoginUrl,
+    returnTo: (url) => returnToFromUrl(url),
+    // Use in a plugin page `load(event)`: guests are sent to `/login?redirect=<this page>`.
+    async requireLogin(event) {
+      const { session } = await event.parent();
+
+      if (!session.user) {
+        throw redirect(302, buildLoginUrl(event.url.pathname + event.url.search));
+      }
+    },
+  },
   ui: {
     ...pageAPI,
     nav: {

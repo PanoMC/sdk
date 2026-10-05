@@ -58,11 +58,12 @@
 
 <script>
   import { getContext, onMount } from "svelte";
-  import { writable } from "svelte/store";
+  import { get, writable } from "svelte/store";
   import { format } from "date-fns";
   import * as locales from "date-fns/locale";
 
   import { afterNavigate, goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   import { NETWORK_ERROR } from "$pano/lib/api.util";
   import { currentLanguage } from "$pano/lib/language.util";
@@ -72,6 +73,7 @@
 
   import { stripIdentifierWhitespace } from "$pano/lib/loginInput.util.js";
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
+  import { returnToFromUrl } from "$pano/lib/returnTo.util.js";
 
   export let data;
 
@@ -233,7 +235,7 @@
         });
 
         await showSuccessToast("successes.LOGIN_SUCCESSFUL");
-        await goto("/");
+        await goto(returnToFromUrl(get(page).url));
         return;
       }
 
@@ -272,7 +274,7 @@
         return data;
       });
 
-      await goto("/");
+      await goto(returnToFromUrl(get(page).url));
 
     } catch (err) {
       console.error(err);
@@ -410,7 +412,7 @@
 
           await showSuccessToast("successes.LOGIN_SUCCESSFUL");
 
-          await goto("/");
+          await goto(returnToFromUrl(get(page).url));
 
           $loading = false;
         });

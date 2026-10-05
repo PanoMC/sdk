@@ -40,11 +40,12 @@
 {/if}
 
 <script context="module">
-  import { error } from "@sveltejs/kit";
+  import { error, redirect } from "@sveltejs/kit";
 
   import { findMatch, registeredPages } from "$pano/lib/PluginManager.js";
   import { base } from "$app/paths";
   import { hasPermission } from "$pano/lib/auth.util.js";
+  import { loginRedirectFor } from "$pano/lib/returnTo.util.js";
 
 
   // Static imports instead of import.meta.glob: the glob's transform emits
@@ -77,7 +78,7 @@
    */
   export async function load(event) {
     const {
-      url: { pathname },
+      url: { pathname, search },
       parent,
     } = event;
     const { session: { user } } = await parent();
@@ -88,11 +89,24 @@
       throw error(404);
     }
 
+    // A guest on a `loginRequired` page goes to login (and comes back) — this runs BEFORE the
+    // permission check, which would otherwise answer a guest with a 404.
+    const loginTarget = loginRedirectFor(registeredPage, user, { pathname, search });
+    if (loginTarget) {
+      throw redirect(302, loginTarget);
+    }
+
     if (registeredPage.permission && !hasPermission(registeredPage.permission, user)) {
       throw error(404);
     }
 
     const resetLayout = registeredPage.resetLayout || false;
+
+    // Route params of the matched plugin page (e.g. `[slug]`) reach the system layout's and the
+    // plugin layout's load, exactly as they reach the page load.
+    if (registeredPage.params) {
+      event.params = { ...event.params, ...registeredPage.params };
+    }
 
     let systemLayout = null;
     let systemLayoutOutput = {};
