@@ -58,7 +58,12 @@ export function sanitizeReturnTo(value, fallback = "/") {
   if (parsed.origin !== BASE) return fallback;
   if (isAuthPath(parsed.pathname)) return fallback;
 
-  return parsed.pathname + parsed.search + parsed.hash;
+  // Dot-segment removal can create a leading `//` (`/.//evil.com` -> `//evil.com`), which the
+  // browser reads as a protocol-relative URL: validate the normalised form too.
+  const out = parsed.pathname + parsed.search + parsed.hash;
+  if (out[0] !== "/" || out[1] === "/" || out[1] === "\\" || out.includes("\\")) return fallback;
+
+  return out;
 }
 
 /**

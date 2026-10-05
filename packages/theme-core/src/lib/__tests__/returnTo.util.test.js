@@ -94,6 +94,11 @@ describe("sanitizeReturnTo (TC-1)", () => {
       "/%6Cogin",
       "/foo/../login",
       "/LOGIN",
+      "/.//evil.com",
+      "/x/..//evil.com",
+      "/%2e//evil.com",
+      "/%2E%2E//evil.com",
+      "/.//login",
     ];
 
     for (const value of rejected) {
@@ -240,6 +245,13 @@ describe("Store requireLogin / requireNotLogin", () => {
       requireNotLogin({ user: { id: 1 } }, { url: new URL("/login?redirect=%2F%2Fevil.com", ORIGIN) }),
     );
     expect(evil.location).toBe("/");
+
+    const dotted = await redirectOf(() =>
+      requireNotLogin({ user: { id: 1 } }, { url: new URL("/login?redirect=%2F.%2F%2Fevil.com", ORIGIN) }),
+    );
+    expect(dotted.location).toBe("/");
+
+    expect(returnToFromUrl(new URL("https://site/login?redirect=/.//evil.com"))).toBe("/");
 
     const none = await redirectOf(() => requireNotLogin({ user: { id: 1 } }));
     expect(none.location).toBe("/");
