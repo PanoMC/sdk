@@ -9,6 +9,16 @@
 {/if}
 
 <script context="module">
+  import { get } from "svelte/store";
+
+  import { executeSidebarLoad, panoApi } from "$pano/lib/PluginAPI";
+  import { resolveSidebarSpec } from "$pano/lib/components/sidebars/sidebarSpec.util.js";
+  import * as HomeSidebar from "$pano/lib/components/sidebars/HomeSidebar.svelte";
+  import * as ProfileSidebar from "$pano/lib/components/sidebars/ProfileSidebar.svelte";
+  import PluginSidebar from "$pano/lib/components/sidebars/PluginSidebar.svelte";
+
+  const hostSidebars = { home: HomeSidebar, profile: ProfileSidebar };
+
   /**
    * @type {import('@sveltejs/kit').PageLoad}
    */
@@ -40,6 +50,23 @@
           output[key] = componentOutput[key];
         }
       }
+    }
+
+    // `sidebar` as a string ("home", "profile", "plugin:<sidebarId>") names a host or engine
+    // sidebar instead of passing a component; a component value is left untouched.
+    const resolved = await resolveSidebarSpec({
+      sidebar: output.sidebar,
+      sidebarProps: output.sidebarProps,
+      event,
+      hosts: hostSidebars,
+      PluginSidebar,
+      executeSidebarLoad,
+      countVisible: (sidebarId) => get(panoApi.ui.sidebar.get(sidebarId)).length,
+    });
+
+    if (resolved) {
+      output.sidebar = resolved.sidebar;
+      if (resolved.sidebarProps !== undefined) output.sidebarProps = resolved.sidebarProps;
     }
 
     return output;

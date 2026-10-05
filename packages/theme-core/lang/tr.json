@@ -455,6 +455,7 @@
     "closed": "Kapalı"
   },
   "notifications": {
+    "UNKNOWN": "Bu bildirim artık desteklenmiyor.",
     "AN_ADMIN_CLOSED_TICKET": "Bir yönetici destek talebinizi kapattı (<b>#{id}</b>).",
     "AN_ADMIN_REPLIED_TICKET": "Bir yönetici destek talebinize yanıt verdi (<b>#{id}</b>)."
   },

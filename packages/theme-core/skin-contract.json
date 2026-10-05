@@ -64,7 +64,7 @@
     "avatarVersion": "store — cache-busting version appended to profile picture URLs",
     "currentLanguage": "store — active language object; .dateFnsCode selects the date-fns locale",
     "locales": "object — date-fns locale namespace (import * as locales stays in controller, passed as a plain value)",
-    "onNotificationClick": "function — notification row click handler (from NotificationManager)",
+    "onNotificationClick": "function(notification, navigate) — notification row click handler (from NotificationManager); the view passes navigate(path) = goto(base + path) so a notification without a listener opens its details.href; the row text key is notificationTextKey(notification) with $_('notifications.UNKNOWN') as default",
     "onDeleteNotificationClick": "function — deletes a single notification",
     "getTime": "function — relative 'time ago' formatter",
     "loadMore": "function — fetches next page; markup calls it with the notifications and loadMoreLoading store objects",
@@ -281,7 +281,7 @@
    "props": {
     "data": "object — controller load data (hookProps, View, mainLayoutView); unused by the default markup but kept for the view contract",
     "themeSettings": "object — the 'themeSettings' context object (theme color, header/navbar gap, footer & breadcrumb toggles, background/custom CSS settings)",
-    "session": "store — the 'session' context store passed as a store object; view auto-subscribes via $session for the head meta tags"
+    "session": "store — the 'session' context store passed as a store object; view auto-subscribes via $session (the page head tags are emitted by the engine PageHead, not the view)"
    }
   },
   "AuthLayoutView": {
@@ -337,6 +337,7 @@
   "Footer"
  ],
  "view_slots": [
+  "profile-nav",
   "login-content",
   "login-alt-methods",
   "register-content",

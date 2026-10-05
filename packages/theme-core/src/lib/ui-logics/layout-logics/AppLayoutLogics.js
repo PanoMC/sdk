@@ -6,7 +6,7 @@ import { _ } from "svelte-i18n";
 import copy from "copy-to-clipboard";
 
 import { browser } from "$app/environment";
-import { goto } from "$app/navigation";
+import { goto, invalidate, invalidateAll } from "$app/navigation";
 import { navigating, page } from "$app/stores";
 import { base } from "$app/paths";
 import { error, redirect } from "@sveltejs/kit";
@@ -32,6 +32,10 @@ import NoContent from "$pano/lib/components/NoContent.svelte";
 import PageActions from "$pano/lib/components/PageActions.svelte";
 import PageTitle from "$pano/lib/components/PageTitle.svelte";
 import PlayerHead from "$pano/lib/components/PlayerHead.svelte";
+import Toast from "$pano/lib/components/Toast.svelte";
+import Sidebar from "$pano/lib/components/Sidebar.svelte";
+import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
+import Hook from "$pano/lib/components/Hook.svelte";
 
 const initLanguage = languageStuff.init;
 const POST_VIEW_ENGAGEMENT_DELAY_MS = 8000;
@@ -154,6 +158,8 @@ export async function processLoad(event) {
     navigating,
     browser,
     goto,
+    invalidate,
+    invalidateAll,
     error,
     redirect,
     components: {
@@ -163,6 +169,10 @@ export async function processLoad(event) {
       PageActions: ResolvedPageActions,
       PageTitle: ResolvedPageTitle,
       PlayerHead: ResolvedPlayerHead,
+      Toast,
+      Sidebar,
+      ViewComponent,
+      Hook,
     },
     utils: {
       api: {

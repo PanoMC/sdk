@@ -11,7 +11,8 @@
     avatarVersion              store — cache-busting version appended to profile picture URLs
     currentLanguage            store — active language object; .dateFnsCode selects the date-fns locale
     locales                    object — date-fns locale namespace, indexed by $currentLanguage.dateFnsCode
-    onNotificationClick        function — opens/acts on a notification when its row is clicked
+    onNotificationClick        function(notification, navigate) — opens/acts on a notification when its row is clicked; the view passes navigate(path) for the details.href fallback
+                               (text key: notificationTextKey(notification) from @panomc/sdk/core/js/NotificationManager.js, default $_("notifications.UNKNOWN"))
     onDeleteNotificationClick  function — deletes a single notification
     getTime                    function — formats a timestamp as a relative "time ago" string
     loadMore                   function — fetches the next page of notifications
@@ -32,7 +33,7 @@
             <button
               type="button"
               title={$_("buttons.view")}
-              on:click={() => onNotificationClick(notification)}
+              on:click={() => onNotificationClick(notification, navigate)}
               class="flex-grow-1 text-start border-0 bg-transparent p-0 d-flex align-items-center gap-3">
               <span class="d-flex align-items-center">
                 {#if notification.details.faIcon}
@@ -54,8 +55,9 @@
 
               <div class="fw-normal">
                 <span class="text-wrap markdown-renderer text-break"
-                  >{@html $_("notifications." + notification.type, {
+                  >{@html $_(notificationTextKey(notification), {
                     values: { ...sanitizeObject(notification.details || {}) },
+                    default: $_("notifications.UNKNOWN"),
                   })}</span>
                 <br />
                 <small>
@@ -107,6 +109,10 @@
 <script>
   import { _ } from "svelte-i18n";
 
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
+  import { notificationTextKey } from "@panomc/sdk/core/js/NotificationManager.js";
+
   import tooltip from "$pano/lib/tooltip.util.js";
 
   import ConfirmRemoveAllNotificationsModal from "$pano/lib/components/modals/ConfirmRemoveAllNotificationsModal.svelte";
@@ -126,4 +132,7 @@
   export let getTime;
   export let loadMore;
   export let sanitizeObject;
+
+  // Notifications without a click listener navigate to their safe `details.href`.
+  const navigate = (path) => goto(base + path);
 </script>

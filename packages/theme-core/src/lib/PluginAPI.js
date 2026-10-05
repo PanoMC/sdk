@@ -2,6 +2,7 @@ import { baseAPI, createFeatureSet, pageAPI } from "@panomc/sdk/core/js/PluginAP
 import { get, writable } from "svelte/store";
 import * as pluginManager from "@panomc/sdk/core/js/PluginManager.js";
 import { sortSiteNavLinks } from "./orderNavLinks.util.js";
+import { addPluginListener, resetPluginListeners } from "@panomc/sdk/core/js/NotificationManager.js";
 import { avatarVersion } from "./Store.js";
 import { browser } from "$app/environment";
 import { redirect } from "@sveltejs/kit";
@@ -32,6 +33,7 @@ export async function init() {
   slots.reset();
   siteNavLinks.set([]);
   lifecycle.reset();
+  resetPluginListeners();
 }
 
 export const executeLifecycle = lifecycle.executeLifecycle;
@@ -41,7 +43,18 @@ export const executeHookLoad = hooks.executeHookLoad;
 
 // Capability ids this theme announces through `pano.features` (see the feature table of the
 // market plugin spec). Plugins test `pano.features?.has(id)`.
-export const THEME_FEATURE_IDS = ["login-return-url", "layout-route-params"];
+export const THEME_FEATURE_IDS = [
+  "login-return-url",
+  "page-meta",
+  "page-title-options",
+  "page-sidebar-id",
+  "profile-nav",
+  "context-components",
+  "toast-escaped-values",
+  "decoded-route-params",
+  "layout-route-params",
+  "plugin-notifications",
+];
 
 export const panoApi = {
   ...baseAPI,
@@ -95,6 +108,15 @@ export const panoApi = {
       },
     },
     profile: {
+      // Profile sidebar navigation: items `{ id, priority, hidden?, props: { href, text, icon?, startsWith?, badge? } }`.
+      nav: {
+        edit(callback) {
+          slots.edit("profile-nav", callback);
+        },
+        get() {
+          return panoApi.ui.view.get("profile-nav");
+        },
+      },
       content: {
         edit(callback) {
           slots.edit("profile-content", callback);
@@ -335,6 +357,12 @@ export const panoApi = {
       },
       onLoad(sidebarId, handler) {
         panoApi.ui.lifecycle.on(`theme:sidebar:${sidebarId}:load`, handler);
+      },
+    },
+    notification: {
+      // Click handler for a plugin-defined notification type; runs after the core listeners.
+      onClick(type, handler) {
+        addPluginListener(type, handler);
       },
     },
     post: {

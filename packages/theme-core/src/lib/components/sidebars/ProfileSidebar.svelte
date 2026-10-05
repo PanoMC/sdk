@@ -43,6 +43,9 @@
             </div>
           </div>
         </div>
+      {:else if item.id === "profile-nav"}
+        <!-- Profile navigation: built-ins plus the plugin-contributed `profile-nav` items -->
+        <ProfileNavCard entries={navEntries} />
       {:else}
         <!-- External Component -->
         <ViewComponent
@@ -61,6 +64,7 @@
   import ApiUtil from "$pano/lib/api.util.js";
   import { writable } from "svelte/store";
   import { executeSidebarLoad, panoApi } from "$pano/lib/PluginAPI";
+  import { mergeProfileNav } from "./profileNav.util.js";
 
   const data = writable({
     lastActivityTime: 0,
@@ -76,6 +80,19 @@
       id: "profile-info",
       component: "local:profile-info",
       priority: 100,
+    });
+
+    panoApi.ui.sidebar.register({
+      sidebarId: "profile",
+      id: "profile-nav",
+      component: "local:profile-nav",
+      priority: 95,
+    });
+
+    // Built-in navigation entries; plugins add theirs with pano.ui.profile.nav.edit. Built-ins an
+    // item of the same id already covers are not added again (load runs on every page visit).
+    panoApi.ui.profile.nav.edit((navItems) => {
+      navItems.splice(0, navItems.length, ...mergeProfileNav(navItems));
     });
 
     // Execute sidebar load and resolve components for SSR
@@ -97,6 +114,8 @@
 <script>
   import { getContext, onDestroy, onMount } from "svelte";
   import { _ } from "svelte-i18n";
+  import { page } from "$app/stores";
+  import { base } from "$app/paths";
 
   import tooltip from "$pano/lib/tooltip.util";
 
@@ -106,6 +125,8 @@
   import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
   import PlayerHead from "$pano/lib/components/PlayerHead.svelte";
   import PageTitle from "../PageTitle.svelte";
+  import ProfileNavCard from "./ProfileNavCard.svelte";
+  import { buildProfileNavEntries } from "./profileNav.util.js";
   import { show as showDeleteAllNotificationsModal } from "$pano/lib/components/modals/ConfirmRemoveAllNotificationsModal.svelte";
 
   export let side;
@@ -129,6 +150,13 @@
   });
 
   const items = panoApi.ui.sidebar.get("profile");
+  const navItems = panoApi.ui.profile.nav.get();
+
+  $: navEntries = buildProfileNavEntries($navItems, {
+    pathname: $page.url.pathname,
+    base,
+    translate: (key) => $_(key),
+  });
 </script>
 
 <style>

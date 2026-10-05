@@ -455,6 +455,7 @@
     "closed": "Closed"
   },
   "notifications": {
+    "UNKNOWN": "This notification is no longer supported.",
     "AN_ADMIN_CLOSED_TICKET": "An admin closed your ticket (<b>#{id}</b>).",
     "AN_ADMIN_REPLIED_TICKET": "An admin replied to your ticket (<b>#{id}</b>)."
   },

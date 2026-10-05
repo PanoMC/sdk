@@ -1,7 +1,9 @@
-<Toast {id} {variant}>{@html $_(text, { values })}</Toast>
+<Toast {id} {variant}>{@html $_(text, { values: escapeValues(values) })}</Toast>
 
 <script>
   import { _ } from 'svelte-i18n';
+
+  import { escapeValues } from '@panomc/sdk/core/js/html.util.js';
 
   import Toast from '$pano/lib/components/Toast.svelte';
 

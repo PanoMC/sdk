@@ -1,0 +1,6 @@
+{
+  "name": "tc9-fixture-plugin",
+  "private": true,
+  "type": "module",
+  "description": "TC-9 fixture plugin for theme-core. Test only, never published."
+}
