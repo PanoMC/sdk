@@ -14,6 +14,8 @@
  *   5. manifest.json carries the required keys
  *   6. settingsSchema (theme.config.js) is shape-valid, appends only, puts no
  *      key in a different tab than the base does, and its defaultTab exists
+ *   7. an overridden MainLayoutView must not emit <meta name="description"> —
+ *      the engine <PageHead> owns it (a second tag duplicates every page's description)
  * Exit code 1 on any violation.
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -84,6 +86,20 @@ for (const name of registered) {
         : new RegExp(`<Hook[^>]*name="${id}"`).test(ov);
     if (!present) {
       problems.push(`view '${name}' override lost plugin ${kind} '${id}' — plugins mounting there will silently disappear`);
+    }
+  }
+}
+
+// 3a. an overridden MainLayoutView must not emit the description meta tag itself: <PageHead>
+// (engine, AppLayout) emits exactly one per page, so a fork that kept the old line would serve two.
+if (registered.includes("MainLayoutView")) {
+  const overridePath = join(themeDir, "src", "views", "MainLayoutView.svelte");
+  if (existsSync(overridePath)) {
+    const ov = readFileSync(overridePath, "utf-8").replace(/<!--[\s\S]*?-->/g, "");
+    if (/\bname\s*=\s*(?:["']description["']|\{\s*["']description["']\s*\})/.test(ov)) {
+      problems.push(
+        `view 'MainLayoutView' override still emits <meta name="description"> — delete that line: the engine <PageHead> emits the description (and og / canonical tags) once per page, so the override would duplicate it`,
+      );
     }
   }
 }

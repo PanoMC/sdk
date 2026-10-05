@@ -4,14 +4,13 @@
   Props:
     data           object — root layout load data (hookProps, View, …); unused by the default markup
     themeSettings  object — "themeSettings" context: colors, gaps, footer/breadcrumb toggles, custom CSS
-    session        store  — "session" context store; $session.siteInfo feeds the head meta tags
+    session        store  — "session" context store; $session.siteInfo feeds the keywords meta tag (the description / og tags come from the engine <PageHead>)
   Slot: the routed page content (rendered inside <Main>).
   Override from a theme:
     theme.config.js → views: { MainLayoutView: () => import("./src/views/MainLayoutView.svelte") }
 -->
 <svelte:head>
   <meta content={$session.siteInfo.keywords.join(", ")} name="keywords" />
-  <meta content={$session.siteInfo.websiteDescription} name="description" />
 
   <meta content={themeSettings.themeColor || "dark"} name="x-theme" />
 

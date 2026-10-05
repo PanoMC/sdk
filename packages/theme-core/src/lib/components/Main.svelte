@@ -9,17 +9,13 @@
 <!-- Main Container -->
 <main class="container">
 
-  {#if $pageTitle}
+  {#if $pageTitle && !resolvedTitle.hidden}
     {@const isString = typeof $pageTitle === "string"}
-    {@const
-      titleText = isString ? $_($pageTitle) : ($pageTitle?.title ? $_($pageTitle.title, { values: $pageTitle.titleValues || {} }) : "")}
-    {@const
-      subtitleText = isString ? "" : ($pageTitle?.subtitle ? $_($pageTitle.subtitle, { values: $pageTitle.subtitleValues || {} }) : "")}
     <div class="row">
       <div class="col-12 mb-3">
         <PageTitle
-          title={titleText}
-          subtitle={subtitleText}
+          title={resolvedTitle.title}
+          subtitle={resolvedTitle.subtitle}
           html={isString ? undefined : $pageTitle.html}
           subtitleHtml={isString ? undefined : $pageTitle.subtitleHtml} />
       </div>
@@ -51,6 +47,7 @@
   import { dev } from "$app/environment";
   import { _ } from "svelte-i18n";
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
+  import { resolvePageTitle } from "$pano/lib/pageTitle.util.js";
 
 
   const devUi = import.meta.env.VITE_DEV_UI === "true";
@@ -60,6 +57,9 @@
   const pageTitle = getContext("pageTitle");
 
   const themeSettings = getContext("themeSettings");
+
+  // `raw` skips translation; `hidden` keeps the title for the document <title> only.
+  $: resolvedTitle = resolvePageTitle($pageTitle, $_);
 
   $: sidebarEnabled =
     typeof themeSettings.sidebarEnabled === "undefined"

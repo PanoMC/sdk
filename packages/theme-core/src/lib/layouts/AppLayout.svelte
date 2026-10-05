@@ -1,3 +1,9 @@
+<PageHead
+  meta={$page.data?.meta}
+  siteInfo={$session.siteInfo}
+  url={$page.url}
+  title={resolvePageTitle($pageTitle, $_).title} />
+
 <svelte:component this={layoutView} data={viewData} {session} {pageTitle} {getTitle}>
   <slot />
 </svelte:component>
@@ -38,6 +44,8 @@
   import { onMount } from "svelte";
   import { get } from "svelte/store";
   import { avatarVersion } from "$pano/lib/Store.js";
+  import PageHead from "$pano/lib/components/PageHead.svelte";
+  import { resolvePageTitle } from "$pano/lib/pageTitle.util.js";
 
   export let data = undefined;
 
@@ -45,9 +53,8 @@
 
   function getTitle(pt, siteName) {
     if (!pt) return siteName;
-    const titleStr = typeof pt === "string"
-      ? $_(pt)
-      : (pt.title ? $_(pt.title, { values: pt.titleValues || {} }) : "");
+    // `raw` titles are used verbatim; `hidden` only affects the visible <PageTitle>.
+    const { title: titleStr } = resolvePageTitle(pt, $_);
     return `${titleStr} \u2014 ${siteName}`;
   }
 

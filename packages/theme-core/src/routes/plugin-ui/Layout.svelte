@@ -148,7 +148,7 @@
     // Expose layout-consumed fields from the plugin layout's load output
     // at the top level so they end up on page.data (e.g. pageTitle, sidebar).
     if (layoutOutput && typeof layoutOutput === "object") {
-      for (const key of ["pageTitle", "breadcrumbs", "sidebar", "sidebarProps"]) {
+      for (const key of ["pageTitle", "breadcrumbs", "sidebar", "sidebarProps", "meta"]) {
         if (layoutOutput[key] !== undefined) {
           output[key] = layoutOutput[key];
         }

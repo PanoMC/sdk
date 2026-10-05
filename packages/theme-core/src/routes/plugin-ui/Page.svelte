@@ -35,7 +35,7 @@
     // at the top level so they end up on page.data (e.g. pageTitle is
     // read by AppLayout/MainLayout to set <title> and the PageTitle component).
     if (componentOutput && typeof componentOutput === "object") {
-      for (const key of ["pageTitle", "breadcrumbs", "sidebar", "sidebarProps"]) {
+      for (const key of ["pageTitle", "breadcrumbs", "sidebar", "sidebarProps", "meta"]) {
         if (componentOutput[key] !== undefined) {
           output[key] = componentOutput[key];
         }
