@@ -33,7 +33,7 @@
           <button
             type="button"
             title={$_("buttons.view")}
-            on:click={() => onNotificationClick(notification)}
+            on:click={() => onNotificationClick(notification, navigate)}
             class="text-start border-0 bg-transparent p-0 d-flex align-items-center gap-3">
 
           <span class="d-flex align-items-center">
@@ -53,8 +53,9 @@
 
             <span class="text-start">
             <span class="text-wrap markdown-renderer text-break">
-              {@html $_('notifications.' + notification.type, {
-                values: { ...sanitizeObject(notification.details || {}) }
+              {@html $_(notificationTextKey(notification), {
+                values: { ...sanitizeObject(notification.details || {}) },
+                default: $_('notifications.UNKNOWN')
               })}
             </span>
           </span>
@@ -143,11 +144,13 @@
   import { _ } from "svelte-i18n";
 
   import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
+  import { base } from "$app/paths";
 
   import { notificationsCount, quickNotifications, avatarVersion } from "$pano/lib/Store";
   import { onNotificationRefresh, setSiteNotificationsSubscription } from "$pano/lib/siteRealtime.js";
   import ApiUtil from "$pano/lib/api.util";
-  import { onNotificationClick } from "$pano/lib/NotificationManager.js";
+  import { onNotificationClick, notificationTextKey } from "$pano/lib/NotificationManager.js";
   import * as locales from "date-fns/locale";
   import { currentLanguage } from "$pano/lib/language.util.js";
 
@@ -260,6 +263,9 @@
     onDestroy(sessionSubscription);
   }
 
+  // Notifications without a click listener navigate to their safe `details.href`.
+  const navigate = (path) => goto(base + path);
+
   function markRead(id) {
     ApiUtil.post({
       path: `/api/notifications/${id}/read`,
@@ -268,7 +274,7 @@
 
   function onClick(notification) {
     markRead(notification.id);
-    onNotificationClick(notification);
+    onNotificationClick(notification, navigate);
     hide(notification.id);
   }
 

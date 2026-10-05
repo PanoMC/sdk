@@ -176,6 +176,17 @@ describe("source wiring", () => {
     expect(source).not.toContain('"notifications." + notification.type');
   });
 
+  test("NotificationContainer pop-up uses notificationTextKey, the UNKNOWN default and the href navigator", () => {
+    const source = read(lib, "components", "NotificationContainer.svelte");
+
+    expect(source).toContain("notificationTextKey(notification)");
+    expect(source).toContain("notifications.UNKNOWN");
+    expect(source).toContain("goto(base + path)");
+    expect(source).not.toContain("'notifications.' + notification.type");
+    expect(source).not.toMatch(/onNotificationClick\(notification\)/);
+    expect(source.match(/onNotificationClick\(notification, navigate\)/g)?.length).toBe(2);
+  });
+
   test("skin-contract lists the profile-nav slot", () => {
     const contract = JSON.parse(read(pkg, "skin-contract.json"));
 
