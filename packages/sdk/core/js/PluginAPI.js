@@ -27,3 +27,13 @@ export const pageAPI = {
     isPluginPage: (path = '') => registeredPages[canonicalizeRouteKey(path)] !== undefined,
   },
 };
+
+/**
+ * Generic capability detection. Hosts announce what they support through `pano.features`;
+ * plugins test `pano.features?.has('<id>')`.
+ * @param {Iterable<string>} ids
+ */
+export function createFeatureSet(ids) {
+  const s = new Set(ids);
+  return Object.freeze({ has: (id) => s.has(id), list: () => [...s].sort() });
+}

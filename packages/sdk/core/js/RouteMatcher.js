@@ -2,6 +2,14 @@
  * Simple route matcher that supports literals, dynamic segments [param],
  * catch-all segments [...param], and basic regex patterns.
  */
+function safeDecode(s) {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
+
 export class RouteMatcher {
   /**
    * Matches a path against a pattern.
@@ -62,7 +70,7 @@ export class RouteMatcher {
       }
 
       const paramName = patternSegments[catchAllIndex].slice(4, -1);
-      params[paramName] = pathSegments.slice(catchAllIndex).join('/');
+      params[paramName] = pathSegments.slice(catchAllIndex).map(safeDecode).join('/');
       return params;
     }
 
@@ -83,12 +91,12 @@ export class RouteMatcher {
   static segmentsMatch(patternSegment, pathSegment, params) {
     if (patternSegment.startsWith('[') && patternSegment.endsWith(']')) {
       const paramName = patternSegment.slice(1, -1);
-      params[paramName] = pathSegment;
+      params[paramName] = safeDecode(pathSegment);
       return true;
     }
     if (patternSegment.startsWith(':')) {
       const paramName = patternSegment.slice(1);
-      params[paramName] = pathSegment;
+      params[paramName] = safeDecode(pathSegment);
       return true;
     }
     return patternSegment === pathSegment;
