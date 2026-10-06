@@ -9,6 +9,7 @@ import { base } from "$app/paths";
 import { init as initPluginAPI, panoApiClient, panoApiServer } from "$lib/PluginAPI.js";
 import { PanoPlugin } from "@panomc/sdk";
 import { findMatch } from "./RouteMatcher.js";
+import { removePluginUiFiles, replacePluginUiFiles } from "./pluginFolder.util.js";
 
 export let registeredPages = {};
 
@@ -162,8 +163,8 @@ function purgeIncompletePluginFolders() {
     }
 
     if (!isPluginFolderIntact(entryPath)) {
-      log(`Removing incomplete plugin folder '${entry}'...`);
-      fs.rmSync(entryPath, { recursive: true, force: true });
+      log(`Removing incomplete plugin UI files of '${entry}'...`);
+      removePluginUiFiles(entryPath);
       // Also drop it from the live store if a previous run added it there.
       plugins.update((p) => {
         delete p[entry];
@@ -197,10 +198,7 @@ async function verifyPlugins(siteInfo) {
     if (!pluginsInfo[pluginId]) {
       log(`Removing '${pluginId}' folder...`);
 
-      fs.rmSync(path.join(pluginsFolder, pluginId), {
-        recursive: true,
-        force: true,
-      });
+      removePluginUiFiles(path.join(pluginsFolder, pluginId));
 
       plugins.update((p) => {
         delete p[pluginId];
@@ -327,8 +325,9 @@ async function downloadAndInstallPlugin(pluginId, pluginManifest, mode) {
     // microseconds — and Phase 0 + the inflight lock guarantee nothing else is reading
     // mid-swap from SSR. Browser-side imports race against rename naturally; if one
     // lands in the gap it 404s, and the PluginManager's reload-once retry resolves it.
-    fs.rmSync(pluginFolder, { recursive: true, force: true });
-    fs.renameSync(tmpDir, pluginFolder);
+    // Only the UI-owned entries (client/, server/, manifest.json) are swapped: the folder is
+    // also the plugin's data folder (config.conf, secret.key, ...) and must survive.
+    replacePluginUiFiles(tmpDir, pluginFolder);
 
     plugins.update((p) => {
       p[pluginId] = structuredClone(pluginManifest);
