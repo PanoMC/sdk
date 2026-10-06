@@ -1,0 +1,4 @@
+build/
+.gradle/
+.kotlin/
+resources/plugin-ui.zip

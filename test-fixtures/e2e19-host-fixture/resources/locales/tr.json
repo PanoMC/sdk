@@ -1,0 +1,13 @@
+{
+  "toast": "Değer: {value}",
+  "nav-fixture": "Fixture",
+  "notifications": {
+    "FIXTURE": "Fixture eklentisi merhaba diyor"
+  },
+  "permissions": {
+    "VIEW_FIXTURE": {
+      "title": "Fixture Görüntüle",
+      "description": "Oyuncu sayfasındaki fixture sekmesini açabilir (E2E-19 test eklentisi)."
+    }
+  }
+}

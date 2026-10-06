@@ -1,0 +1,13 @@
+{
+  "toast": "Значение: {value}",
+  "nav-fixture": "Fixture",
+  "notifications": {
+    "FIXTURE": "Плагин fixture передает привет"
+  },
+  "permissions": {
+    "VIEW_FIXTURE": {
+      "title": "Просмотр Fixture",
+      "description": "Может открывать вкладку fixture на странице игрока (тестовый плагин E2E-19)."
+    }
+  }
+}

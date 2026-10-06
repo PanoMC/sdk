@@ -1,0 +1,13 @@
+{
+  "toast": "Value: {value}",
+  "nav-fixture": "Fixture",
+  "notifications": {
+    "FIXTURE": "The fixture plugin says hello"
+  },
+  "permissions": {
+    "VIEW_FIXTURE": {
+      "title": "View Fixture",
+      "description": "Can open the fixture tab of the player page (E2E-19 test plugin)."
+    }
+  }
+}
