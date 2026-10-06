@@ -8,6 +8,9 @@ Test only, never published. One plugin jar (`tc9-fixture`) plus a driver for the
 - `ui/` + `../tc9-fixture-plugin/src`: theme pages of TC-9 and panel pages of PUI-2 (`build.sh` assembles them like `pano-boilerplate-plugin`).
 - `run/host-checks.mjs`: the checks (Playwright through the market's `e2e-browser/lib`), `run/smtp-sink.mjs` + `parse-eml.py`: the local SMTP sink.
 
+TC-9 item 2 (SSR of a host component from a plugin bundle) runs against the PRODUCTION build of vanilla-theme: `./build-theme-prod.sh` once (private copy under
+`.worktrees/e2e19-ui/vanilla-theme`, `E2E19_THEME_BUILD` overrides the build directory); the driver starts and stops that server itself.
+
 Run (stream A, from the market checkout; the driver imports the market's e2e libs and its `playwright`):
 
 ```

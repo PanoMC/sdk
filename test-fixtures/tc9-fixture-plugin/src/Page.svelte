@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-body" data-fixture-page={name}>
     {#if name === 'hook'}
-      {#if Hook}<Hook name="fixture:hook" />{:else}<span data-fixture="no-hook">Hook missing from context</span>{/if}
+      {#if Hook}<Hook name="fixture:hook" /><Hook name="fixture:hook-ssr" />{:else}<span data-fixture="no-hook">Hook missing from context</span>{/if}
     {:else if name === 'toast'}
       <button class="btn btn-primary" onclick={showXssToast}>Toast</button>
     {:else}

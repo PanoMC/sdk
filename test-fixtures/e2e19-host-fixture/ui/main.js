@@ -1,4 +1,5 @@
 import Theme from './theme.js';
+import * as HookProbeModule from './HookProbe.svelte';
 import { viewComponent } from '@panomc/sdk/utils/component';
 import { registerPanel } from './panel/register.js';
 
@@ -15,6 +16,12 @@ export default class E2e19FixturePlugin extends Theme {
     this.pano.ui.hook.register({
       name: 'fixture:hook',
       component: viewComponent(() => import('./HookProbe.svelte'))
+    });
+    // TC-9 item 2 (SSR proof): the host `Hook` only emits markup for a hook whose component is an already resolved module (a `viewComponent` thunk is
+    // resolved in a client effect), so this second hook is registered with the statically imported module and renders in the plugin's server bundle.
+    this.pano.ui.hook.register({
+      name: 'fixture:hook-ssr',
+      component: HookProbeModule
     });
   }
 }

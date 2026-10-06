@@ -1,14 +1,16 @@
 // E2E-19 host integration checks against the isolated market E2E instance with the host UIs of the local checkouts (`e2e-instance.sh start --ui external:<theme>,<panel>`)
 // and this fixture plugin (build.sh; the instance is started with MARKET_E2E_FAKE_JAR=<tc9-fixture-local-build.jar>, which replaces the fake gateway jar):
 //
-//   TC-9   items 1 to 7 (15 section 10): the TC-9 fixture pages on vanilla-theme (item 2 records whether SSR rendering of a host component from a plugin bundle is proven)
+//   TC-9   items 1 to 7 (15 section 10): the TC-9 fixture pages on vanilla-theme (item 2 asserts, on the adapter-node production build, that a host component rendered from a plugin bundle emits markup on the server)
 //   PUI-2  items 1 to 5: the player-detail tab, permission gate, catch-all, @panomc/sdk/utils/auth, plugin notification
 //   P-4.3  mail with locale / text / Reply-To / PDF attachment into a local SMTP sink
 //   P-5.3  GET /api/panel/notifications: pluginId for a plugin row, null for a core row
 //
 // Run from the market checkout after `eval "$(scripts/e2e-instance.sh start ...)"`:   bun <this file> [filter ...]
 // Ends with `E2E19-SUMMARY executed=N failed=M`; exits non-zero on a failure. Nothing here is shipped.
+import { spawn } from 'node:child_process';
 import crypto from 'node:crypto';
+import net from 'node:net';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -398,16 +400,66 @@ check('TC-9.1', 'a guest opening a loginRequired plugin page is redirected to /l
   }
 });
 
-check('TC-9.2', 'the host Hook from the context renders inside the plugin page client-side; the SSR variant is recorded', async () => {
+/**
+ * The production host: the adapter-node build of a private copy of vanilla-theme (`build-theme-prod.sh`), started on a free port against the instance's API and
+ * stopped through the exact child process. TC-9 item 2 needs it: the vite dev server resolves Svelte once for host and plugin, the production server loads the
+ * plugin's server bundle separately (15 section 4.7, the "own Svelte copy" risk).
+ */
+const THEME_BUILD = process.env.E2E19_THEME_BUILD || path.join(umbrella, '.worktrees/e2e19-ui/vanilla-theme/build');
+
+async function freePort() {
+  return await new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      server.close(() => resolve(port));
+    });
+  });
+}
+
+async function startProdTheme() {
+  assert(
+    fs.existsSync(path.join(THEME_BUILD, 'index.js')),
+    `no production theme build at ${THEME_BUILD}: run build-theme-prod.sh first (or set E2E19_THEME_BUILD to an adapter-node build directory)`,
+  );
+  const port = await freePort();
+  const child = spawn(process.execPath, [path.join(THEME_BUILD, 'index.js')], {
+    cwd: path.dirname(THEME_BUILD),
+    env: { ...process.env, HOST: '127.0.0.1', PORT: String(port), API_URL: `${env.url}/api`, PANO_WEBSITE_API_URL: 'http://127.0.0.1:9/' },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  let log = '';
+  child.stdout.on('data', (d) => (log += d));
+  child.stderr.on('data', (d) => (log += d));
+  const url = `http://127.0.0.1:${port}`;
+  const deadline = Date.now() + 120000;
+
+  for (;;) {
+    if (child.exitCode !== null) throw new Error(`the production theme exited early (${child.exitCode}): ${log.slice(-800)}`);
+
+    try {
+      if ((await fetch(`${url}/_app/version.json`)).ok) break;
+    } catch {
+      // not listening yet
+    }
+
+    if (Date.now() > deadline) {
+      child.kill('SIGTERM');
+      throw new Error(`the production theme did not answer within 120 s: ${log.slice(-800)}`);
+    }
+
+    await sleep(500);
+  }
+
+  return { url, log: () => log, stop: () => child.kill('SIGTERM') };
+}
+
+check('TC-9.2', 'the host Hook from the context renders inside the plugin page client-side; the SSR rendering is proven on the production build', async () => {
   const target = TC9_PATHS.hook;
   const ssr = await htmlOf(`${env.themeUrl}${target}`);
   assertEqual(ssr.status, 200, 'the page answers 200');
   const ssrHasPage = ssr.text.includes('data-fixture-page="hook"');
-  const ssrNoHook = ssr.text.includes('data-fixture="no-hook"');
-  const ssrProbe = ssr.text.includes('data-fixture="hook-probe"');
-  // Svelte's server output marks the taken branch of an {#if}: Page.svelte renders `{#if name === 'hook'}{#if Hook}<Hook/>` so "[0" twice = the Hook branch
-  const ssrHookBranch = /data-fixture-page="hook"><!--\[0--><!--\[0-->/.test(ssr.text);
-  const hostRendered = ssr.text.includes('</footer>') && ssr.text.includes('</html>');
 
   const pc = await newContext(globalThis.__browser, { locale: 'en-US' });
   await blockDevBounce(pc);
@@ -424,18 +476,45 @@ check('TC-9.2', 'the host Hook from the context renders inside the plugin page c
     // client side: the context carries Hook, so the "Hook missing" fallback never shows, and the registered hook component renders
     assertEqual(await page.locator('[data-fixture="no-hook"]').count(), 0, 'the Hook-missing fallback is absent on the client');
     await page.locator('[data-fixture="hook-probe"]').waitFor({ timeout: 30000 });
+    await page.locator('[data-fixture="hook-probe-ssr"]').waitFor({ timeout: 30000 });
     assertEqual(hydration.length, 0, `no hydration warning: ${hydration.join(' | ')}`);
     pc.expectNoErrors('TC-9.2');
   } finally {
     await pc.close();
   }
 
-  const verdict =
-    ssrHasPage && ssrHookBranch && !ssrNoHook && hostRendered
-      ? `PROVEN: the host Hook component (from getPanoContext().context.components) renders on the server from the plugin's own server bundle without error (the page answers 200 with the full document, the Hook branch of the plugin page is taken, no fallback) and hydrates with no warning; ${ssrProbe ? 'the registered hook content is in the server HTML' : 'the content of hooks registered by plugins is not in the server HTML (the host Hook resolves it in a client effect), so plugins that need hook content in SSR cannot rely on it'}`
-      : `NOT PROVEN: plugin page server-rendered=${ssrHasPage}, Hook branch=${ssrHookBranch}, fallback shown=${ssrNoHook}, full document=${hostRendered}; plugins keep mounting host components client-side only`;
+  // The dev server above only shows that the plugin page renders. The proof is on the production build: the host `Hook` emits markup on the server only for a hook
+  // whose component is a resolved module (the thunk of `fixture:hook` is resolved in a client effect), so the page also registers `fixture:hook-ssr` that way.
+  const prod = await startProdTheme();
+  let verdict;
+
+  try {
+    const res = await htmlOf(`${prod.url}${target}`);
+    const html = res.text;
+    const container = /<div[^>]*class="hook-view-container[ "][^>]*hookName="fixture:hook-ssr"/i.test(html) || /<div[^>]*hookName="fixture:hook-ssr"[^>]*class="hook-view-container[ "]/i.test(html);
+    const probe = html.includes('data-fixture="hook-probe-ssr"');
+    const pageThere = html.includes('data-fixture-page="hook"');
+    const fallback = html.includes('data-fixture="no-hook"');
+    const doc = html.includes('</footer>') && html.includes('</html>');
+    const thunkProbe = html.includes('data-fixture="hook-probe"');
+
+    assertEqual(res.status, 200, `production server: ${target} answers 200 (server log: ${prod.log().slice(-400)})`);
+    assert(pageThere, 'production server HTML contains the plugin page');
+    assert(!fallback, 'production server HTML has no "Hook missing" fallback');
+    assert(doc, 'production server HTML is the full document');
+    assert(
+      container,
+      `production server HTML contains the markup the host Hook emitted (div.hook-view-container with hookName="fixture:hook-ssr"), server log: ${prod.log().slice(-400)}`,
+    );
+    assert(probe, 'production server HTML contains the hook component rendered inside the host Hook (data-fixture="hook-probe-ssr")');
+    // the same hook as a viewComponent thunk is resolved on the client only: its content is NOT in the server HTML (recorded, not asserted as a goal)
+    verdict = `PROVEN on the adapter-node production build: the host Hook (from getPanoContext().context.components) called from the plugin's server bundle emits its own markup (div.hook-view-container, hookName attribute) and the hook component inside it in the server HTML, no fallback; hydration clean in the browser (dev server). A hook registered with a viewComponent thunk renders its content on the client only (in the server HTML: ${thunkProbe}).`;
+  } finally {
+    prod.stop();
+  }
+
   note(`TC-9 item 2 (SSR rendering of a host component from a plugin bundle): ${verdict}`);
-  assert(ssrHasPage, 'the plugin page is part of the server HTML');
+  assert(ssrHasPage, 'the plugin page is part of the dev server HTML');
 });
 
 check('TC-9.3', 'a page with meta serves exactly one description, og:image, canonical and one JSON-LD', async () => {
@@ -622,30 +701,58 @@ check('PUI-2.2', 'the Fixture tab appears only with the permission', async () =>
   const overview = (p) => p.getByText(player.username).first().waitFor({ timeout: 90000 });
   const tabLink = (page) => page.locator('a', { hasText: /^Fixture$/ });
 
+  // a positive "the fixture plugin finished loading and its menu edit is applied" signal, then a rendered-frame wait so the menu has re-rendered from the store
+  const menuEdited = async (page) => {
+    await page.waitForFunction(() => document.documentElement.dataset.tc9FixtureMenuEdited === '1', null, { timeout: 120000 });
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  };
+
   for (const [label, account, expected] of [
+    ['admin', a, 1],
     ['holder of the node', staff.with, 1],
     ['staff without the node', staff.without, 0],
-    ['admin', a, 1],
   ]) {
     const { pc, page } = await panelPage(account, `/players/detail/${player.username}`, overview);
 
     try {
       await page.locator('a', { hasText: /^Sessions$/ }).first().waitFor({ timeout: 60000 }); // the menu is rendered
+      await menuEdited(page); // the fixture's edit is in the store: 0 links now means "filtered by the permission", not "not applied yet"
       assertEqual(await tabLink(page).count(), expected, `Fixture tab links for the ${label}`);
     } finally {
       await pc.close();
     }
   }
 
-  // a user without the node who types the URL gets no fixture content
-  const { pc, page, status } = await panelPage(staff.without, `/players/detail/${player.username}/fixture`, null, { waitBoot: false });
+  // a user without the node who types the URL gets the panel's not-found view, HTTP 404, no fixture content and no fixture request
+  {
+    const { pc, page, requests, status } = await panelPage(staff.without, `/players/detail/${player.username}/fixture`, null, { waitBoot: false });
 
-  try {
-    await sleep(4000);
-    assertEqual(await page.locator('[data-fixture="player-tab"]').count(), 0, 'no fixture content for a user without the node');
-    note(`PUI-2 item 2: a user without the node opening the tab URL directly gets HTTP ${status} and no fixture content`);
-  } finally {
-    await pc.close();
+    try {
+      assertEqual(status, 404, 'a user without the node opening the tab URL directly gets HTTP 404');
+      // `hydrated()` does not apply here: the panel never sets window.__PANO_APP_BOOTED__ on its error view (checked: the flag stays undefined on this 404), so the
+      // positive signals are the load event and the panel's own error view (Error.svelte), awaited with the same long timeout as every other navigation
+      await page.waitForLoadState('load', { timeout: 120000 });
+      await page.locator('img[src$="/assets/img/404.png"]').waitFor({ timeout: 120000 });
+      assertEqual(await page.locator('[data-fixture="player-tab"]').count(), 0, 'no fixture content for a user without the node');
+      assertEqual(await tabLink(page).count(), 0, 'no Fixture tab link on the not-found view');
+      const fixtureCalls = requests.filter((u) => new URL(u).pathname.endsWith(`/api/panel/players/${player.username}`) && new URL(u).searchParams.has('tc9fixture'));
+      assertEqual(fixtureCalls.length, 0, `the fixture page load issued no request: ${fixtureCalls.join(', ')}`);
+      note(`PUI-2 item 2: a user without the node opening the tab URL directly gets HTTP ${status}, the panel's not-found view and no fixture content`);
+    } finally {
+      await pc.close();
+    }
+  }
+
+  // the positive control of the same page object: the holder of the node on the same URL gets HTTP 200 and the fixture content
+  {
+    const { pc, page, status } = await panelPage(staff.with, `/players/detail/${player.username}/fixture`, null);
+
+    try {
+      assertEqual(status, 200, 'the holder of the node opening the tab URL directly gets HTTP 200');
+      await page.locator('[data-fixture="player-tab"]').waitFor({ timeout: 90000 });
+    } finally {
+      await pc.close();
+    }
   }
 });
 

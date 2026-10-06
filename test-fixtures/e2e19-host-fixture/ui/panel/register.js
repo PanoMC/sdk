@@ -11,10 +11,19 @@ export function registerPanel(pano) {
     resetLayout: false,
     permission: NODE
   });
-  pano.ui.player?.detail?.editMenu?.((items) => [
+  const edited = pano.ui.player?.detail?.editMenu?.((items) => [
     ...items,
     { id: 'fixture', href: '/fixture', text: `plugins.${PLUGIN_ID}.nav-fixture`, startsWith: true, permission: NODE }
   ]);
+
+  // The edit is queued behind other plugins' edits of the same menu (editSerialized). The driver waits for this marker before it counts the tab links of a user
+  // WITHOUT the permission: "0 links" only means something once the edit has been applied to the menu store.
+  Promise.resolve(edited).then(
+    () => {
+      if (typeof document !== 'undefined') document.documentElement.dataset.tc9FixtureMenuEdited = '1';
+    },
+    (error) => console.error('[tc9-fixture] editMenu failed:', error)
+  );
 
   // PUI-2 item 5: the target of the notification's details.href
   pano.ui.page.register({

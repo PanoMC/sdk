@@ -18,7 +18,8 @@
   export async function load(event) {
     const username = event.params?.username;
     const url = `/api/panel/players/${encodeURIComponent(username)}`;
-    const body = await ApiUtil.get({ path: url, request: event });
+    // the query marks this request as the fixture's own (the layout asks for the same player): a client-side run of this load is visible to the driver
+    const body = await ApiUtil.get({ path: `${url}?tc9fixture=1`, request: event });
 
     return { data: { username, url, status: body?.result ?? body?.error ?? 'none', playerId: body?.player?.id ?? null } };
   }
