@@ -10,7 +10,7 @@ export const notificationsCount = writable(0);
 export const quickNotifications = writable([]);
 
 export const initialized = writable(false);
-export const avatarVersion = writable('');
+export { avatarVersion, markAvatarVersionHydrated } from "./avatarVersion.js";
 
 export async function logout(session) {
   sendLogout().then(async () => {
