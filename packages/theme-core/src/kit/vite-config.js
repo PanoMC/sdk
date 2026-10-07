@@ -13,6 +13,7 @@ import { defineConfig, loadEnv } from "vite";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import { createHash } from "node:crypto";
 import { importFromTheme } from "./resolve.js";
 
 const require = createRequire(import.meta.url);
@@ -99,6 +100,48 @@ function copyCoreMetaPlugin() {
   };
 }
 
+/**
+ * A short digest of the installed @panomc/sdk and @panomc/theme-core files (path, size, mtime).
+ *
+ * `vite dev` serves files under node_modules with `?v=<browserHash>` and `Cache-Control: immutable`.
+ * That hash is built from the lockfile and the config only, so it stays the same when `bun install`
+ * refreshes these two `file:` packages from the theme-core submodule: the browser then keeps the old
+ * files for a year and the app dies on a missing export. The digest goes into a plugin NAME (plugin
+ * names are part of vite's config hash), so new package content always gives a new `?v=`.
+ */
+function corePackagesDigest() {
+  const hash = createHash("sha1");
+
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((x, y) => (x.name < y.name ? -1 : 1))) {
+      if (entry.name === "node_modules" || entry.name === ".git") continue;
+
+      const full = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.isFile()) {
+        const stat = fs.statSync(full);
+        hash.update(`${full}:${stat.size}:${Math.floor(stat.mtimeMs)}\n`);
+      }
+    }
+  };
+
+  for (const name of ["@panomc/sdk", "@panomc/theme-core"]) {
+    try {
+      walk(path.dirname(require.resolve(`${name}/package.json`)));
+    } catch {
+      // not installed in this consumer: nothing to track
+    }
+  }
+
+  return hash.digest("hex").slice(0, 12);
+}
+
+function corePackagesCacheKeyPlugin() {
+  return { name: `pano-core-packages-${corePackagesDigest()}`, apply: "serve" };
+}
+
 /** Absolute path to @panomc/theme-core's src/ inside the consumer's node_modules. */
 function corePackageSrc() {
   return path.dirname(require.resolve("@panomc/theme-core/package.json")) + "/src";
@@ -138,6 +181,7 @@ export function createViteConfig(opts = {}) {
         ...copyFolders.map((f) => copyFolderPlugin(f)),
         copyManifestPlugin(),
         copyCoreMetaPlugin(),
+        corePackagesCacheKeyPlugin(),
         ...(opts.extraPlugins ?? []),
       ],
       // NOTE: The theme file-fingerprint is stamped into build/manifest.json by
