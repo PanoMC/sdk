@@ -14,7 +14,7 @@ mock.module("@sveltejs/kit", () => ({
   redirect: (status, location) => new Redirect(status, location),
 }));
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false }));
+mock.module("$app/environment", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({ goto: async () => {} }));
 mock.module("$pano/lib/services/auth.js", () => ({ sendLogout: async () => {} }));
 mock.module("$pano/lib/components/ToastContainer.svelte", () => ({ showSuccess: async () => {} }));
