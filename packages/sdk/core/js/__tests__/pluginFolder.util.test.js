@@ -69,4 +69,38 @@ describe("plugin folder sync", () => {
     removePluginUiFiles(empty);
     expect(fs.existsSync(empty)).toBe(false);
   });
+
+  test("replace leaves unchanged entries untouched and swaps only what changed", () => {
+    const root = tmp();
+    const folder = path.join(root, "plugin");
+    seed(folder, "same");
+    const inode = (rel) => fs.statSync(path.join(folder, rel)).ino;
+    const before = { client: inode("client/a.js"), server: inode("server/a.js"), manifest: inode("manifest.json") };
+
+    const staging = path.join(root, "staging");
+    seed(staging, "same");
+    fs.writeFileSync(path.join(staging, "server", "a.js"), "new");
+    replacePluginUiFiles(staging, folder);
+
+    expect(inode("client/a.js")).toBe(before.client);
+    expect(inode("manifest.json")).toBe(before.manifest);
+    expect(inode("server/a.js")).not.toBe(before.server);
+    expect(fs.readFileSync(path.join(folder, "server", "a.js"), "utf8")).toBe("new");
+    expect(fs.existsSync(staging)).toBe(false);
+  });
+
+  test("replace notices an added or removed file in an entry", () => {
+    const root = tmp();
+    const folder = path.join(root, "plugin");
+    seed(folder, "same");
+    fs.writeFileSync(path.join(folder, "client", "stale.js"), "x");
+
+    const staging = path.join(root, "staging");
+    seed(staging, "same");
+    fs.writeFileSync(path.join(staging, "server", "extra.js"), "y");
+    replacePluginUiFiles(staging, folder);
+
+    expect(fs.existsSync(path.join(folder, "client", "stale.js"))).toBe(false);
+    expect(fs.existsSync(path.join(folder, "server", "extra.js"))).toBe(true);
+  });
 });

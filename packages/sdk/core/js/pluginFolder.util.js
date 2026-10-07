@@ -18,15 +18,45 @@ export function removePluginUiFiles(pluginFolder) {
   }
 }
 
-/** Replaces the UI-owned entries in pluginFolder with those of stagingDir, keeping all other files. */
+/** True when both paths hold the same file, or the same tree of files with the same bytes. */
+export function sameContent(a, b) {
+  if (!fs.existsSync(a) || !fs.existsSync(b)) return false;
+
+  const statA = fs.statSync(a);
+  const statB = fs.statSync(b);
+
+  if (statA.isDirectory() !== statB.isDirectory()) return false;
+
+  if (!statA.isDirectory()) {
+    return statA.size === statB.size && fs.readFileSync(a).equals(fs.readFileSync(b));
+  }
+
+  const namesA = fs.readdirSync(a).sort();
+  const namesB = fs.readdirSync(b).sort();
+
+  if (namesA.length !== namesB.length || namesA.some((name, i) => name !== namesB[i])) return false;
+
+  return namesA.every((name) => sameContent(path.join(a, name), path.join(b, name)));
+}
+
+/**
+ * Replaces the UI-owned entries in pluginFolder with those of stagingDir, keeping all other files.
+ *
+ * An entry whose content did not change is left untouched on disk. Development mode downloads every
+ * plugin UI again on each server render; rewriting identical files made the dev server's file watcher
+ * reload the page right after it had loaded (a blank flash after every refresh).
+ */
 export function replacePluginUiFiles(stagingDir, pluginFolder) {
   fs.mkdirSync(pluginFolder, { recursive: true });
 
   for (const entry of UI_OWNED_ENTRIES) {
     const target = path.join(pluginFolder, entry);
+    const source = path.join(stagingDir, entry);
+
+    if (sameContent(source, target)) continue;
+
     fs.rmSync(target, { recursive: true, force: true });
 
-    const source = path.join(stagingDir, entry);
     if (fs.existsSync(source)) fs.renameSync(source, target);
   }
 
