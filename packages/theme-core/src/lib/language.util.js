@@ -54,6 +54,20 @@ export async function init(initialLocale, event) {
     fallbackLocale: "en-US",
     initialLocale: languageToLoad.code
   });
+
+  return languageToLoad;
+}
+
+// Re-applies a resolved language synchronously. On the server the stores above are process-wide,
+// so concurrent requests with different locales overwrite each other between `init` (awaits) and
+// the render. Call this at the top of the root layout's component init (render is synchronous).
+export function activateLanguage(language) {
+  if (!language) {
+    return;
+  }
+
+  locale.set(language.code);
+  currentLanguage.set(language);
 }
 
 export function getAcceptedLanguage(headers) {

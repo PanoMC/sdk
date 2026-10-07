@@ -216,12 +216,14 @@ export async function processLoad(event) {
   // After navbar lifecycle, the two view loads operate on independent viewIds,
   // theme:app:load writes to output but doesn't depend on view results,
   // and initLanguage is fully independent. Run them all in parallel.
-  await Promise.all([
+  const [, , , language] = await Promise.all([
     executeViewLoad("navbar-right", event),
     executeViewLoad("navbar-profile-dropdown", event),
     executeLifecycle("theme:app:load", output, event),
     initLanguage(siteInfo.locale, event)
   ]);
+
+  output.language = language;
 
   if (browser && !get(initialized)) {
     initNotificationListeners();
@@ -231,6 +233,11 @@ export async function processLoad(event) {
 }
 
 export function init(data) {
+  // SSR: language stores are module-level; re-apply this request's language right before render.
+  if (!browser) {
+    languageStuff.activateLanguage(data.language);
+  }
+
   const session = writable(data.session);
   const sidebar = writable(null);
   const sidebarProps = writable({});
