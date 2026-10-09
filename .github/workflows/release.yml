@@ -44,6 +44,10 @@ jobs:
       - name: Build widget runtime
         run: cd packages/widget-host && bun run build
 
+      # Every bare import of a shipped file must be declared by its package (a published package must install on its own).
+      - name: Check package imports
+        run: node scripts/check-package-imports.js
+
       - name: Test
         run: bun run test
 
