@@ -1,0 +1,23 @@
+{
+  "controllers": {},
+  "format": 1,
+  "views": {
+    "style:StyledCard": {
+      "classes": [
+        "style-styled-card",
+        "style-styled-card__title"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "active": {
+          "required": false
+        },
+        "title": {
+          "required": false
+        }
+      },
+      "slots": []
+    }
+  }
+}

@@ -10,7 +10,7 @@
 
 <script context="module">
   import { processLoad, processServerLoad } from "$pano/lib/ui-logics/layout-logics/AppLayoutLogics";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").LayoutServerLoad}
@@ -26,14 +26,15 @@
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
+    const data = await processLoad(event);
+
+    const { View, ...blocks } = await loadView(
+      event,
       "AppLayoutView",
       () => import("../views/AppLayoutView.svelte"),
     );
 
-    const data = await processLoad(event);
-
-    return { ...data, appLayoutView: await viewPromise };
+    return { ...data, ...blocks, appLayoutView: View };
   }
 </script>
 

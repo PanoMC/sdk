@@ -1,0 +1,6 @@
+{
+  "name": "plugin-style-fixture",
+  "private": true,
+  "type": "module",
+  "description": "CX-01 fixture plugin: one view with a <style> block. Test only, never published."
+}

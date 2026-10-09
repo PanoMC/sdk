@@ -3,7 +3,38 @@ import path from "path";
 
 // plugins/<pluginId>/ is shared with the backend: it is also the plugin's data folder
 // (config.conf, secret.key, ...). The UI engine may only touch what it writes itself.
-export const UI_OWNED_ENTRIES = ["client", "server", "manifest.json"];
+export const UI_OWNED_ENTRIES = [
+  "client",
+  "server",
+  "manifest.json",
+  "contract",
+  "pano-plugin.json",
+  "controllers",
+  "samples",
+];
+
+export const PACKAGE_FILE_NAME = "pano-plugin.json";
+
+/**
+ * Reads the package index (pano-plugin.json) of a plugin folder.
+ * A missing or unreadable file means an old plugin without a package: returns null.
+ * @param {string} pluginFolder
+ * @returns {{ namespace?: string, styles?: any, views?: any, package: object } | null}
+ */
+export function readPluginPackage(pluginFolder) {
+  let json;
+  try {
+    json = JSON.parse(fs.readFileSync(path.join(pluginFolder, PACKAGE_FILE_NAME), "utf8"));
+  } catch {
+    return null;
+  }
+  if (!json || typeof json !== "object" || Array.isArray(json)) return null;
+  const out = { package: json };
+  if (typeof json.namespace === "string" && json.namespace) out.namespace = json.namespace;
+  if (json.styles !== undefined) out.styles = json.styles;
+  if (json.views !== undefined) out.views = json.views;
+  return out;
+}
 
 /** Removes only the UI-owned entries of a plugin folder, then the folder itself if it is empty. */
 export function removePluginUiFiles(pluginFolder) {

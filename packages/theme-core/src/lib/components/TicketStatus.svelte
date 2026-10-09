@@ -1,24 +1,18 @@
-{#if status === TicketStatuses.NEW}
-  <span class="badge text-bg-success rounded-pill"
-    >{$_("ticket-statuses.new")}</span>
-{:else if status === TicketStatuses.REPLIED}
-  <span class="badge text-bg-warning rounded-pill"
-    >{$_("ticket-statuses.replied")}</span>
-{:else if status === TicketStatuses.CLOSED}
-  <span class="badge text-bg-danger rounded-pill"
-    >{$_("ticket-statuses.closed")}</span>
-{/if}
+<!--
+  Controller of the engine's <TicketStatus>. The markup lives in views/parts/TicketStatus.svelte; a theme may
+  replace it with the "TicketStatus" entry of theme.config.js views (see skin-contract.json for the props).
+-->
+<svelte:component this={getOverride("TicketStatus") ?? TicketStatusView} {status} />
 
 <script context="module">
-  export const TicketStatuses = Object.freeze({
-    NEW: "NEW",
-    REPLIED: "REPLIED",
-    CLOSED: "CLOSED",
-  });
+  import { TicketStatuses } from "$pano/lib/views/parts/ticketStatuses.js";
+
+  export { TicketStatuses };
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
+  import { getOverride } from "$pano/registry/index.js";
+  import TicketStatusView from "$pano/lib/views/parts/TicketStatus.svelte";
 
   export let status = TicketStatuses.NEW;
 </script>

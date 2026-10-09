@@ -1,4 +1,5 @@
 {
+  "sdkLine": "2.0.0",
   "branches": [
     {
       "name": "dev",
@@ -15,7 +16,7 @@
       "@semantic-release/exec",
       {
         "prepareCmd": "node scripts/set-version.js ${nextRelease.version}",
-        "publishCmd": "cd packages/theme-core && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../sdk && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks"
+        "publishCmd": "cd packages/theme-core && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../sdk && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../plugin-kit && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../client && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../client-gen && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks && cd ../widget-host && bun publish --access public --tag ${nextRelease.channel || 'latest'} --no-git-checks"
       }
     ],
     [

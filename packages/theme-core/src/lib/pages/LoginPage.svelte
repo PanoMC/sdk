@@ -28,17 +28,12 @@
 
 <script context="module">
   import { executeLifecycle, executeViewLoad, panoApiServer } from "$pano/lib/PluginAPI";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   export async function load(event) {
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
-      "LoginView",
-      () => import("../views/LoginView.svelte"),
-    );
-
     const { parent } = event;
     await parent();
 
@@ -52,7 +47,7 @@
     await executeViewLoad("login-content", event);
     await executeViewLoad("login-alt-methods", event);
 
-    return { initialError: lifecycleData.error || null, pageTitle: "components.modals.login.title", View: await viewPromise };
+    return { initialError: lifecycleData.error || null, pageTitle: "components.modals.login.title", ...(await loadView(event, "LoginView", () => import("../views/LoginView.svelte"))) };
   }
 </script>
 
@@ -165,7 +160,7 @@
 
     try {
       const body = await verifyLinkCode($usernameOrEmail, $linkCode);
-      if (body.result === "ok") {
+      if (!body.error) {
         registerToken = body.token;
         // Assuming backend returns username associated with code
         if (body.username) {
@@ -173,10 +168,10 @@
         }
         $viewState = "REGISTER";
       } else {
-        if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-          $error = body.reason;
+        if (body.error.code === "PLUGIN_DENIED_LOGIN" && body.error.details?.reason) {
+          $error = body.error.details.reason;
         } else {
-          $error = body.result === "error" ? body.error : NETWORK_ERROR;
+          $error = body.error.code || NETWORK_ERROR;
         }
       }
     } catch (err) {
@@ -203,8 +198,8 @@
         agreement: $agreement,
       });
 
-      if (body.result !== "ok") {
-        if (body.error === "INVALID_TOKEN") {
+      if (body.error) {
+        if (body.error.code === "INVALID_TOKEN") {
           $viewState = "LOGIN";
           $error = null;
           $autoVerifyDone = false;
@@ -212,7 +207,7 @@
           $loading = false;
           return;
         }
-        $error = body.result === "error" ? body.error : NETWORK_ERROR;
+        $error = body.error.code || NETWORK_ERROR;
         $loading = false;
         return;
       }
@@ -252,8 +247,8 @@
       await showSuccessToast("successes.REGISTER_SUCCESSFUL");
 
       const loginBody = await sendLogin({ usernameOrEmail: $usernameOrEmail, password: $password });
-      if (loginBody.result !== "ok") {
-        $error = loginBody.error;
+      if (loginBody.error) {
+        $error = loginBody.error.code;
         $loading = false;
         return;
       }
@@ -295,9 +290,12 @@
       newUsername: $viewState === "SET_USERNAME" ? $newUsername : undefined
     })
       .then(async (body) => {
-        if (body.result !== "ok") {
+        if (body.error) {
           $loading = false;
-          if (body.error === "LINK_CODE_REQUIRED") {
+          const errorCode = body.error.code;
+          const errorDetails = body.error.details ?? {};
+
+          if (errorCode === "LINK_CODE_REQUIRED") {
             $viewState = "LINK_CODE";
             $passwordVisible = false;
             $password = "";
@@ -305,17 +303,17 @@
             return;
           }
 
-          if (body.error === "LOGIN_EMAIL_NOT_VERIFIED") {
+          if (errorCode === "LOGIN_EMAIL_NOT_VERIFIED") {
             if ($emailRequired) {
               $emailVerificationSent = true;
               $error = null;
               return;
             }
-            $error = { key: "LOGIN_EMAIL_NOT_VERIFIED", props: { email: body.email } };
+            $error = { key: "LOGIN_EMAIL_NOT_VERIFIED", props: { email: errorDetails.email } };
             return;
           }
 
-          if (body.error === "REGISTER_EMAIL_REQUIRED") {
+          if (errorCode === "REGISTER_EMAIL_REQUIRED") {
             $emailRequired = true;
             $passwordVisible = true;
             if ($session?.siteInfo?.isDemo && $usernameOrEmail === "demo") {
@@ -326,15 +324,15 @@
             return;
           }
 
-          if (body.error === "USERNAME_REQUIRED") {
-            $usernameRequiredUserId = body.userId;
+          if (errorCode === "USERNAME_REQUIRED") {
+            $usernameRequiredUserId = errorDetails.userId;
             $viewState = "SET_USERNAME";
             $error = null;
             setTimeout(() => document.getElementById("newUsername")?.focus(), 50);
             return;
           }
 
-          if (body.error === "LOGIN_IS_INVALID" && !$passwordVisible) {
+          if (errorCode === "LOGIN_IS_INVALID" && !$passwordVisible) {
             $passwordVisible = true;
             if ($session?.siteInfo?.isDemo && $usernameOrEmail === "demo") {
               $password = "123456";
@@ -344,28 +342,25 @@
             return;
           }
 
-          if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-            $error = body.reason;
+          if (errorCode === "PLUGIN_DENIED_LOGIN" && errorDetails.reason) {
+            $error = errorDetails.reason;
             return;
           }
 
-          $error = body.result === "error" ? body.error : NETWORK_ERROR;
+          $error = errorCode || NETWORK_ERROR;
 
-          if (
-            body.result === "error" &&
-            body.error === "LOGIN_USER_IS_BANNED"
-          ) {
-            if (!body.until) {
+          if (errorCode === "LOGIN_USER_IS_BANNED") {
+            if (!errorDetails.until) {
               $error = { key: "LOGIN_USER_IS_BANNED_PERMANENTLY" };
-              if (body.reason) {
+              if (errorDetails.reason) {
                 $error = {
                   key: "LOGIN_USER_IS_BANNED_PERMANENTLY_WITH_REASON",
-                  props: { reason: `'${body.reason}'` }
+                  props: { reason: `'${errorDetails.reason}'` }
                 };
               }
             } else {
               const formattedUntil = format(
-                new Date(body.until),
+                new Date(errorDetails.until),
                 "dd/MM/yyyy HH:mm",
                 {
                   locale: locales[$currentLanguage.dateFnsCode]
@@ -377,11 +372,11 @@
                 props: { untilTime: formattedUntil }
               };
 
-              if (body.reason) {
+              if (errorDetails.reason) {
                 $error = {
                   key: "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON",
                   props: {
-                    reason: `'${body.reason}'`,
+                    reason: `'${errorDetails.reason}'`,
                     untilTime: formattedUntil
                   }
                 };

@@ -14,7 +14,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
+import { pathToFileURL } from "node:url";
 import { importFromTheme } from "./resolve.js";
+import { scanThemeMeta, renderThemeMetaModule } from "./theme-meta.js";
+import { loadThemeConfig, pullContracts, writeCoreMeta } from "../../bin/contracts.js";
 
 const require = createRequire(import.meta.url);
 
@@ -46,7 +49,7 @@ function copyFolderPlugin(folder) {
   };
 }
 
-function copyManifestPlugin(filename = "manifest.json") {
+export function copyManifestPlugin(filename = "manifest.json") {
   let outDir = "";
 
   return {
@@ -65,7 +68,7 @@ function copyManifestPlugin(filename = "manifest.json") {
       }
 
       try {
-        await fs.promises.copyFile(srcPath, destPath);
+        await fs.promises.writeFile(destPath, await manifestWithApiLevel(srcPath));
         console.log(`Copied manifest from ${srcPath} to ${destPath}`);
       } catch (err) {
         console.error("Failed to copy manifest.json:", err);
@@ -74,9 +77,34 @@ function copyManifestPlugin(filename = "manifest.json") {
   };
 }
 
-function copyCoreMetaPlugin() {
-  // core-meta.json is the sidecar that carries theme metadata the platform
-  // must not rewrite (coreVersion, tier, baseTheme). See docs/P0-SPIKE.md §6.
+/**
+ * The manifest as it goes into build/: `apiLevel` is stamped from the engine's package.json
+ * (`pano.apiLevel`, doc 04 section 7) unless the theme's own manifest sets one. A manifest that is
+ * not valid JSON is copied byte for byte.
+ */
+async function manifestWithApiLevel(srcPath) {
+  const raw = await fs.promises.readFile(srcPath);
+
+  let manifest;
+  try {
+    manifest = JSON.parse(raw.toString("utf-8"));
+  } catch {
+    return raw;
+  }
+
+  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest) || "apiLevel" in manifest) return raw;
+
+  const apiLevel = require("@panomc/theme-core/package.json").pano?.apiLevel;
+  if (!Number.isInteger(apiLevel)) return raw;
+
+  return JSON.stringify({ ...manifest, apiLevel }, null, 2) + "\n";
+}
+
+export function copyCoreMetaPlugin() {
+  // core-meta.json is what the platform reads about a theme (overrides, engine, supports, home, routes,
+  // controllers, urls, settingsSchema; doc 01 section 7) plus the author's own keys (tier, baseTheme, ...)
+  // and the coreVersion stamped here. It is generated from theme.config.js on every build, so it cannot be
+  // stale; `finalize-fingerprint.js` runs after this and covers it. See docs/P0-SPIKE.md section 6.
   let outDir = "";
 
   return {
@@ -86,15 +114,27 @@ function copyCoreMetaPlugin() {
       outDir = "build/";
     },
     async closeBundle() {
-      const srcPath = path.resolve(process.cwd(), "core-meta.json");
-      if (!fs.existsSync(srcPath)) return;
-
+      const themeDir = process.cwd();
+      const destPath = path.resolve(themeDir, outDir, "core-meta.json");
       const corePkg = require("@panomc/theme-core/package.json");
-      const meta = JSON.parse(await fs.promises.readFile(srcPath, "utf-8"));
-      meta.coreVersion = corePkg.version;
 
-      const destPath = path.resolve(process.cwd(), outDir, "core-meta.json");
-      await fs.promises.writeFile(destPath, JSON.stringify(meta, null, 2));
+      let configFailed = false;
+      const config = await loadThemeConfig(themeDir, (error) => {
+        configFailed = true;
+        console.warn(`[core-meta] could not import theme.config.js: ${error?.message ?? error}`);
+      });
+
+      if (configFailed) {
+        // keep the committed file rather than write metadata from an empty config
+        const srcPath = path.resolve(themeDir, "core-meta.json");
+        if (!fs.existsSync(srcPath)) return;
+        const meta = JSON.parse(await fs.promises.readFile(srcPath, "utf-8"));
+        meta.coreVersion = corePkg.version;
+        await fs.promises.writeFile(destPath, JSON.stringify(meta, null, 2));
+        return;
+      }
+
+      writeCoreMeta({ themeDir, config, outFile: destPath, extra: { coreVersion: corePkg.version } });
       console.log(`Wrote core-meta.json (coreVersion ${corePkg.version})`);
     },
   };
@@ -142,6 +182,55 @@ function corePackagesCacheKeyPlugin() {
   return { name: `pano-core-packages-${corePackagesDigest()}`, apply: "serve" };
 }
 
+const THEME_META_ID = "virtual:pano-theme-meta";
+const THEME_META_RESOLVED = "\0" + THEME_META_ID;
+
+/**
+ * Serves `virtual:pano-theme-meta` (doc 01 section 4): the blocks, slots and claims found by scanning
+ * the theme's overrides, added route pages and home pages (see theme-meta.js). The scanned files and
+ * theme.config.js are watched, so an edit rebuilds the module.
+ * @param {{ themeDir?: string }} [options]
+ */
+export function panoThemeMeta(options = {}) {
+  const themeDir = options.themeDir ?? process.cwd();
+  const configPath = path.join(themeDir, "theme.config.js");
+  /** @type {Set<string>} */
+  let watched = new Set();
+
+  async function loadConfig() {
+    if (!fs.existsSync(configPath)) return {};
+    try {
+      // a fresh URL every time: the module cache must not serve an old theme.config.js
+      const mod = await import(`${pathToFileURL(configPath).href}?t=${Date.now()}`);
+      return mod.default ?? {};
+    } catch (error) {
+      console.warn(`[pano-theme-meta] could not import theme.config.js: ${error?.message ?? error}`);
+      return {};
+    }
+  }
+
+  return {
+    name: "pano-theme-meta",
+    enforce: "pre",
+    resolveId(id) {
+      return id === THEME_META_ID ? THEME_META_RESOLVED : null;
+    },
+    async load(id) {
+      if (id !== THEME_META_RESOLVED) return null;
+      const meta = scanThemeMeta({ themeDir, config: await loadConfig() });
+      watched = new Set([configPath, ...meta.files]);
+      for (const file of watched) this.addWatchFile?.(file);
+      return renderThemeMetaModule(meta, themeDir);
+    },
+    handleHotUpdate({ file, server }) {
+      if (!watched.has(path.normalize(file))) return;
+      const mod = server.moduleGraph.getModuleById(THEME_META_RESOLVED);
+      if (mod) server.moduleGraph.invalidateModule(mod);
+      server.ws.send({ type: "full-reload" });
+    },
+  };
+}
+
 /** Absolute path to @panomc/theme-core's src/ inside the consumer's node_modules. */
 function corePackageSrc() {
   return path.dirname(require.resolve("@panomc/theme-core/package.json")) + "/src";
@@ -171,9 +260,20 @@ export function createViteConfig(opts = {}) {
     // $app/runtime code (see kit/resolve.js).
     const { sveltekit } = await importFromTheme("@sveltejs/kit", "./vite");
 
+    // Every dev start refreshes plugin-contracts/ from the installed plugins and prints the views whose
+    // contract changed (doc 01 section 5). Never fatal: a broken plugin folder must not stop the dev server.
+    if (command === "serve") {
+      try {
+        pullContracts({ themeDir: process.cwd(), log: (line) => console.log(`[theme-core] ${line}`) });
+      } catch (error) {
+        console.warn(`[theme-core] plugin contracts were not refreshed: ${error?.message ?? error}`);
+      }
+    }
+
     const config = {
       clearScreen: false,
       plugins: [
+        panoThemeMeta(),
         sveltekit(),
         // NOTE: licenses.json is generated by bin/license/finalize-fingerprint.js
         // AFTER vite build — a closeBundle plugin races adapter-node's build/

@@ -1,64 +1,18 @@
-<Sidebar side={side}>
-  <div class="d-flex flex-column gap-3">
-    {#if showDeleteAll}
-      <div class="order-last order-lg-first w-100">
-        <button
-          class="btn btn-danger w-100"
-          type="button"
-          on:click={() => showDeleteAllNotificationsModal()}>
-          <i class="fas fa-trash-alt me-2"></i>
-          {$_("buttons.delete-all")}
-        </button>
-      </div>
-    {/if}
-    <div
-      class="vstack gap-3"
-      class:order-first={showDeleteAll}
-      class:order-lg-last={showDeleteAll}>
-    {#each $items as item (item.id)}
-      {#if item.id === "profile-info"}
-        <!-- Profile Info Snippet -->
-        <div class="card square-card-desktop">
-          <div class="card-body vstack gap-3">
-            <div class="d-block">
-              <PlayerHead
-                width="64"
-                height="64"
-                username={user.username}
-                inGame={$data.inGame}
-                lastActivityTime={$data.lastActivityTime}
-                checkTime={checkTime} />
-            </div>
-            <PageTitle title={user.username} breadcrumb={false} />
-            <div class="text-center">
-              <PlayerStatusBadge
-                banned={$data.isBanned}
-                lastActivityTime={$data.lastActivityTime}
-                inGame={$data.inGame}
-                checkTime={checkTime} />
-            </div>
-            <div class="text-center">
-              <PlayerPermissionBadge
-                permissionGroupName={$data.permissionGroupName} />
-            </div>
-          </div>
-        </div>
-      {:else if item.id === "profile-nav"}
-        <!-- Profile navigation: built-ins plus the plugin-contributed `profile-nav` items -->
-        <ProfileNavCard entries={navEntries} />
-      {:else}
-        <!-- External Component -->
-        <ViewComponent
-          component={item.component}
-          data={$data}
-          user={user}
-          checkTime={checkTime}
-          {...item.props} />
-      {/if}
-    {/each}
-    </div>
-  </div>
-</Sidebar>
+<!--
+  Controller of the engine's <ProfileSidebar>. The markup lives in views/parts/ProfileSidebar.svelte; a
+  theme may replace it with the "ProfileSidebar" entry of theme.config.js views (see skin-contract.json
+  for the props). The controller keeps the data, the item list, the navigation entries and the clock.
+-->
+<svelte:component
+  this={getOverride("ProfileSidebar") ?? ProfileSidebarView}
+  {side}
+  {showDeleteAll}
+  {onDeleteAllClick}
+  {items}
+  {data}
+  {user}
+  {checkTime}
+  {navEntries} />
 
 <script context="module">
   import ApiUtil from "$pano/lib/api.util.js";
@@ -100,7 +54,7 @@
 
     data.set(
       await ApiUtil.get({
-        path: "/api/sidebars/profile",
+        path: "/sidebars/profile",
         request: event,
       }),
     );
@@ -117,15 +71,8 @@
   import { page } from "$app/stores";
   import { base } from "$app/paths";
 
-  import tooltip from "$pano/lib/tooltip.util";
-
-  import PlayerPermissionBadge from "$pano/lib/components/PlayerPermissionBadge.svelte";
-  import PlayerStatusBadge from "$pano/lib/components/PlayerStatusBadge.svelte";
-  import Sidebar from "$pano/lib/components/Sidebar.svelte";
-  import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
-  import PlayerHead from "$pano/lib/components/PlayerHead.svelte";
-  import PageTitle from "../PageTitle.svelte";
-  import ProfileNavCard from "./ProfileNavCard.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import ProfileSidebarView from "$pano/lib/views/parts/ProfileSidebar.svelte";
   import { buildProfileNavEntries } from "./profileNav.util.js";
   import { show as showDeleteAllNotificationsModal } from "$pano/lib/components/modals/ConfirmRemoveAllNotificationsModal.svelte";
 
@@ -152,26 +99,11 @@
   const items = panoApi.ui.sidebar.get("profile");
   const navItems = panoApi.ui.profile.nav.get();
 
+  const onDeleteAllClick = () => showDeleteAllNotificationsModal();
+
   $: navEntries = buildProfileNavEntries($navItems, {
     pathname: $page.url.pathname,
     base,
     translate: (key) => $_(key),
   });
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .square-card-desktop {
-      aspect-ratio: 1 / 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .square-card-desktop :global(.card-body) {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-  }
-</style>

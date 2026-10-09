@@ -2,7 +2,7 @@
   @view TicketsView
   Controller: $pano/lib/pages/profile/TicketsPage.svelte
   Props:
-    data                object — page data from load (pageType, page, totalPage, ticketCount, category, categoryUrl)
+    data                object — page data from load (pageType, page, totalPages, ticketCount, category, categoryUrl)
     contentItems        store — plugin-extendable content item list for the tickets page
     tickets             store — the tickets list from TicketsPageLogics.init; $tickets to read, the raw store is handed back to onCloseTicketClick
     PageTypes           object — ticket list filter enum (ALL, CLOSED) for the header buttons
@@ -11,7 +11,7 @@
   Override from a theme:
     theme.config.js → views: { TicketsView: () => import("./src/views/TicketsView.svelte") }
 -->
-<div class="vstack gap-3">
+<div class="pano-tickets-view vstack gap-3">
   {#each $contentItems as item (item.id)}
     {#if item.id === "tickets-card"}
       <div class="card mt-3 mt-lg-0">
@@ -31,17 +31,17 @@
           </div>
           <div slot="right" class="btn-group">
             <a
-              class="btn btn-outline-primary btn-sm"
+              class="pano-tickets-view__action btn btn-outline-primary btn-sm"
               class:active={data.pageType === PageTypes.ALL}
               role="button"
-              href="/tickets">
+              href={route("/tickets")}>
               {$_("pages.tickets.all")}
             </a>
             <a
-              class="btn btn-outline-primary btn-sm"
+              class="pano-tickets-view__closed btn btn-outline-primary btn-sm"
               class:active={data.pageType === PageTypes.CLOSED}
               role="button"
-              href="/tickets?pageType=CLOSED">
+              href="{route('/tickets')}?pageType=CLOSED">
               {$_("pages.tickets.closed")}
             </a>
           </div>
@@ -52,13 +52,13 @@
           tickets={$tickets} />
 
         {#if data.ticketCount > 0}
-          <div class="card-footer">
+          <div class="pano-tickets-view__footer card-footer">
             <Pagination
               page={data.page}
-              totalPage={data.totalPage}
+              totalPages={data.totalPages}
               loading={false}
               on:firstPageClick={() => onPageClick(data, 1)}
-              on:lastPageClick={() => onPageClick(data, data.totalPage)}
+              on:lastPageClick={() => onPageClick(data, data.totalPages)}
               on:pageLinkClick={(event) => onPageClick(data, event.detail.page)} />
           </div>
         {/if}
@@ -72,6 +72,8 @@
 
 <script>
   import { _ } from "svelte-i18n";
+
+  import { route } from "$pano/registry/routes.js";
 
   import Pagination from "$pano/lib/components/Pagination.svelte";
   import CardHeader from "$pano/lib/components/CardHeader.svelte";

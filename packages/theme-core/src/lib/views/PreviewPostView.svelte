@@ -38,13 +38,13 @@
   }
 </style>
 
-<div class="vstack gap-3">
-  <h5 class="card-title mb-0">{$_("pages.preview-post.title", {values: {postTitle: post.title}})}</h5>
+<div class="pano-preview-post-view vstack gap-3">
+  <h5 class="pano-preview-post-view__title card-title mb-0">{$_("pages.preview-post.title", {values: {postTitle: post.title}})}</h5>
 
   {#if post.category.title !== "-"}
     <div class="text-center">
       <span
-        class="badge {post.category.title !== '-'
+        class="pano-preview-post-view__badge badge {post.category.title !== '-'
           ? 'text-bg-secondary'
           : 'text-bg-primary'} text-decoration-none rounded-pill focus-ring">
         {post.category.title}
@@ -59,7 +59,7 @@
         <img
           id="thumbnail"
           src={post.thumbnailUrl}
-          class="d-block"
+          class="pano-preview-post-view__image d-block"
           alt={post.title}
           title={post.title} />
       </div>
@@ -83,7 +83,7 @@
             class="col-lg-3 d-flex align-items-end justify-content-end opacity-75">
             <span class="d-inline-block focus-ring rounded-circle ms-2">
               <img
-                src="/api/profile/picture/{post.writer
+                src="/api/v1/profile/picture/{post.writer
                   .username}?{$avatarVersion}"
                 alt={post.writer.username}
                 width="24"
@@ -92,7 +92,7 @@
                   post.writer.username,
                   { placement: "bottom" },
                 ]}
-                class="rounded-circle" />
+                class="pano-preview-post-view__image-2 rounded-circle" />
             </span>
           </div>
         </div>
@@ -101,13 +101,13 @@
   {/if}
 
   <div class="card">
-    <div class="card-body">
+    <div class="pano-preview-post-view__body card-body">
       <div class="card-text text-break word-break">
         {@html post.text}
       </div>
     </div>
     {#if !(post.thumbnailUrl && (typeof themeSettings.postCoverImageEnabled === "undefined" ? true : themeSettings.postCoverImageEnabled))}
-      <div class="card-footer">
+      <div class="pano-preview-post-view__footer card-footer">
         <div class="d-flex align-items-center justify-content-between small">
           {#if typeof themeSettings.postViewCountEnabled === "undefined" ? true : themeSettings.postViewCountEnabled}
             <div>
@@ -120,7 +120,7 @@
             <Date time={post.date} />
             <span class="d-inline-block rounded focus-ring rounded-circle ms-2">
               <img
-                src="/api/profile/picture/{post.writer
+                src="/api/v1/profile/picture/{post.writer
                   .username}?{$avatarVersion}"
                 alt={post.writer.username}
                 width="28"
@@ -129,7 +129,7 @@
                   post.writer.username,
                   { placement: "bottom" },
                 ]}
-                class="rounded-circle" />
+                class="pano-preview-post-view__image-3 rounded-circle" />
             </span>
           </div>
         </div>

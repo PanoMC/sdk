@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "pluginId": "pano-plugin-demo",
+  "namespace": "demo",
+  "version": "1.2.3",
+  "sdk": 2,
+  "viewImports": "warn",
+  "contract": "contract/views.json",
+  "controllers": "contract/controllers.json",
+  "views": {
+    "HelloPage": {
+      "samples": [],
+      "controllers": {},
+      "helpers": [],
+      "roots": [],
+      "classes": []
+    },
+    "ProductCard": {
+      "samples": [
+        "filled",
+        "empty"
+      ],
+      "controllers": {
+        "demo/cart": 1,
+        "demo/format": 1
+      },
+      "helpers": [
+        "lib/sale.js"
+      ],
+      "roots": [
+        "div"
+      ],
+      "classes": [
+        "demo-product-card"
+      ],
+      "attrs": [
+        "title"
+      ]
+    }
+  },
+  "styles": {
+    "fallback": "client/fallback.css",
+    "own": "client/plugin.css",
+    "hash": "9f2c1a7e",
+    "icons": true
+  },
+  "badges": {
+    "controllers": true,
+    "samples": true,
+    "semanticClasses": true,
+    "widgets": false,
+    "openapi": false
+  }
+}

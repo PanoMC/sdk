@@ -4,19 +4,25 @@
  *
  *   bunx @panomc/theme-core new [name]     scaffold a working Pano theme
  *   bunx @panomc/theme-core sync           regenerate route shims + host-provides stubs
- *   bunx @panomc/theme-core check          contract lint (view registry, svelte pin, …)
- *   bunx @panomc/theme-core list-views     list the overridable core views
- *   bunx @panomc/theme-core eject-view <ViewName>
- *                                  copy a core default view into src/views/ and
- *                                  register it in theme.config.js
- *   bunx @panomc/theme-core package        reproducible zip of build/ (the zip sha256
- *                                  is the premium license identity)
+ *   bunx @panomc/theme-core check [--strict] [--fix]
+ *                                  contract lint (view registry, svelte pin, …); --strict makes warnings fail,
+ *                                  --fix writes controller pins into theme.config.js
+ *   bunx @panomc/theme-core list-views     list engine and plugin views, with contract and overridden marks
+ *   bunx @panomc/theme-core eject-view <id | ns:* [--pages]> [--from <dir|zip>]
+ *                                  copy an engine view or a plugin's readable view into src/views/
+ *                                  and register it in theme.config.js
+ *   bunx @panomc/theme-core accept <id>
+ *                                  take over the plugin's current contract for an override
+ *   bunx @panomc/theme-core contracts pull [--from <dir|zip>]
+ *                                  refresh plugin-contracts/ from the installed plugins
+ *   bunx @panomc/theme-core package        runs `check --strict`, then a reproducible zip of build/ (the zip
+ *                                  sha256 is the premium license identity)
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync, copyFileSync, mkdirSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { pc, version, DOCS_URL, brandIntro, outro, note } from "./ui.js";
+import { pc, version, DOCS_URL } from "./ui.js";
 
 let binDir = dirname(fileURLToPath(import.meta.url));
 const [cmd, ...args] = process.argv.slice(2);
@@ -43,10 +49,13 @@ function run(script, extra = []) {
 const COMMANDS = {
   new: "scaffold a working Pano theme (interactive when run with no name)",
   sync: "regenerate route shims + host-provides stubs + merged lang",
-  check: "contract lint — view registry, svelte pin, slots, settings",
-  "list-views": "list the core views you can override",
-  "eject-view": "copy a default view into src/views/ and register it",
-  package: "reproducible zip of build/ (its sha256 is the license identity)",
+  check: "contract lint — view registry, svelte pin, slots, settings (--strict: warnings fail, --fix: write controller pins)",
+  "list-views": "list engine and plugin views with contract and overridden marks",
+  "eject-view": "copy an engine or plugin view into src/views/ and register it",
+  accept: "take over a plugin's current contract for an override",
+  contracts: "pull plugin view contracts into plugin-contracts/",
+  "dev-hint": "print where the theme dev server URL goes in the panel (called by dev:ui)",
+  package: "check --strict, then a reproducible zip of build/ (its sha256 is the license identity)",
 };
 
 function printHelp() {
@@ -62,7 +71,14 @@ function printHelp() {
     pc.bold("Commands"),
   ];
   for (const [name, desc] of Object.entries(COMMANDS)) {
-    const arg = name === "eject-view" ? pc.dim(" <View>") : "";
+    const arg =
+      name === "eject-view"
+        ? pc.dim(" <id | ns:*>")
+        : name === "accept"
+          ? pc.dim(" <id>")
+          : name === "contracts"
+            ? pc.dim(" pull")
+            : "";
     lines.push(`  ${pc.yellow(name.padEnd(pad))}${arg}  ${pc.dim(desc)}`);
   }
   lines.push(
@@ -71,6 +87,8 @@ function printHelp() {
     `  ${pc.cyan("bunx @panomc/theme-core new")}              ${pc.dim("interactive scaffolder")}`,
     `  ${pc.cyan("bunx @panomc/theme-core new my-theme")}     ${pc.dim("scaffold immediately")}`,
     `  ${pc.cyan("bunx @panomc/theme-core eject-view LoginView")}`,
+    `  ${pc.cyan("bunx @panomc/theme-core eject-view market:ProductCard")}`,
+    `  ${pc.cyan("bunx @panomc/theme-core eject-view market:* --pages")}`,
     "",
     `${pc.bold("Docs")}  ${pc.cyan(DOCS_URL)}`,
     "",
@@ -108,6 +126,22 @@ function suggest(input) {
   return bestD <= 3 ? best : null;
 }
 
+/**
+ * The two lines `dev:ui` prints once before it starts the dev server: the panel field that takes the dev server URL
+ * and the switch that must be on. `--port <n>` (default 3000) names the URL.
+ */
+function printDevHint(rest) {
+  const at = rest.indexOf("--port");
+  const port = at >= 0 && /^\d+$/.test(rest[at + 1] ?? "") ? rest[at + 1] : "3000";
+
+  console.log(
+    [
+      `${pc.cyan("dev")}  Panel → Appearance → Front-end → Theme dev server: ${pc.bold(`http://localhost:${port}`)}`,
+      `${pc.cyan("dev")}  Development Mode must be on (Panel → Platform Settings → Development Mode).`,
+    ].join("\n"),
+  );
+}
+
 switch (cmd) {
   case undefined:
   case "help":
@@ -130,108 +164,32 @@ switch (cmd) {
   case "check":
     run("check.js", args);
     break;
+  case "dev-hint":
+    printDevHint(args);
+    break;
   case "package":
     run("package-zip.js", args);
     break;
 
-  case "list-views": {
-    const contract = JSON.parse(
-      readFileSync(join(binDir, "..", "skin-contract.json"), "utf-8"),
-    );
-    console.log(
-      `\n${pc.bgCyan(pc.black(" pano "))} ${pc.bold("theme-core")} ${pc.dim(`v${version}`)}`,
-    );
-    // Wrap the (sometimes long) props list under an indented tree so the
-    // output stays readable instead of running one giant line per view.
-    const width = Math.min(process.stdout.columns || 80, 100);
-    const indent = "     ";
-    const wrap = (items) => {
-      const lines = [];
-      let line = "";
-      for (const item of items) {
-        const chunk = line ? `${line}, ${item}` : item;
-        if (indent.length + chunk.length > width && line) {
-          lines.push(indent + line + ",");
-          line = item;
-        } else {
-          line = chunk;
-        }
-      }
-      if (line) lines.push(indent + line);
-      return lines;
-    };
-    console.log(pc.bold("\n  Overridable views ") + pc.dim("(theme.config.js → views)\n"));
-    for (const [name, def] of Object.entries(contract.views)) {
-      const props = Object.keys(def.props ?? {});
-      console.log(`  ${pc.cyan("●")} ${pc.bold(name)}`);
-      if (props.length) for (const l of wrap(props)) console.log(pc.dim(l));
-      else console.log(indent + pc.dim("(no props)"));
-    }
-    console.log(pc.bold("\n  Registry components ") + pc.dim("(chrome + plugin-facing)"));
-    for (const l of wrap(contract.registry_components)) console.log(pc.dim(l));
-    console.log(
-      `\n  Eject one with ${pc.cyan("bunx @panomc/theme-core eject-view <ViewName>")}` +
-        `\n  ${pc.dim("(the file's header documents every prop in detail)")}\n`,
-    );
+  case "list-views":
+    run("contracts.js", ["list-views", ...args]);
     break;
-  }
 
-  case "eject-view": {
-    const name = args[0];
-    if (!name || !/^[A-Z][A-Za-z0-9]*View$/.test(name)) {
-      console.error(
-        `${pc.red("✗")} usage: ${pc.cyan("bunx @panomc/theme-core eject-view <ViewName>")} ${pc.dim("(e.g. LoginView)")}`,
-      );
-      process.exit(1);
-    }
-    const source = join(binDir, "..", "src", "lib", "views", `${name}.svelte`);
-    if (!existsSync(source)) {
-      console.error(`${pc.red("✗")} no default view named ${pc.bold(name)} in this core version`);
-      process.exit(1);
-    }
-    const targetDir = join(process.cwd(), "src", "views");
-    const target = join(targetDir, `${name}.svelte`);
-    if (existsSync(target)) {
-      console.error(`${pc.red("✗")} ${target} already exists — refusing to overwrite`);
-      process.exit(1);
-    }
-    mkdirSync(targetDir, { recursive: true });
-    copyFileSync(source, target);
-
-    // Register in theme.config.js (idempotent, text-level).
-    const configPath = join(process.cwd(), "theme.config.js");
-    let registered = false;
-    if (existsSync(configPath)) {
-      let cfg = readFileSync(configPath, "utf-8");
-      if (!cfg.includes(`${name}:`)) {
-        cfg = cfg.replace(
-          /views:\s*\{/,
-          `views: {\n    ${name}: () => import("./src/views/${name}.svelte"),`,
-        );
-        writeFileSync(configPath, cfg);
-      }
-      registered = true;
-    }
-
-    brandIntro();
-    note(
-      [
-        `${pc.green("✓")} copied to ${pc.cyan(`src/views/${name}.svelte`)}`,
-        registered
-          ? `${pc.green("✓")} registered in ${pc.cyan("theme.config.js")}`
-          : `${pc.yellow("▲")} no theme.config.js found — register the view manually`,
-      ].join("\n"),
-      `Ejected ${name}`,
-    );
-    outro(
-      [
-        "Next steps:",
-        `  ${pc.dim("edit")}  ${pc.cyan(`src/views/${name}.svelte`)} ${pc.dim("(props are documented in its header)")}`,
-        `  ${pc.dim("run")}   ${pc.cyan("bun run check")} ${pc.dim("to validate the override contract")}`,
-      ].join("\n"),
-    );
+  case "eject-view":
+    run("contracts.js", ["eject-view", ...args]);
     break;
-  }
+
+  case "accept":
+    run("contracts.js", ["accept", ...args]);
+    break;
+
+  case "contracts":
+    if (args[0] !== "pull") {
+      console.error(`${pc.red("✗")} usage: ${pc.cyan("bunx @panomc/theme-core contracts pull")} ${pc.dim("[--from <dir|zip>]")}`);
+      process.exit(1);
+    }
+    run("contracts.js", ["pull", ...args.slice(1)]);
+    break;
 
   default: {
     const hint = suggest(cmd);

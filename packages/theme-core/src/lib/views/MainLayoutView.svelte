@@ -19,7 +19,7 @@
 
 <Hook name="theme:top" />
 
-<div class="vstack gap-3 min-vh-100">
+<div class="pano-main-layout-view vstack gap-3 min-vh-100">
   <div class="vstack gap-{themeSettings.headerNavBarGap || '3'} flex-grow-0">
     <svelte:component this={chrome.Header} />
 
@@ -74,7 +74,7 @@
     body {
       min-height: 100vh;
       ${themeSettings.backgroundColor ? `background-color: ${themeSettings.backgroundColor} !important;` : ""}
-      ${themeSettings.files?.backgroundImage ? `background-image: url(/api/theme/file/${themeSettings.files.backgroundImage}) !important;` : ""}
+      ${themeSettings.files?.backgroundImage ? `background-image: url(/api/v1/theme/file/${themeSettings.files.backgroundImage}) !important;` : ""}
       ${themeSettings.bgImagePosition ? `background-position: ${themeSettings.bgImagePosition} !important;` : ""}
       ${themeSettings.bgImageRepeat ? `background-repeat: ${themeSettings.bgImageRepeat} !important;` : ""}
       ${themeSettings.bgImageSize ? `background-size: ${themeSettings.bgImageSize} !important;` : ""}

@@ -1,6 +1,15 @@
+<!--
+  Controller of the engine's <Breadcrumb>. The markup lives in views/parts/Breadcrumb.svelte; a theme may
+  replace it with the "Breadcrumb" entry of theme.config.js views (see skin-contract.json for the props).
+-->
+<svelte:component this={getOverride("Breadcrumb") ?? BreadcrumbView} {items} />
+
 <script>
   import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
+
+  import { getOverride } from "$pano/registry/index.js";
+  import BreadcrumbView from "$pano/lib/views/parts/Breadcrumb.svelte";
 
   /**
    * Breadcrumb items are supplied manually by pages via the `breadcrumbs`
@@ -46,43 +55,3 @@
 
   $: items = Array.isArray($breadcrumbsStore) ? $breadcrumbsStore.map(normalize) : [];
 </script>
-
-{#if items.length > 0}
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb justify-content-center mb-0">
-      {#each items as crumb, i}
-        {@const isLast = i === items.length - 1}
-        <li
-          class="breadcrumb-item"
-          class:active={isLast}
-          aria-current={isLast ? "page" : undefined}>
-          {#if isLast || !crumb.href}
-            {#if crumb.icon}
-              <i class={crumb.icon}></i>
-            {:else if crumb.html}
-              {@html crumb.label}
-            {:else}
-              {crumb.label}
-            {/if}
-          {:else}
-            <a href={crumb.href} class="text-decoration-none badge text-bg-primary rounded-pill px-1">
-              {#if crumb.icon}
-                <i class={crumb.icon}></i>
-              {:else if crumb.html}
-                {@html crumb.label}
-              {:else}
-                {crumb.label}
-              {/if}
-            </a>
-          {/if}
-        </li>
-      {/each}
-    </ol>
-  </nav>
-{/if}
-
-<style>
-  .breadcrumb {
-    --bs-breadcrumb-divider: "•";
-  }
-</style>

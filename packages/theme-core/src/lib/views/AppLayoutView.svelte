@@ -26,6 +26,6 @@
 </script>
 
 <svelte:head>
-  <link href="/api/favicon?hash={$session.siteInfo.faviconHash}" rel="icon" />
+  <link href={`/api/v1/favicon?hash=${$session.siteInfo.faviconHash}`} rel="icon" />
   <title>{getTitle($pageTitle, $session.siteInfo.websiteName)}</title>
 </svelte:head>

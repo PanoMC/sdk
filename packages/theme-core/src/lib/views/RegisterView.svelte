@@ -17,7 +17,7 @@
   Override from a theme:
     theme.config.js → views: { RegisterView: () => import("./src/views/RegisterView.svelte") }
 -->
-<div class="container mx-auto">
+<div class="pano-register-view container mx-auto">
   <div class="vstack gap-3">
     {#each $contentItems as item (item.id)}
       {#if item.id === "register-form"}
@@ -42,10 +42,10 @@
               </div>
               <div slot="footer" class="text-center">
                 <a
-                  class="btn btn-link {$loading ? 'disabled pe-none' : ''}"
+                  class="pano-register-view__action btn btn-link {$loading ? 'disabled pe-none' : ''}"
                   aria-disabled={$loading}
                   tabindex={$loading ? -1 : undefined}
-                  href="/login">
+                  href={route("/login")}>
                   {$_("buttons.already-registered")}
                 </a>
               </div>
@@ -72,6 +72,8 @@
 
 <script>
   import { _ } from "svelte-i18n";
+
+  import { route } from "$pano/registry/routes.js";
 
   import ErrorAlert from "$pano/lib/components/ErrorAlert.svelte";
   import SuccessAlert from "$pano/lib/components/SuccessAlert.svelte";

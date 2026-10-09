@@ -7,12 +7,12 @@
     theme.config.js → views: { PlayerDetailView: () => import("./src/views/PlayerDetailView.svelte") }
 -->
 <!-- Statistics -->
-<div class="vstack gap-3">
+<div class="pano-player-detail-view vstack gap-3">
   <div class="card">
-    <div class="card-header">
+    <div class="pano-player-detail-view__header card-header">
       {$_("pages.player-profile.title")}
     </div>
-    <table class="table">
+    <table class="pano-player-detail-view__table table">
     <tbody>
       <tr>
         <td>{$_("pages.player-profile.register-date")}</td>

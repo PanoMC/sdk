@@ -2,13 +2,27 @@
  "$schema_note": "Machine-readable Pano theme contract, generated from the controller/view split. Consumed by 'theme-core check' and store-side CI.",
  "views": {
   "HomeView": {
+   "contract": 1,
+   "source": "src/lib/views/HomeView.svelte",
+   "uses": ["Pagination", "Posts"],
+   "hooks": ["page:home:top"],
+   "slotProps": {},
    "props": {
-    "data": "object — load result (posts, postCount, page, totalPage, category, categoryUrl, sidebar, hookProps) plus View",
+    "data": "object — load result (posts, postCount, page, totalPages, category, categoryUrl, sidebar, hookProps) plus View",
     "themeSettings": "plain object — from getContext('themeSettings') in the controller; postsEnabled gates the post list and pagination",
     "onPageClick": "function(data, page) — pagination navigation handler imported from HomePageLogics"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "onPageClick", "themeSettings"]
    }
   },
   "LoginView": {
+   "contract": 1,
+   "source": "src/lib/views/LoginView.svelte",
+   "uses": ["PageTitle", "RegisterForm"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data (initialError, pageTitle, View)",
     "session": "store — session context from getContext('session') (siteInfo, user, csrfToken)",
@@ -35,9 +49,18 @@
     "onUsernameOrEmailFieldInput": "function — input handler for the username/email field",
     "onRegisterEmailFieldInput": "function — input handler for the register email field",
     "onNewUsernameFieldInput": "function — input handler for the new username field"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["agreement", "altMethods", "autoVerifyDone", "contentItems", "data", "email", "emailRequired", "emailVerificationSent", "error", "linkCode", "loading", "newUsername", "onCompleteRegister", "onNewUsernameFieldInput", "onRegisterEmailFieldInput", "onSubmit", "onUsernameOrEmailFieldInput", "onVerifyLink", "password", "passwordRepeat", "passwordVisible", "session", "usernameOrEmail", "usernameRequiredUserId", "viewState"]
    }
   },
   "RegisterView": {
+   "contract": 1,
+   "source": "src/lib/views/RegisterView.svelte",
+   "uses": ["RegisterForm"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — SvelteKit page data (initialError, initialUsername, pageTitle, View)",
     "contentItems": "store<Array> — plugin-extensible register page content items ({ id, priority, component }) from panoApiClient.ui.auth.register.content",
@@ -51,13 +74,22 @@
     "password": "writable store<string> — two-way bound password field value",
     "passwordRepeat": "writable store<string> — two-way bound password confirmation value",
     "agreement": "writable store<boolean> — two-way bound register-agreement checkbox value"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["agreement", "altMethods", "contentItems", "data", "email", "error", "loading", "onSubmit", "password", "passwordRepeat", "successMessage", "username"]
    }
   },
   "NotificationsView": {
+   "contract": 1,
+   "source": "src/lib/views/NotificationsView.svelte",
+   "uses": ["ConfirmRemoveAllNotificationsModal", "NoContent"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — full load data (notifications, notificationCount, sidebar config), forwarded per recipe",
     "notifications": "store — currently loaded notification list (writable from init())",
-    "count": "store — total notification count on the server",
+    "count": "store — notification count as far as page.nextCursor says: above the loaded list while a cursor is set, equal to it when the list is complete",
     "page": "store — zero-based load-more page index",
     "loadMoreLoading": "store — true while the next page of notifications is fetching",
     "checkTime": "store — tick counter passed BARE (no $) to getTime so relative timestamps refresh",
@@ -69,37 +101,82 @@
     "getTime": "function — relative 'time ago' formatter",
     "loadMore": "function — fetches next page; markup calls it with the notifications and loadMoreLoading store objects",
     "sanitizeObject": "function — escapes notification detail values before {@html} i18n interpolation"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "checkTime", "count", "currentLanguage", "data", "getTime", "loadMore", "loadMoreLoading", "locales", "notifications", "onDeleteNotificationClick", "onNotificationClick", "page", "sanitizeObject"]
    }
   },
   "PlayerDetailView": {
+   "contract": 1,
+   "source": "src/lib/views/PlayerDetailView.svelte",
+   "uses": ["Date"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "PageData — SvelteKit load result; the markup reads data.registerDate (epoch timestamp of the player's registration, rendered via the Date component)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data"]
    }
   },
   "PostDetailView": {
+   "contract": 1,
+   "source": "src/lib/views/PostDetailView.svelte",
+   "uses": ["Date"],
+   "hooks": ["theme:post-detail:bottom"],
+   "slotProps": {},
    "props": {
     "data": "load data — post ({title, text, category, writer, thumbnailUrl, views, date}), previousPost/nextPost (object or \"-\"), hookProps, View",
     "themeSettings": "plain object (getContext(\"themeSettings\") in controller) — post* visibility toggles read directly, not as a store",
     "avatarVersion": "store object (writable from $pano/lib/Store) — view auto-subscribes via $avatarVersion for profile-picture cache busting"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "data", "themeSettings"]
    }
   },
   "PreviewPostView": {
+   "contract": 1,
+   "source": "src/lib/views/PreviewPostView.svelte",
+   "uses": ["Date"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — full load result (post, previousPost, nextPost, View); passed per view contract, markup does not read it directly",
     "post": "object — the post being previewed (title, category.title, writer.username, text, date, views, thumbnailUrl); originates from the shim prop post={data.post}",
     "themeSettings": "object — getContext('themeSettings') resolved in the controller (postCoverImageEnabled, postViewCountEnabled)",
     "avatarVersion": "store — store object from $pano/lib/Store; view auto-subscribes as $avatarVersion for avatar cache-busting"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "data", "post", "themeSettings"]
    }
   },
   "SupportView": {
+   "contract": 1,
+   "source": "src/lib/views/SupportView.svelte",
+   "uses": [],
+   "hooks": ["theme:support:content"],
+   "slotProps": {},
    "props": {
     "data": "object — page load data, forwarded verbatim to plugin ViewComponents",
     "session": "store — session context store; markup reads $session.siteInfo.supportEmail and .websiteName",
     "items": "store — plugin view entries registered for the 'support-content' slot (from panoApi.ui.view.get)",
     "optionItems": "store — plugin view entries registered for the 'support-options' slot (from panoApi.ui.view.get)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "items", "optionItems", "session"]
    }
   },
   "ActivateEmailView": {
+   "contract": 1,
+   "source": "src/lib/views/ActivateEmailView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — SvelteKit page data (data.token = activation token from URL, consumed by verifyEmail; data.View = resolved view class)",
     "error": "writable store — error code rendered by ErrorAlert (e.g. \"INVALID_LINK\"); passed as store object, view reads $error",
@@ -107,9 +184,18 @@
     "loading": "writable store — true while the verification request is in flight (spinner + disabled button)",
     "activateContentItems": "readable store — plugin-injected content items for the activate page (panoApiClient.ui.auth.activate.content.get())",
     "verifyEmail": "function(error, successMessage, loading, data) — runs the e-mail verification request; called from the button on:click with the raw store objects"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["activateContentItems", "data", "error", "loading", "successMessage", "verifyEmail"]
    }
   },
   "ConfirmNewEmailView": {
+   "contract": 1,
+   "source": "src/lib/views/ConfirmNewEmailView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — merged load data (token, pageTitle, session, View, …)",
     "activateNewEmailContentItems": "store<item[]> — plugin-injected content items for the activate-new-email slot (from panoApiClient.ui.auth.activateNewEmail.content.get())",
@@ -117,9 +203,18 @@
     "error": "writable store<string|null> — error code shown in ErrorAlert (e.g. \"INVALID_LINK\")",
     "successMessage": "writable store<string|null> — success code shown in SuccessAlert after activation",
     "verifyEmail": "function — (error, successMessage, loading, data) sends the email-activation request; markup passes the store objects themselves"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["activateNewEmailContentItems", "data", "error", "loading", "successMessage", "verifyEmail"]
    }
   },
   "RenewPasswordView": {
+   "contract": 1,
+   "source": "src/lib/views/RenewPasswordView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data from load; forwarded to onSubmit (also carries data.View)",
     "error": "writable store — error shown by ErrorAlert; set by onSubmit",
@@ -129,9 +224,18 @@
     "newPasswordRepeat": "writable store<string> — bound value of the repeat password input",
     "renewPasswordContentItems": "store<Array<{id, component}>> — plugin-injected content items from panoApiClient.ui.auth.renewPassword.content.get()",
     "onSubmit": "function — (error, message, loading, newPassword, newPasswordRepeat, data) form submit handler from RenewPasswordPageLogics"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "error", "loading", "message", "newPassword", "newPasswordRepeat", "onSubmit", "renewPasswordContentItems"]
    }
   },
   "ResetPasswordView": {
+   "contract": 1,
+   "source": "src/lib/views/ResetPasswordView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — merged page data from $page.data (session, pageTitle, View); not read by the default markup but part of the view contract",
     "error": "writable store — error code rendered by ErrorAlert",
@@ -141,15 +245,33 @@
     "resetPasswordContentItems": "readable store — plugin-registered content items rendered inside the form via ViewComponent",
     "onSubmit": "function(error, message, loading, usernameOrEmail) — logic import passed through; sends the reset-password request",
     "stripIdentifierWhitespace": "function(value) — logic import passed through; strips whitespace in the input's oninput handler"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "error", "loading", "message", "onSubmit", "resetPasswordContentItems", "stripIdentifierWhitespace", "usernameOrEmail"]
    }
   },
   "ErrorView": {
+   "contract": 1,
+   "source": "src/lib/views/ErrorView.svelte",
+   "uses": ["PageTitle"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object|undefined — always undefined today (SvelteKit runs no load for +error.svelte); kept for the shared controller contract and forwarded as {data}",
     "page": "reactive object (store-like prop) — SvelteKit page state from $app/state; page.status selects the 404 vs internal-error subtitle"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "page"]
    }
   },
   "ThemeSettingsView": {
+   "contract": 1,
+   "source": "src/lib/views/ThemeSettingsView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data (themeSettings, View)",
     "themeSettings": "writable store — live theme settings object being edited; markup reads/mutates via $themeSettings",
@@ -186,16 +308,34 @@
     "save": "function — save the active tab's settings",
     "resetTab": "function — reset the active tab's settings (with confirm modal)",
     "resetAll": "function — reset all theme settings (with confirm modal)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["activeTab", "allResetVisible", "backgroundImageFiles", "currentThemeDefault", "data", "defaultHeaderBg", "dragOverItemIndex", "draggingItemIndex", "headerBackgroundImageFiles", "onBackgroundImageChange", "onDragEnd", "onDragOver", "onDragStart", "onDrop", "onHeaderBackgroundImageChange", "onPlayCardBackgroundImageChange", "onRemoveBackgroundImageClick", "onRemoveHeaderBackgroundImageClick", "onRemovePlayCardBackgroundImageClick", "onThemeColorChange", "orderedFooterLinks", "orderedNavLinks", "playCardBackgroundImageFiles", "resetAll", "resetTab", "resetting", "resettingAll", "save", "saving", "session", "tabChanged", "tabResetVisible", "themeSettings", "toggleFooterLink", "toggleLink"]
    }
   },
   "ProfileView": {
+   "contract": 1,
+   "source": "src/lib/views/ProfileView.svelte",
+   "uses": ["Date"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data from load (registerDate, lastLoginDate, pageTitle, sidebar, View)",
     "contentItems": "store<Array> — plugin-extendable profile page content blocks from panoApiClient.ui.profile.content.get()",
     "cardRowItems": "store<Array> — plugin-extendable profile card table rows from panoApiClient.ui.profile.cardRows.get()"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["cardRowItems", "contentItems", "data"]
    }
   },
   "SettingsView": {
+   "contract": 1,
+   "source": "src/lib/views/SettingsView.svelte",
+   "uses": ["Date", "LogoutSessionConfirmModal", "NoContent"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data (sessions, sidebar, pageTitle, View)",
     "session": "store — session context from getContext(\"session\") (siteInfo, user, csrfToken)",
@@ -230,19 +370,37 @@
     "invalidateAll": "function — SvelteKit invalidateAll (refresh load data)",
     "parseUserAgent": "function — user-agent string to short browser label",
     "stripIdentifierWhitespace": "function — strip whitespace from identifier input"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["Languages", "cardRowItems", "changingEmail", "changingEmail2ndStep", "changingEmailError", "changingEmailLoading", "changingEmailSuccess", "contentItems", "currentPassword", "data", "handleSave", "invalidateAll", "loadingSessionId", "logout", "newEmail", "onLogoutSession", "parseUserAgent", "registerPlugin", "resetPasswordError", "resetPasswordLoading", "resetPasswordSuccess", "saveButtonDisabled", "saveButtonVisible", "sendChangeEmailLink", "sendResetPasswordLink", "session", "showToast", "startChangingEmail", "startChangingEmail2ndStep", "stopChangingEmail", "stopChangingEmail2ndStep", "stripIdentifierWhitespace", "userLocale"]
    }
   },
   "TicketsView": {
+   "contract": 1,
+   "source": "src/lib/views/TicketsView.svelte",
+   "uses": ["Pagination", "Tickets"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
-    "data": "object — page load data (pageType, page, totalPage, ticketCount, category, categoryUrl, View)",
+    "data": "object — page load data (pageType, page, totalPages, ticketCount, category, categoryUrl, View)",
     "contentItems": "store — plugin-extendable content item list from panoApiClient.ui.tickets.content.get(); markup iterates $contentItems",
     "tickets": "store — tickets list store produced by init(data) in the controller; markup reads $tickets and hands the raw store back to onCloseTicketClick",
     "PageTypes": "object — ticket filter enum (ALL/CLOSED) from TicketsPageLogics, used for the header button active states",
     "onCloseTicketClick": "function — (ticketsStore, ticket) close-ticket handler from TicketsPageLogics",
     "onPageClick": "function — (data, page) pagination navigation handler from TicketsPageLogics"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["PageTypes", "contentItems", "data", "onCloseTicketClick", "onPageClick", "tickets"]
    }
   },
   "TicketDetailView": {
+   "contract": 1,
+   "source": "src/lib/views/TicketDetailView.svelte",
+   "uses": ["Date", "PageTitle", "TicketStatus"],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page data from load (ticket, messages, sidebar config); also carries View",
     "ticket": "store — the ticket being viewed (id, title, category, status, date, messageCount)",
@@ -256,9 +414,18 @@
     "avatarVersion": "store — cache-busting version appended to profile picture URLs",
     "loadMore": "function — fetches the previous page of messages (called with loadMoreLoading, messages, data)",
     "sendMessage": "function — sends the reply (called with messageSendLoading, sentMessageCount, shouldScroll, messages, message, data)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "data", "loadMore", "loadMoreLoading", "message", "messageSendLoading", "messages", "messagesSectionDiv", "sendMessage", "sentMessageCount", "shouldScroll", "ticket"]
    }
   },
   "CreateTicketView": {
+   "contract": 1,
+   "source": "src/lib/views/CreateTicketView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — page load data (categories, sidebar, pageTitle, View)",
     "error": "writable store — submit error rendered by ErrorAlert",
@@ -267,47 +434,704 @@
     "categoryId": "writable store — selected category id, -1 = no category (bind:value={$categoryId})",
     "loading": "writable store — request in-flight flag, disables the submit button",
     "submit": "function — (error, loading, title, message, categoryId) sends the create-ticket request; view passes the store objects, not their values"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["categoryId", "data", "error", "loading", "message", "submit", "title"]
    }
   },
   "AppLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/AppLayoutView.svelte",
+   "uses": ["ToastContainer"],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — full layout load data (session payload, _pageTitleStore, View); passed for contract completeness, unused by the stock view markup",
     "session": "store — writable session store ({ user, csrfToken, siteInfo }) returned by init(data); view reads $session.siteInfo for favicon hash and website name",
     "pageTitle": "store — current page title descriptor (null | i18n key string | { title, titleValues }); view reads $pageTitle for the document title",
     "getTitle": "function — (pageTitle, siteName) => formatted document <title> string; stays in the controller because it closes over the controller's $_ (svelte-i18n) subscription"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "getTitle", "pageTitle", "session"]
    }
   },
   "MainLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/MainLayoutView.svelte",
+   "uses": ["Breadcrumb", "Main", "NotificationContainer"],
+   "hooks": ["theme:top", "page:top"],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — controller load data (hookProps, View, mainLayoutView); unused by the default markup but kept for the view contract",
     "themeSettings": "object — the 'themeSettings' context object (theme color, header/navbar gap, footer & breadcrumb toggles, background/custom CSS settings)",
-    "session": "store — the 'session' context store passed as a store object; view auto-subscribes via $session (the page head tags are emitted by the engine PageHead, not the view)"
+    "session": "store — the 'session' context store passed as a store object; view auto-subscribes via $session (the page head tags are emitted by the engine PageHead, not the view)",
+    "chrome": "object — registry-resolved chrome components { Navbar, Header, Footer } (an override of any of them is already applied); render them with <svelte:component this={chrome.Navbar} />"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["chrome", "data", "session", "themeSettings"]
    }
   },
   "AuthLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/AuthLayoutView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — layout load data returned by processLoad (AuthLayoutLogics), plus View"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data"]
    }
   },
   "ProfileLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/ProfileLayoutView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — layout load data from ProfileLayoutLogics.processLoad (includes data.View, the resolved view component)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data"]
    }
   },
   "ThemeSettingsLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/ThemeSettingsLayoutView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — merged layout load data from processLoad (ThemeSettingsLayoutLogics), also carries View; unused by the trivial markup but kept per contract",
     "hidden": "store<boolean> — store returned by ThemeSettingsLayoutLogics init(); drives the hidden attribute on the wrapper div"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "hidden"]
    }
   },
   "TicketsLayoutView": {
+   "contract": 1,
+   "source": "src/lib/views/TicketsLayoutView.svelte",
+   "uses": ["CloseTicketConfirmModal"],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
    "props": {
     "data": "object — layout load data (parent data merged by processLoad, plus View); the view markup itself does not read it, kept for contract completeness"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data"]
    }
   },
   "RulesView": {
+   "contract": 1,
+   "source": "src/lib/views/RulesView.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
    "props": {
     "data": "object — load result; data.registerAgreement: sanitized HTML of the register agreement"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data"]
+   }
+  },
+  "Main": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Main.svelte",
+   "uses": ["PageTitle"],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
+   "props": {
+    "dev": "boolean — SvelteKit dev flag (the part links /style.css in dev unless devUi)",
+    "devUi": "boolean — true while the theme's UI dev server runs and serves /style.css itself",
+    "pageTitle": "store — the 'pageTitle' context: a translation key or { title, titleValues, subtitle, subtitleValues, html, subtitleHtml, raw, hidden }",
+    "resolvedTitle": "object — { title, subtitle, hidden } after translation (resolvePageTitle); hidden keeps the title for the document <title> only",
+    "sidebar": "store — the 'sidebar' context: the sidebar component of this page, or a falsy value",
+    "sidebarProps": "store — the 'sidebarProps' context: props for the sidebar component",
+    "sidebarEnabled": "boolean — themeSettings.sidebarEnabled (true when unset)",
+    "sidebarPosition": "string — 'LEFT' | 'RIGHT' (themeSettings.sidebarPosition, else from sidebarProps.side)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["dev", "devUi", "pageTitle", "resolvedTitle", "sidebar", "sidebarEnabled", "sidebarPosition", "sidebarProps"]
+   }
+  },
+  "Sidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Sidebar.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
+   "props": {
+    "side": "string — 'left' | 'right': the side of the content the column sits on (default 'right')"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["side"]
+   }
+  },
+  "Breadcrumb": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Breadcrumb.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "items": "array — the normalized trail [{ label, href?, icon?, html }]; label is already translated, the last item is the current page, an empty array renders nothing"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["items"]
+   }
+  },
+  "Post": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Post.svelte",
+   "uses": ["Date"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "post": "object — { url, title, text, views, date, thumbnailUrl?, category: { title, url }, writer: { username } }",
+    "detail": "boolean — true on the post page (full text, view count), false for the list card",
+    "themeSettings": "object — the 'themeSettings' context (postCoverImageEnabled, postViewCountEnabled, postAuthorImageEnabled)",
+    "avatarVersion": "store — cache-busting version appended to avatar image URLs"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "detail", "post", "themeSettings"]
+   }
+  },
+  "Posts": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Posts.svelte",
+   "uses": ["NoContent", "Post"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "posts": "array — post objects (see Post); an empty array shows the no-content card"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["posts"]
+   }
+  },
+  "Tickets": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Tickets.svelte",
+   "uses": ["NoContent", "TicketRow"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "tickets": "array — ticket objects (see TicketRow); an empty array shows the no-content card",
+    "onCloseTicketClick": "function(ticket) — called when a row's close button is pressed; the controller dispatches 'closeTicket' with { ticket }"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["onCloseTicketClick", "tickets"]
+   }
+  },
+  "TicketRow": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/TicketRow.svelte",
+   "uses": ["Date", "TicketStatus"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "ticket": "object — { id, title, status, category: { title, url }, lastUpdate, selected? }",
+    "onCloseTicket": "function() — the close button handler; the controller dispatches 'closeTicket' with { ticket }"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["onCloseTicket", "ticket"]
+   }
+  },
+  "TicketStatus": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/TicketStatus.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "status": "string — 'NEW' | 'REPLIED' | 'CLOSED' (default 'NEW'): the badge to show"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["status"]
+   }
+  },
+  "Toast": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/Toast.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
+   "props": {
+    "id": "number — toast id; the element id must be `appToast{id}` (ToastContainer finds the element by that id)",
+    "variant": "string|null — 'success' | 'danger' | 'warning' | null: the requested tone",
+    "variantClass": "string — Bootstrap text class mapped from the variant ('' for a neutral toast); add it to the toast element"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["id", "variant", "variantClass"]
+   }
+  },
+  "DefaultToast": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/DefaultToast.svelte",
+   "uses": ["Toast"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "id": "number — toast id, passed on to <Toast>",
+    "text": "string — the translation key the toast was shown with",
+    "message": "string — the translated text with its values already HTML-escaped; safe for {@html}",
+    "variant": "string|null — 'success' | 'danger' | 'warning' | null: the requested tone, passed on to <Toast>"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["id", "message", "text", "variant"]
+   }
+  },
+  "ToastContainer": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/ToastContainer.svelte",
+   "uses": ["DefaultToast"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "toasts": "store — the toasts on screen [{ id, component, params }]; render each with <svelte:component this={toast.component} id={toast.id} {...toast.params} /> (component is <DefaultToast> unless the caller passed its own)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["toasts"]
+   }
+  },
+  "NotificationContainer": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/NotificationContainer.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "notifications": "store — the notifications on screen (objects of the notifications API)",
+    "checkTime": "number — tick counter, passed BARE (no $) to getTime so relative times refresh",
+    "currentLanguage": "store — active language object; .dateFnsCode selects the date-fns locale",
+    "locales": "object — date-fns locale namespace",
+    "avatarVersion": "store — cache-busting version appended to profile picture URLs",
+    "getTime": "function(checkTime, time, locale) — relative 'time ago' text",
+    "onNotificationClick": "function(notification, navigate) — runs the notification's listener, or navigates to details.href",
+    "navigate": "function(path) — goto(base + path)",
+    "notificationTextKey": "function(notification) — the translation key of the notification text",
+    "sanitizeObject": "function(details) — escapes detail values before {@html} i18n interpolation",
+    "onClick": "function(notification) — the whole-card click: marks it read, follows it and hides the toast"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "checkTime", "currentLanguage", "getTime", "locales", "navigate", "notificationTextKey", "notifications", "onClick", "onNotificationClick", "sanitizeObject"]
+   }
+  },
+  "CloseTicketConfirmModal": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/CloseTicketConfirmModal.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "dialogID": "string — id of the modal root element; show() finds the modal by it, keep it",
+    "error": "store — current error (string or { key, props }); render it with <ErrorAlert error={$error} />",
+    "loading": "boolean — the close request is in flight; disable the buttons",
+    "hide": "function() — cancel: closes the modal",
+    "onYesClick": "function() — confirm: closes the ticket"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["dialogID", "error", "hide", "loading", "onYesClick"]
+   }
+  },
+  "ConfirmRemoveAllNotificationsModal": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/ConfirmRemoveAllNotificationsModal.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "dialogID": "string — id of the modal root element; show() finds the modal by it, keep it",
+    "loading": "boolean|undefined — the delete request is in flight; disable the buttons",
+    "hide": "function() — cancel: closes the modal",
+    "onYesClick": "function() — confirm: deletes every notification"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["dialogID", "hide", "loading", "onYesClick"]
+   }
+  },
+  "LogoutSessionConfirmModal": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/LogoutSessionConfirmModal.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "dialogID": "string — id of the modal root element; show() finds the modal by it, keep it",
+    "hide": "function() — cancel: closes the modal",
+    "onYesClick": "function() — confirm: closes the modal and runs the callback (logs out)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["dialogID", "hide", "onYesClick"]
+   }
+  },
+  "LoginFormBody": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/LoginFormBody.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "beforeSubmit": [],
+    "footer": []
+   },
+   "props": {
+    "usernameOrEmail": "string — bindable username / email field value",
+    "password": "string — bindable password field value",
+    "loading": "boolean — request in flight; disables the submit button",
+    "usernameDisabled": "boolean — the username field is read-only",
+    "submitLabel": "string|null — translation key of the submit button (default: the login label)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["loading", "password", "submitLabel", "usernameDisabled", "usernameOrEmail"]
+   }
+  },
+  "RegisterForm": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/RegisterForm.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "beforeSubmit": [],
+    "footer": []
+   },
+   "props": {
+    "username": "string — bindable username field value",
+    "email": "string — bindable email field value",
+    "password": "string — bindable password field value",
+    "passwordRepeat": "string — bindable password-repeat field value",
+    "agreement": "boolean — bindable register-agreement checkbox value",
+    "loading": "boolean — request in flight; disables the submit button",
+    "usernameDisabled": "boolean — the username field is read-only"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["agreement", "email", "loading", "password", "passwordRepeat", "username", "usernameDisabled"]
+   }
+  },
+  "Date": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/Date.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
+   "props": {
+    "time": "string|number — epoch milliseconds to show",
+    "relativeFormat": "boolean — 'yesterday at 10:00' style instead of '12 March 2026' (default false)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["relativeFormat", "time"]
+   }
+  },
+  "Pagination": {
+   "kind": "component",
+   "contract": 2,
+   "source": "src/lib/components/Pagination.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "page": "number — current page, 1-based (default 1)",
+    "totalPages": "number — number of pages (default 1)"
+   },
+   "locked": {
+    "contract": 2,
+    "props": ["page", "totalPages"]
+   }
+  },
+  "NoContent": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/NoContent.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": []
+   },
+   "props": {
+    "icon": "string — Font Awesome classes of the icon",
+    "text": "string — message under the icon (default: the 'no content' text)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["icon", "text"]
+   }
+  },
+  "PageActions": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/PageActions.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "left": [],
+    "middle": [],
+    "right": []
+   },
+   "props": {
+    "leftClasses": "string|undefined — extra classes of the left column",
+    "middleClasses": "string|undefined — extra classes of the middle column",
+    "rightClasses": "string|undefined — extra classes of the right column"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["leftClasses", "middleClasses", "rightClasses"]
+   }
+  },
+  "PageTitle": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/PageTitle.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {
+    "default": [],
+    "title": []
+   },
+   "props": {
+    "title": "string — heading text (already translated)",
+    "subtitle": "string — text under the heading (already translated)",
+    "html": "boolean|undefined — render the title as HTML",
+    "subtitleHtml": "boolean — render the subtitle as HTML (default false)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["html", "subtitle", "subtitleHtml", "title"]
+   }
+  },
+  "PlayerHead": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/PlayerHead.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "username": "string — player name; the head image comes from it",
+    "width": "number — image width in px (default 64)",
+    "height": "number — image height in px (default 64)",
+    "checkTime": "number — tick counter so the 'last seen' text refreshes",
+    "inGame": "boolean — the player is in the game right now (default false)",
+    "lastActivityTime": "string|number — epoch milliseconds of the last activity",
+    "banned": "boolean — the player is banned"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["banned", "checkTime", "height", "inGame", "lastActivityTime", "username", "width"]
+   }
+  },
+  "Navbar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/Navbar.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {},
+   "locked": {
+    "contract": 1,
+    "props": []
+   }
+  },
+  "Header": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/Header.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {},
+   "locked": {
+    "contract": 1,
+    "props": []
+   }
+  },
+  "Footer": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/components/Footer.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {},
+   "locked": {
+    "contract": 1,
+    "props": []
+   }
+  },
+  "HomeSidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/HomeSidebar.svelte",
+   "uses": ["Sidebar"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "side": "\"left\" | \"right\" - which side of the content the column sits on",
+    "items": "store of { id, component, props } - the sidebar items, plugin items included (an id the markup does not know is rendered with <ViewComponent>, the place plugins inject)",
+    "data": "store - { mainServer: { status, playerCount, maxPlayerCount }, serverGameVersion, ipAddress, lastRegisteredUsers: [{ username, lastActivityTime, inGame }] }",
+    "themeSettings": "object - the active theme's settings",
+    "avatarVersion": "store - cache buster appended to the avatar URLs",
+    "serverOnline": "boolean - the main server is ONLINE",
+    "isCommandTextCopied": "boolean - the address was copied a moment ago (the tooltip says \"copied\")",
+    "onCopyCommandTextClick": "function() - copies the address to the clipboard",
+    "playCardIpText": "string - the address shown on the play card",
+    "playCardIpLength": "string - its length, for the stylesheet's no-JS size estimate",
+    "playCardBgImage": "string - background image URL of the play card (empty for none)",
+    "playCardOpacity": "number - opacity of that image",
+    "playCardBgStyle": "string - CSS of the overlay above the image",
+    "playCardBorderColor": "string - Bootstrap border class of the play card",
+    "playCardHeaderClass": "string - Bootstrap background class of the header (card style 1)",
+    "playCardIpColor": "string - Bootstrap link class of the address (card style 2)",
+    "playCardBtnColor": "string - Bootstrap button colour of the address (card style 1)",
+    "showPlayCardStatusBadge": "boolean - show the online / offline badge",
+    "showPlayCardPlayerCount": "boolean - show the player count",
+    "showPlayCardVersionInfo": "boolean - show the game version"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["avatarVersion", "data", "isCommandTextCopied", "items", "onCopyCommandTextClick", "playCardBgImage", "playCardBgStyle", "playCardBorderColor", "playCardBtnColor", "playCardHeaderClass", "playCardIpColor", "playCardIpLength", "playCardIpText", "playCardOpacity", "serverOnline", "showPlayCardPlayerCount", "showPlayCardStatusBadge", "showPlayCardVersionInfo", "side", "themeSettings"]
+   }
+  },
+  "ProfileSidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/ProfileSidebar.svelte",
+   "uses": ["PageTitle", "PlayerHead", "Sidebar"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "side": "\"left\" | \"right\" - which side of the content the column sits on",
+    "showDeleteAll": "boolean - show the \"delete all notifications\" button (default false)",
+    "onDeleteAllClick": "function() - opens the confirmation for deleting all notifications",
+    "items": "store of { id, component, props } - the sidebar items, plugin items included (an id the markup does not know is rendered with <ViewComponent>, the place plugins inject)",
+    "data": "store - { lastActivityTime, inGame, permissionGroupName, isBanned } of the signed-in user",
+    "user": "object - the signed-in user ({} for a visitor)",
+    "checkTime": "number - ticks every second so the \"last seen\" texts refresh",
+    "navEntries": "array - { id, href, text, icon, badge, active } of the profile navigation (hrefs already go through route())"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["checkTime", "data", "items", "navEntries", "onDeleteAllClick", "showDeleteAll", "side", "user"]
+   }
+  },
+  "SupportSidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/SupportSidebar.svelte",
+   "uses": ["Sidebar"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "side": "\"left\" | \"right\" - which side of the content the column sits on",
+    "items": "store of { id, component, props } - the sidebar items, plugin items included (an id the markup does not know is rendered with <ViewComponent>, the place plugins inject)",
+    "data": "store - { onlineAdmins: string[] }"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "items", "side"]
+   }
+  },
+  "PlayerDetailSidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/PlayerDetailSidebar.svelte",
+   "uses": ["PageTitle", "PlayerHead", "Sidebar"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "side": "\"left\" | \"right\" - which side of the content the column sits on",
+    "items": "store of { id, component, props } - the sidebar items, plugin items included (an id the markup does not know is rendered with <ViewComponent>, the place plugins inject)",
+    "data": "store - { username, lastActivityTime, inGame, permissionGroupName, banned } of the shown player",
+    "checkTime": "number - ticks every second so the \"last seen\" texts refresh"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["checkTime", "data", "items", "side"]
+   }
+  },
+  "TicketCreateAndDetailSidebar": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/TicketCreateAndDetailSidebar.svelte",
+   "uses": ["Sidebar"],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "side": "\"left\" | \"right\" - which side of the content the column sits on",
+    "items": "store of { id, component, props } - the sidebar items, plugin items included (an id the markup does not know is rendered with <ViewComponent>, the place plugins inject)",
+    "data": "store - { onlineAdmins: string[] }",
+    "ticketData": "store - the open ticket ({ id, status, ... }), null on the create page",
+    "onCloseTicketClick": "function(ticket) - opens the confirmation for closing the ticket"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["data", "items", "onCloseTicketClick", "side", "ticketData"]
    }
   }
  },
@@ -323,19 +1147,6 @@
   "footer": ["footerEnabled", "footerLogoEnabled", "footerTitleEnabled", "footerTitle", "footerContentEnabled", "footerContent", "footerLinksEnabled", "footerPluginLinksEnabled", "footerLinksEnableStatus", "footerLinksOrder"],
   "advanced": ["customCss"]
  },
- "registry_components": [
-  "LoginFormBody",
-  "RegisterForm",
-  "Date",
-  "Pagination",
-  "NoContent",
-  "PageActions",
-  "PageTitle",
-  "PlayerHead",
-  "Navbar",
-  "Header",
-  "Footer"
- ],
  "view_slots": [
   "profile-nav",
   "login-content",
@@ -365,5 +1176,38 @@
   "(theme)",
   "(theme-settings)",
   "(plugin-ui)"
+ ],
+ "registry_components": [
+  "Main",
+  "Sidebar",
+  "Breadcrumb",
+  "Post",
+  "Posts",
+  "Tickets",
+  "TicketRow",
+  "TicketStatus",
+  "Toast",
+  "DefaultToast",
+  "ToastContainer",
+  "NotificationContainer",
+  "CloseTicketConfirmModal",
+  "ConfirmRemoveAllNotificationsModal",
+  "LogoutSessionConfirmModal",
+  "LoginFormBody",
+  "RegisterForm",
+  "Date",
+  "Pagination",
+  "NoContent",
+  "PageActions",
+  "PageTitle",
+  "PlayerHead",
+  "Navbar",
+  "Header",
+  "Footer",
+  "HomeSidebar",
+  "ProfileSidebar",
+  "SupportSidebar",
+  "PlayerDetailSidebar",
+  "TicketCreateAndDetailSidebar"
  ]
 }

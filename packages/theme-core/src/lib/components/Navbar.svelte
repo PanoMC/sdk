@@ -83,7 +83,7 @@
 </style>
 
 <!-- Navbar -->
-<div class:container={themeSettings.navbarWidthOption !== "FULL_SIZE"}>
+<div class="pano-navbar" class:container={themeSettings.navbarWidthOption !== "FULL_SIZE"}>
   <nav
     data-bs-theme={getContrast(effectiveNavbarBgColor)}
     class="navbar navbar-expand-lg rounded rounded-{themeSettings.navRoundLevel
@@ -110,7 +110,7 @@
             {#if $session.user && $session.user.panelAccess}
               <li class="nav-item position-relative">
                 <a
-                  class="nav-link"
+                  class="pano-navbar__link nav-link"
                   href={PANEL_URL}
                   target="_blank"
                   rel="noreferrer"
@@ -143,51 +143,51 @@
               <li class="nav-item dropdown position-relative">
                 <button
                   type="button"
-                  class="nav-link position-relative d-flex align-items-center"
+                  class="pano-navbar__link-2 nav-link position-relative d-flex align-items-center"
                   data-bs-toggle="dropdown"
                   aria-expanded="false">
                   <span class="me-2 d-none d-lg-inline"
                     >{$session.user.username}</span>
                   <img
                     alt={$session.user.username}
-                    class="rounded"
-                    src="/api/profile/picture/{$session.user
+                    class="pano-navbar__image rounded"
+                    src="/api/v1/profile/picture/{$session.user
                       .username}?{$avatarVersion}"
                     width="24"
                     height="24" />
                   {#if $notificationsCount !== 0}
                     <span
-                      class="position-absolute top-0 end-0 badge rounded-pill bg-danger px-2 py-1">
+                      class="pano-navbar__badge position-absolute top-0 end-0 badge rounded-pill bg-danger px-2 py-1">
                       {$notificationsCount}
                     </span>
                   {/if}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end position-absolute">
-                  <h6 class="dropdown-header">{$session.user.username}</h6>
+                <ul class="pano-navbar__menu dropdown-menu dropdown-menu-end position-absolute">
+                  <h6 class="pano-navbar__title dropdown-header">{$session.user.username}</h6>
                   {#each $profileDropdownItems as item (item.id)}
                     {#if item.id === "profile"}
                       <li>
                         <a
                           class:active={matching(
                             $page.url.pathname,
-                            "/profile",
+                            route("/profile"),
                           )}
-                          class="dropdown-item focus-ring"
-                          href="/profile">{$_("buttons.profile")}</a>
+                          class="pano-navbar__menu-item dropdown-item focus-ring"
+                          href={route("/profile")}>{$_("buttons.profile")}</a>
                       </li>
                     {:else if item.id === "notifications"}
                       <li>
                         <a
                           class:active={matching(
                             $page.url.pathname,
-                            "/notifications",
+                            route("/notifications"),
                           )}
-                          class="dropdown-item focus-ring position-relative"
-                          href="/notifications"
+                          class="pano-navbar__notifications dropdown-item focus-ring position-relative"
+                          href={route("/notifications")}
                           >{$_("buttons.notifications")}
                           {#if $notificationsCount !== 0}
                             <span
-                              class="position-absolute top-0 badge rounded-pill bg-danger p-1 d-inline">
+                              class="pano-navbar__badge-2 position-absolute top-0 badge rounded-pill bg-danger p-1 d-inline">
                             </span>
                           {/if}</a>
                       </li>
@@ -196,26 +196,26 @@
                         <a
                           class:active={matching(
                             $page.url.pathname,
-                            "/tickets",
+                            route("/tickets"),
                           )}
-                          class="dropdown-item focus-ring"
-                          href="/tickets">{$_("buttons.tickets")}</a>
+                          class="pano-navbar__tickets dropdown-item focus-ring"
+                          href={route("/tickets")}>{$_("buttons.tickets")}</a>
                       </li>
                     {:else if item.id === "settings"}
                       <li>
                         <a
                           class:active={matching(
                             $page.url.pathname,
-                            "/profile/settings",
+                            route("/profile/settings"),
                           )}
-                          class="dropdown-item focus-ring"
-                          href="/profile/settings">{$_("buttons.settings")}</a>
+                          class="pano-navbar__settings dropdown-item focus-ring"
+                          href={route("/profile/settings")}>{$_("buttons.settings")}</a>
                       </li>
                     {:else if item.id === "logout"}
                       <li>
                         <button
                           type="button"
-                          class="dropdown-item focus-ring link-danger"
+                          class="pano-navbar__logout dropdown-item focus-ring link-danger"
                           on:click={() => logout(session)}
                           >{$_("buttons.logout")}</button>
                       </li>
@@ -223,7 +223,7 @@
                       <!-- Custom plugin item -->
                       <li>
                         <a
-                          class="dropdown-item focus-ring"
+                          class="pano-navbar__menu-item-2 dropdown-item focus-ring"
                           href={item.props.href}>
                           {#if item.props.icon}
                             <i class="{item.props.icon} me-2"></i>
@@ -241,7 +241,7 @@
           {:else if component.id === "auth-buttons"}
             {#if !$session.user}
               <li class="nav-item position-relative me-lg-2">
-                <a href="/login" class="nav-link">
+                <a href={route("/login")} class="pano-navbar__login nav-link">
                   {$_("buttons.login")}
                 </a>
                 {#if showLoginBubble}
@@ -260,7 +260,7 @@
                 {/if}
               </li>
               <li class="nav-item">
-                <a href="/register" class="btn btn-secondary rounded-pill">
+                <a href={route("/register")} class="pano-navbar__action btn btn-secondary rounded-pill">
                   {$_("buttons.register")}
                 </a>
               </li>
@@ -282,7 +282,7 @@
                 <a
                   href={link.href}
                   target={link.target}
-                  class="nav-link"
+                  class="pano-navbar__link-3 nav-link"
                   class:active={matching(
                     $page.url.pathname,
                     link.href,
@@ -315,6 +315,7 @@
   import { page } from "$app/stores";
   import { browser } from "$app/environment";
   import { PANEL_URL } from "$pano/lib/variables.js";
+  import { route } from "$pano/registry/routes.js";
 
   import { avatarVersion, logout, notificationsCount } from "$pano/lib/Store";
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
@@ -407,12 +408,12 @@
   $: navbarWidthOption = themeSettings.navbarWidthOption || "BY_CONTENT";
 
   $: nativeLinks = [
-    { id: "home", text: "nav-links.homepage", href: "/" },
-    { id: "support", text: "nav-links.support", href: "/support" },
+    { id: "home", text: "nav-links.homepage", href: route("/") },
+    { id: "support", text: "nav-links.support", href: route("/support") },
     {
       id: "rules",
       text: "nav-links.rules",
-      href: "/rules",
+      href: route("/rules"),
       condition: !!$session.siteInfo?.hasRegisterAgreement
     },
   ];

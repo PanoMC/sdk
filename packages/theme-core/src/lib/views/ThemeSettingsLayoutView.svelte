@@ -9,7 +9,7 @@
   Override from a theme:
     theme.config.js → views: { ThemeSettingsLayoutView: () => import("./src/views/ThemeSettingsLayoutView.svelte") }
 -->
-<div hidden="{$hidden}">
+<div class="pano-theme-settings-layout-view" hidden="{$hidden}">
   <slot />
 </div>
 

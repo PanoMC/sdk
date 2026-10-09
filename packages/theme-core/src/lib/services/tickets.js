@@ -1,35 +1,56 @@
 import ApiUtil, { buildQueryParams } from "../api.util.js";
+import { readPage } from "../pageShape.js";
 
-export const getTickets = async ({ page, pageType, categoryUrl, request, csrfToken }) => {
-  const queryParams = buildQueryParams({ page, pageType, categoryUrl });
+export const getTickets = async ({ page, pageSize, pageType, categoryUrl, request, csrfToken }) => {
+  const queryParams = buildQueryParams({ page, pageSize, pageType, categoryUrl });
 
   return ApiUtil.get({
-    path: `/api/tickets${queryParams}`,
+    path: `/tickets${queryParams}`,
     request,
     csrfToken
   }).then((body) => {
-    body.page = parseInt(page);
-    body.pageType = pageType;
+    const result = readPage(body);
 
-    return body;
+    if (result.failed) {
+      return result.body;
+    }
+
+    return {
+      ...result.rest,
+      tickets: result.items,
+      ticketCount: result.count,
+      page: parseInt(page),
+      totalPages: result.totalPages,
+      pageType
+    };
   });
 };
 
-export const getTicketCategories = async ({ page, request, csrfToken }) => {
+export const getTicketCategories = async ({ page, pageSize, request, csrfToken }) => {
+  const queryParams = buildQueryParams({ page, pageSize });
+
   return ApiUtil.get({
-    path: `/api/ticket/categories?page=${page}`,
+    path: `/ticket-categories${queryParams}`,
     request,
     csrfToken
   }).then((body) => {
-    body.page = parseInt(page);
+    const result = readPage(body);
 
-    return body;
+    if (result.failed) {
+      return result.body;
+    }
+
+    return {
+      ...result.rest,
+      categories: result.items,
+      page: parseInt(page)
+    };
   });
 };
 
 export const updateTicket = async ({ id, status, request, csrfToken }) => {
   return ApiUtil.put({
-    path: `/api/tickets/${id}`,
+    path: `/tickets/${id}`,
     body: {
       status,
     },
@@ -46,7 +67,7 @@ export const createTicket = async ({
                                      csrfToken
 }) => {
   return ApiUtil.post({
-    path: `/api/tickets`,
+    path: `/tickets`,
     body: {
       title,
       message,
@@ -59,7 +80,7 @@ export const createTicket = async ({
 
 export const getTicketDetail = async ({ id, request, csrfToken }) => {
   return ApiUtil.get({
-    path: `/api/tickets/${id}`,
+    path: `/tickets/${id}`,
     request,
     csrfToken
   });
@@ -72,7 +93,7 @@ export const loadMoreTicketMessages = async ({
                                                csrfToken
 }) => {
   return ApiUtil.get({
-    path: `/api/tickets/${id}/messages?lastMessageId=${lastMessageId}`,
+    path: `/tickets/${id}/messages?lastMessageId=${lastMessageId}`,
     request,
     csrfToken
   });
@@ -85,7 +106,7 @@ export const sendTicketMessage = async ({
                                           csrfToken
 }) => {
   return ApiUtil.post({
-    path: `/api/tickets/${ticketId}/messages`,
+    path: `/tickets/${ticketId}/messages`,
     body: {
       message,
     },

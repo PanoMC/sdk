@@ -39,18 +39,18 @@
   $: isButtonDisabled = $title === "" || $message === "";
 </script>
 
-<div class="vstack gap-3">
+<div class="pano-create-ticket-view vstack gap-3">
   <ErrorAlert error={$error} />
   <div class="vstack gap-0">
     <input
       id="ticketTitle"
       type="text"
-      class="form-control form-control-lg rounded-bottom-0"
+      class="pano-create-ticket-view__input form-control form-control-lg rounded-bottom-0"
       placeholder={$_("pages.create-ticket.inputs.title")}
       bind:value={$title} />
 
     <select
-      class="form-select form-select-lg rounded-top-0"
+      class="pano-create-ticket-view__select form-select form-select-lg rounded-top-0"
       id="datalistOptions"
       bind:value={$categoryId}>
       <option value={-1}>{$_("pages.create-ticket.inputs.no-category")}</option>
@@ -62,10 +62,10 @@
 
   <!-- Ticket Editor -->
 
-  <textarea bind:value={$message} class="form-control" rows="6"></textarea>
+  <textarea bind:value={$message} class="pano-create-ticket-view__input-2 form-control" rows="6"></textarea>
 
   <button
-    class="btn btn-lg btn-secondary w-100"
+    class="pano-create-ticket-view__action btn btn-lg btn-secondary w-100"
     class:disabled={$loading || isButtonDisabled}
     disabled={$loading || isButtonDisabled}
     on:click={() => submit(error, loading, title, message, categoryId)}>

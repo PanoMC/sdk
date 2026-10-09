@@ -43,6 +43,11 @@ const defaultExportSpecs = new Set([
   "@panomc/sdk/utils/tooltip",
 ]);
 
+// Runtime specifiers whose SDK module is written by a later unit of the open
+// front-end plan. Until the file exists their shim is emitted with no exports
+// (and a warning) so the generator keeps working; it fills in on the next run.
+const pendingSpecs = new Set(["@panomc/sdk/controllers"]);
+
 const identifierRe = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 // Names that parse as IdentifierName but cannot be declared with `const` — they must
@@ -68,15 +73,28 @@ async function enumerateExports(spec) {
   }
   writeFileSync(entryPath, entrySource);
 
-  const result = await Bun.build({
-    entrypoints: [entryPath],
-    target: "browser",
-    format: "esm",
-    splitting: false,
-    minify: false,
-    // The bundle is only scanned for its export list, never executed or shipped.
-    outdir: undefined,
-  });
+  let result;
+  try {
+    result = await Bun.build({
+      entrypoints: [entryPath],
+      target: "browser",
+      format: "esm",
+      splitting: false,
+      minify: false,
+      // The bundle is only scanned for its export list, never executed or shipped.
+      outdir: undefined,
+    });
+  } catch (error) {
+    // Newer Bun versions throw on a failed build instead of returning success: false.
+    result = { success: false, logs: [error] };
+  }
+
+  if (!result.success && pendingSpecs.has(spec)) {
+    console.warn(
+      `Warning: '${spec}' does not resolve yet; emitting its shim without exports.`,
+    );
+    return [];
+  }
 
   if (!result.success) {
     console.error(`Failed to bundle '${spec}' for export enumeration:`);

@@ -27,13 +27,13 @@
   }
 </style>
 
-<div class="vstack gap-3">
+<div class="pano-ticket-detail-view vstack gap-3">
   <PageTitle
     title={`#${$ticket.id} ${$ticket.title}`}
     subtitle={$_("pages.ticket-detail.detail.opened-in-category", {
       values: {
         category: `<a
-  href="/tickets?category=${$ticket.category.url}"
+  href="${route("/tickets")}?category=${$ticket.category.url}"
   title="${$_("pages.ticket-detail.filter")}"
   >${
     $ticket.category === "-"
@@ -54,11 +54,11 @@
         <TicketStatus status={$ticket.status} />
       </div>
     </CardHeader>
-    <div class="card-body" id="messageSection" bind:this={$messagesSectionDiv}>
+    <div class="pano-ticket-detail-view__body card-body" id="messageSection" bind:this={$messagesSectionDiv}>
       {#if $messages.length < $ticket.messageCount && $ticket.messageCount > 5}
         <div class="d-flex justify-content-center mb-3">
           <button
-            class="btn btn-sm btn-secondary"
+            class="pano-ticket-detail-view__action btn btn-sm btn-secondary"
             class:disabled={$loadMoreLoading}
             on:click={() => loadMore(loadMoreLoading, messages, data)}
             ><i class="fas fa-arrow-up me-1"></i>
@@ -77,11 +77,11 @@
           {#if message.panel}
             <div class="row g-2 flex-nowrap">
               <div class="col-auto">
-                <a href="/player/{message.username}">
+                <a href={route(`/player/${message.username}`)}>
                   <img
-                    src="/api/profile/picture/{message.username}?{$avatarVersion}"
+                    src="/api/v1/profile/picture/{message.username}?{$avatarVersion}"
                     alt={message.username}
-                    class="rounded-circle animate__animated animate__zoomIn"
+                    class="pano-ticket-detail-view__image rounded-circle animate__animated animate__zoomIn"
                     use:tooltip={[message.username, { placement: "bottom" }]}
                     width="48"
                     height="48" />
@@ -89,7 +89,7 @@
               </div>
               <div class="col vstack align-items-start">
                 <div class="card rounded-5 text-bg-primary border-0 shadow-sm">
-                  <div class="card-body answer px-3 py-2">
+                  <div class="pano-ticket-detail-view__body-2 card-body answer px-3 py-2">
                     {@html message.message}
                   </div>
                 </div>
@@ -102,7 +102,7 @@
             <div class="row g-2 flex-nowrap">
               <div class="col vstack align-items-end">
                 <div class="card rounded-5 bg-transparent border shadow-sm">
-                  <div class="card-body px-3 py-2">
+                  <div class="pano-ticket-detail-view__body-3 card-body px-3 py-2">
                     {message.message}
                   </div>
                 </div>
@@ -111,11 +111,11 @@
                 </small>
               </div>
               <div class="col-auto">
-                <a href="/player/{message.username}">
+                <a href={route(`/player/${message.username}`)}>
                   <img
-                    src="/api/profile/picture/{message.username}?{$avatarVersion}"
+                    src="/api/v1/profile/picture/{message.username}?{$avatarVersion}"
                     alt={message.username}
-                    class="rounded-circle animate__animated animate__zoomIn"
+                    class="pano-ticket-detail-view__image-2 rounded-circle animate__animated animate__zoomIn"
                     use:tooltip={[message.username, { placement: "bottom" }]}
                     width="48"
                     height="48" />
@@ -127,15 +127,15 @@
       </div>
     </div>
     <div
-      class="card-footer"
+      class="pano-ticket-detail-view__footer card-footer"
       class:d-none={$ticket.status === TicketStatuses.CLOSED}>
       <div class="input-group">
         <textarea
           placeholder={$_("pages.ticket-detail.inputs.message.placeholder")}
-          class="form-control"
+          class="pano-ticket-detail-view__input form-control"
           bind:value={$message}></textarea>
         <button
-          class="btn btn-secondary border-left-0"
+          class="pano-ticket-detail-view__send btn btn-secondary border-left-0"
           disabled={$messageSendLoading || isSendButtonDisabled}
           class:disabled={$messageSendLoading || isSendButtonDisabled}
           on:click={() =>
@@ -158,6 +158,8 @@
 
 <script>
   import { _ } from "svelte-i18n";
+
+  import { route } from "$pano/registry/routes.js";
 
   import Date from "$pano/lib/components/Date.svelte";
   import tooltip from "$pano/lib/tooltip.util";

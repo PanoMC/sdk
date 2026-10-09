@@ -13,10 +13,10 @@
         {#each onlineAdmins as onlineAdmin, index (onlineAdmin)}
           <div class="col-auto">
             <a
-              href="/player/{onlineAdmin}"
+              href={route(`/player/${onlineAdmin}`)}
               class="online-admin-link focus-ring rounded position-relative d-inline-block">
               <img
-                src="/api/profile/picture/{onlineAdmin}?{$avatarVersion}"
+                src="/api/v1/profile/picture/{onlineAdmin}?{$avatarVersion}"
                 class="online-admin-avatar rounded border border-3 border-success"
                 alt={onlineAdmin}
                 use:tooltip={[
@@ -37,6 +37,7 @@
 <script>
   import { _ } from "svelte-i18n";
   import { avatarVersion } from "$pano/lib/Store";
+  import { route } from "$pano/registry/routes.js";
   import tooltip from "$pano/lib/tooltip.util";
   import { getContext } from "svelte";
   import NoContent from "./NoContent.svelte";

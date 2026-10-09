@@ -1,0 +1,82 @@
+[
+  {
+    "method": "GET",
+    "old": "/api/panel/players/:username/exists",
+    "new": "/api/v1/panel/players/:username/exists",
+    "relative": "/panel/players/:username/exists",
+    "class": "PanelIsUserExistsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelAddonsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/plugins",
+    "new": "/api/v1/panel/addons",
+    "relative": "/panel/addons",
+    "class": "PanelGetAddonsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelAddonsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/plugins/search",
+    "new": "/api/v1/panel/addons/search",
+    "relative": "/panel/addons/search",
+    "class": "PanelGetAddonsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelAddonsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/panel/posts",
+    "new": "/api/v1/panel/posts",
+    "relative": "/panel/posts",
+    "class": "PanelGetPostsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelAddonsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/plugins/:pluginId/resources/plugin-ui.zip",
+    "new": "/api/v1/plugins/:pluginId/_/ui.zip",
+    "relative": "/plugins/:pluginId/_/ui.zip",
+    "class": "GetPluginUiZipAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginUiZipAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/post/thumbnail/:filename",
+    "new": "/api/v1/posts/thumbnails/:filename",
+    "relative": "/posts/thumbnails/:filename",
+    "class": "GetThumbnailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSiteInfoAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/posts",
+    "new": "/api/v1/posts",
+    "relative": "/posts",
+    "class": "GetPostsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSiteInfoAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/posts/:url",
+    "new": "/api/v1/posts/:url",
+    "relative": "/posts/:url",
+    "class": "GetPostsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSiteInfoAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/server/icon/default",
+    "new": "/api/v1/server/icon/default",
+    "relative": "/server/icon/default",
+    "class": "PanelGetDefaultServerIconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelAddonsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/siteInfo",
+    "new": "/api/v1/site-info",
+    "relative": "/site-info",
+    "class": "GetSiteInfoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSiteInfoAPI.kt"
+  }
+]

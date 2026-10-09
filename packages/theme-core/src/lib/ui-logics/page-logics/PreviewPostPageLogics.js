@@ -45,7 +45,7 @@ export async function processLoad(event) {
         return;
       }
 
-      data.post = body;
+      data.post = body.post;
     }
   );
 

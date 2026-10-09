@@ -51,8 +51,13 @@ function makeTheme({ extraHead = "", registerOverride = true } = {}) {
   return dir;
 }
 
-function runCheck(cwd) {
-  const proc = Bun.spawnSync([process.execPath, checkJs], { cwd, stdout: "pipe", stderr: "pipe" });
+function runCheck(cwd, args = []) {
+  const proc = Bun.spawnSync([process.execPath, checkJs, ...args], {
+    cwd,
+    stdout: "pipe",
+    stderr: "pipe",
+    env: { ...process.env, PANO_CHECK_ROUTES: join(pkgDir, "bin", "__tests__", "check", "fixtures", "routes.json") },
+  });
 
   return {
     code: proc.exitCode,
@@ -104,5 +109,93 @@ describe("bin/check.js MainLayoutView description (TC-8)", () => {
     });
 
     expect(runCheck(dir).code).toBe(0);
+  });
+});
+
+describe("bin/check.js arguments (TC-41)", () => {
+  /** A theme with one warning (a plugin view without a snapshot) and nothing else. */
+  function warningTheme() {
+    const dir = makeTheme({ registerOverride: false });
+    mkdirSync(join(dir, "src", "views"), { recursive: true });
+    writeFileSync(join(dir, "src", "views", "P.svelte"), "<div></div>");
+    writeFileSync(
+      join(dir, "theme.config.js"),
+      `export default { views: { "market:ProductCard": () => import("./src/views/P.svelte") } };\n`,
+    );
+
+    return dir;
+  }
+
+  test("a warning prints and exits 0; --strict turns it into a failure", () => {
+    const dir = warningTheme();
+    const lax = runCheck(dir);
+
+    expect(lax.code).toBe(0);
+    expect(lax.out).toContain("[C2]");
+    expect(lax.out).toContain("run: theme-core contracts pull");
+    expect(lax.out).toContain("OK");
+
+    const strict = runCheck(dir, ["--strict"]);
+
+    expect(strict.code).toBe(1);
+    expect(strict.out).toContain("[C2]");
+    expect(strict.out).toContain("1 problem must be fixed");
+    expect(strict.out).toContain("strict");
+  });
+
+  test("an unknown argument exits 2 and names the usage", () => {
+    const { code, out } = runCheck(makeTheme(), ["--stric"]);
+
+    expect(code).toBe(2);
+    expect(out).toContain("--stric");
+    expect(out).toContain("theme-core check [--strict] [--fix]");
+  });
+
+  test("--fix writes the controller pins; a second run is clean even under --strict", () => {
+    const dir = makeTheme({ registerOverride: false });
+    cpSync(
+      join(pkgDir, "bin", "__tests__", "check", "fixtures", "plugin-contracts"),
+      join(dir, "plugin-contracts"),
+      { recursive: true },
+    );
+    mkdirSync(join(dir, "src", "pages"), { recursive: true });
+    writeFileSync(
+      join(dir, "src", "pages", "Cart.svelte"),
+      `<script>\n  import { plugin } from "@panomc/sdk/controllers";\n  const cart = plugin("market").use("cart");\n</script>\n`,
+    );
+
+    const before = runCheck(dir);
+
+    expect(before.code).toBe(0);
+    expect(before.out).toContain("[C12]");
+    expect(before.out).toContain("run: theme-core check --fix");
+    expect(runCheck(dir, ["--strict"]).code).toBe(1);
+
+    const fixed = runCheck(dir, ["--strict", "--fix"]);
+
+    expect(fixed.out).toContain("fixed: pinned controller 'market/cart' to version 2");
+    expect(fixed.code).toBe(0);
+    expect(readFileSync(join(dir, "theme.config.js"), "utf-8")).toContain('"market/cart": 2');
+    expect(runCheck(dir, ["--strict"]).code).toBe(0);
+  });
+
+  test("info lines (claims) never fail a strict run", () => {
+    const dir = makeTheme({ registerOverride: false });
+    cpSync(
+      join(pkgDir, "bin", "__tests__", "check", "fixtures", "plugin-contracts"),
+      join(dir, "plugin-contracts"),
+      { recursive: true },
+    );
+    mkdirSync(join(dir, "src", "views"), { recursive: true });
+    writeFileSync(join(dir, "src", "views", "Navbar.svelte"), '<PluginBlock id="market:NavCart" />');
+    writeFileSync(
+      join(dir, "theme.config.js"),
+      `export default { views: { Navbar: () => import("./src/views/Navbar.svelte") } };\n`,
+    );
+
+    const { code, out } = runCheck(dir, ["--strict"]);
+
+    expect(out).toContain("automatic copy in 'navbar-right' is suppressed");
+    expect(code).toBe(0);
   });
 });

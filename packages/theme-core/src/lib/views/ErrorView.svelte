@@ -7,7 +7,7 @@
   Override from a theme:
     theme.config.js → views: { ErrorView: () => import("./src/views/ErrorView.svelte") }
 -->
-<div class="vstack gap-3">
+<div class="pano-error-view vstack gap-3">
   <PageTitle
     title={$_("page-errors.title", { values: { status: page.status }, default: `Error: ${page.status}` })}
     subtitle={page.status === 404
@@ -21,7 +21,7 @@
   </div>
 
   <div class="text-center">
-    <a href="/" class="btn btn-primary">
+    <a href={route("/")} class="pano-error-view__action btn btn-primary">
       <i class="fas fa-home me-2"></i>
       {$_("nav-links.homepage")}
     </a>
@@ -30,6 +30,8 @@
 
 <script>
   import { _ } from "svelte-i18n";
+
+  import { route } from "$pano/registry/routes.js";
 
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
 

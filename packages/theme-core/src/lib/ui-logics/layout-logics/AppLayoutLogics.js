@@ -1,7 +1,17 @@
 import { onDestroy, onMount, setContext } from "svelte";
 import { get, writable } from "svelte/store";
 import { setPanoContext } from "@panomc/sdk/internal";
-import { resolveView } from "$pano/registry/index.js";
+import {
+  getDefault,
+  getOverride,
+  getThemeConfig,
+  getThemeProvides,
+  hasView,
+  resolveView,
+  route,
+  setThemeMeta,
+} from "$pano/registry/index.js";
+import { setRouteConfig } from "$pano/registry/routes.js";
 import { _ } from "svelte-i18n";
 import copy from "copy-to-clipboard";
 
@@ -22,7 +32,8 @@ import tooltip from "$pano/lib/tooltip.util";
 
 import { addListener } from "$pano/lib/NotificationManager";
 import { initializePlugins, preparePlugins } from "$pano/lib/PluginManager";
-import { executeLifecycle, executeViewLoad } from "$pano/lib/PluginAPI";
+import { executeLifecycle, executeViewLoad, panoApi } from "$pano/lib/PluginAPI";
+import { bindControllerSession, themeHostFactory } from "$pano/lib/controllerHost";
 import { hasPermission } from "$pano/lib/auth.util";
 import { trackPostView } from "$pano/lib/services/posts";
 
@@ -36,13 +47,109 @@ import Toast from "$pano/lib/components/Toast.svelte";
 import Sidebar from "$pano/lib/components/Sidebar.svelte";
 import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
 import Hook from "$pano/lib/components/Hook.svelte";
+import PluginBlock from "$pano/lib/components/PluginBlock.svelte";
+import PluginSlot from "$pano/lib/components/PluginSlot.svelte";
+import FallbackScope from "$pano/lib/components/FallbackScope.svelte";
+import { buildStyleTable, createViewWrapper } from "$pano/lib/fallbackStyles.js";
 
 const initLanguage = languageStuff.init;
+
+/**
+ * `virtual:pano-theme-meta` (doc 01 section 4): the view references, claims and home pages the build found in the
+ * theme's own files. A theme without the virtual module (or one that fails to load) gets an empty meta.
+ */
+async function readThemeMeta() {
+  try {
+    const module = await import("virtual:pano-theme-meta");
+
+    return module?.default ?? module ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** The theme-side setup of the open front-end, done once per module instance (server process / browser page). */
+let themeSetup = null;
+
+function setupTheme() {
+  themeSetup ??= (async () => {
+    const themeConfig = getThemeConfig();
+
+    // the generated hooks.js does this too; a hand-written one may not
+    setRouteConfig(themeConfig);
+    setThemeMeta(await readThemeMeta());
+    panoApi.controllers.setHostFactory(themeHostFactory);
+    panoApi.controllers.setThemePins(themeConfig.controllers);
+  })();
+
+  return themeSetup;
+}
+
+/**
+ * The styles of every installed plugin, as plain data. `pano-plugin.json` is read on the server only, so the server
+ * load hands this to the browser (doc 03 section 4.4: `styles` metadata). Cached per plugin and UI hash; in
+ * development mode a rebuilt plugin is read again.
+ */
+const styleEntries = new Map();
+
+/** The fallback-style wrapper of the latest load (it holds that load's plugin style table). */
+let viewWrapper = null;
+
+/**
+ * `views.wrap` is the fallback-style hook of doc 03 section 4.4: a default plugin view gets the scoped fallback
+ * sheet in a theme without Bootstrap; in every other theme it is the identity.
+ * @param {string} name  `<ns>:<View>`
+ * @param {Function} component
+ * @param {"default" | "override"} source
+ */
+const wrapView = (name, component, source) => {
+  const wrap = viewWrapper?.wrap;
+
+  return typeof wrap === "function" ? wrap(name, component, source) : component;
+};
+
+/**
+ * `views.wrapInjected` is the same hook for what an injection's `component` resolved to (a nav item, a sidebar
+ * widget, a hook): a named view keeps its plugin's scope, a legacy component gets the `legacy` scope. In a theme with
+ * Bootstrap it is the component itself.
+ * @param {any} module  the resolved module (or component) of the injected item
+ */
+const wrapInjectedView = (module) => {
+  const wrap = viewWrapper?.wrapInjected;
+
+  return typeof wrap === "function" ? wrap(module) : (module?.default ?? module);
+};
+
+async function readStyleTable(siteInfo) {
+  const { readPluginPackage } = await import("@panomc/sdk/core/js/pluginFolder.util.js");
+  const found = [];
+
+  for (const [id, info] of Object.entries(siteInfo?.plugins ?? {})) {
+    if (!id || id.includes("/") || id.includes("\\") || id.startsWith(".")) continue;
+
+    const uiHash = info?.version && typeof info.version === "object" ? info.version.uiHash : info?.uiHash;
+    const cacheKey = `${id}:${uiHash ?? ""}`;
+    const cacheable = Boolean(uiHash) && !siteInfo.developmentMode;
+    let entry = cacheable ? styleEntries.get(cacheKey) : undefined;
+
+    if (entry === undefined) {
+      const pkg = readPluginPackage(`plugins/${id}`);
+
+      entry = { id, namespace: pkg?.namespace, styles: pkg?.styles, views: pkg?.views };
+      if (cacheable) styleEntries.set(cacheKey, entry);
+    }
+
+    found.push(entry);
+  }
+
+  return buildStyleTable(found);
+}
+
 const POST_VIEW_ENGAGEMENT_DELAY_MS = 8000;
 
 async function sendVisitorVisitRequest({ event, csrfToken, isDemo }) {
   if (isDemo) return;
-  ApiUtil.post({ path: "/api/visitorVisit", request: event, csrfToken });
+  ApiUtil.post({ path: "/visitor-visit", request: event, csrfToken });
 }
 
 function extractPostUrlFromPath(pathname) {
@@ -90,7 +197,7 @@ export async function processServerLoad(event) {
   } = event;
 
   let siteInfo = await ApiUtil.get({
-    path: "/api/siteInfo",
+    path: "/site-info",
     request: event,
     csrfToken
   });
@@ -98,11 +205,13 @@ export async function processServerLoad(event) {
   await preparePlugins(siteInfo);
 
   const avatarVersionDate = `v=${Date.now()}`;
+  const pluginStyles = await readStyleTable(siteInfo);
 
   return {
     user,
     csrfToken,
     siteInfo,
+    pluginStyles,
     apiUrlEnv,
     panoWebsiteUrlEnv,
     avatarVersionDate,
@@ -115,6 +224,7 @@ export async function processLoad(event) {
       user,
       csrfToken,
       siteInfo,
+      pluginStyles = {},
       apiUrlEnv,
       panoWebsiteUrlEnv,
       avatarVersionDate,
@@ -122,6 +232,7 @@ export async function processLoad(event) {
     parent,
   } = event;
   await parent();
+  await setupTheme();
   avatarVersion.set(avatarVersionDate);
 
   if (apiUrlEnv) {
@@ -152,6 +263,13 @@ export async function processLoad(event) {
     resolveView("PlayerHead", async () => PlayerHead),
   ]);
 
+  viewWrapper = createViewWrapper({
+    FallbackScope,
+    getTable: () => pluginStyles,
+    getProvides: getThemeProvides,
+    dev: Boolean(siteInfo?.developmentMode),
+  });
+
   setPanoContext({
     page,
     base,
@@ -173,6 +291,19 @@ export async function processLoad(event) {
       Sidebar,
       ViewComponent,
       Hook,
+      PluginBlock,
+      PluginSlot,
+    },
+    // read by the view proxies of plugin builds (`@panomc/sdk/views`), at render time
+    views: {
+      getOverride,
+      getDefault,
+      has: hasView,
+      wrap: wrapView,
+      wrapInjected: wrapInjectedView,
+    },
+    routes: {
+      resolve: route,
     },
     utils: {
       api: {
@@ -205,6 +336,7 @@ export async function processLoad(event) {
 
   const output = {
     session: { user, csrfToken, siteInfo },
+    pluginStyles,
     _pageTitleStore: writable(null),
     _breadcrumbsStore: writable(null)
   };
@@ -308,6 +440,11 @@ export function init(data) {
   setContext("pageTitle", data._pageTitleStore);
   setContext("breadcrumbs", data._breadcrumbsStore);
   setContext("themeSettings", data.session.siteInfo.themeSettings);
+
+  // browser only: controllers read the session through the host (doc 02 section 1); the server host reads the request
+  if (browser) {
+    onDestroy(bindControllerSession(session));
+  }
 
   const onVisibilityChange = () => {
     schedulePostViewTracking(activePostUrl);

@@ -1,6 +1,7 @@
 {
   "name": "@panomc/sdk",
   "version": "0.0.0-development",
+  "sdkLine": "2.0.0",
   "author": "PanoMC",
   "repository": {
     "url": "https://github.com/PanoMC/sdk"
@@ -58,6 +59,10 @@
       "svelte": "./src/utils/text.js",
       "default": "./src/utils/text.js"
     },
+    "./utils/route": {
+      "svelte": "./src/utils/route.js",
+      "default": "./src/utils/route.js"
+    },
     "./variables": {
       "svelte": "./src/variables.js",
       "default": "./src/variables.js"
@@ -66,15 +71,30 @@
       "svelte": "./src/svelte.js",
       "default": "./src/svelte.js"
     },
+    "./views": {
+      "svelte": "./src/views.js",
+      "default": "./src/views.js"
+    },
+    "./controllers": {
+      "svelte": "./src/controllers.js",
+      "default": "./src/controllers.js"
+    },
+    "./build/*": "./build/*",
     "./core/*": {
       "svelte": "./core/*",
       "default": "./core/*"
     },
     "./package.json": "./package.json"
   },
+  "bin": {
+    "pano-api": "./bin/pano-api.js"
+  },
   "files": [
     "src",
-    "core"
+    "core",
+    "bin",
+    "build",
+    "api"
   ],
   "publishConfig": {
     "access": "public"

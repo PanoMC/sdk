@@ -11,14 +11,14 @@
 -->
 <!-- Statistics -->
 
-<div class="vstack gap-3">
+<div class="pano-profile-view vstack gap-3">
   {#each $contentItems as item (item.id)}
     {#if item.id === "profile-card"}
       <div class="card">
         <CardHeader>
           <div slot="left">{$_("pages.profile.title")}</div>
         </CardHeader>
-        <table class="table">
+        <table class="pano-profile-view__table table">
           <tbody>
             {#each $cardRowItems as row (row.id)}
               {#if row.id === "register-date"}

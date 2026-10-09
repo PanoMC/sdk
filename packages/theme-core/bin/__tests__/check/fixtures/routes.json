@@ -1,0 +1,5 @@
+[
+  { "method": "GET", "path": "/api/v1/posts" },
+  { "method": "GET", "path": "/api/v1/posts/:url" },
+  { "method": "GET", "path": "/api/v1/site-info" }
+]

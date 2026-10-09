@@ -2,18 +2,20 @@
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/layout-logics/AuthLayoutLogics";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   export async function load(event) {
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
+    const data = await processLoad(event);
+    const { View, ...blocks } = await loadView(
+      event,
       "AuthLayoutView",
       () => import("../views/AuthLayoutView.svelte"),
     );
-    const data = await processLoad(event);
-    return { ...data, authLayoutView: await viewPromise };
+
+    return { ...data, ...blocks, authLayoutView: View };
   }
 </script>
 

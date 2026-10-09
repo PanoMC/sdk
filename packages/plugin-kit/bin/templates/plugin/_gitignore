@@ -1,0 +1,15 @@
+.gradle
+.idea
+.kotlin
+.vertx
+build
+
+/*.jar
+
+.DS_Store
+node_modules
+src/main/resources/plugin-ui
+
+/*.mjs
+
+src/main/resources/*.zip

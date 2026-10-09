@@ -1,0 +1,27 @@
+{
+  "controllers": {
+    "demo/cart": {
+      "actions": [
+        "add",
+        "setQuantity",
+        "clear",
+        "retry"
+      ],
+      "state": [
+        "status",
+        "lines",
+        "count",
+        "replaceRequest"
+      ],
+      "version": 1
+    },
+    "demo/format": {
+      "actions": [
+        "money"
+      ],
+      "state": [],
+      "version": 1
+    }
+  },
+  "format": 1
+}

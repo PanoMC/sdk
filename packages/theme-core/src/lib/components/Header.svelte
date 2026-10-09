@@ -3,7 +3,7 @@
 </svelte:head>
 
 <!-- Header -->
-<div class="hero" class:container={headerWidthOption !== "FULL_SIZE"}>
+<div class="pano-header hero" class:container={headerWidthOption !== "FULL_SIZE"}>
   <div
     class="hero-content position-relative p-0"
     class:bg-transparent={!effectiveHeaderBgColor}
@@ -17,7 +17,7 @@
         <img
           alt={$_("components.header.alt")}
           class={logoAnimationClass}
-          src="/api/websiteLogo?hash={$session.siteInfo.websiteLogoHash}"
+          src="/api/v1/website-logo?hash={$session.siteInfo.websiteLogoHash}"
           style="object-fit: contain; width: {themeSettings.logoWidth || '256'}px; height: {themeSettings.logoHeight ? themeSettings.logoHeight + 'px' : 'auto'}; max-width: 100%;"
           title={$session.siteInfo.websiteName} />
       </div>
@@ -95,7 +95,7 @@
   const styles = `
     .hero::before {
       ${effectiveHeaderBgColor ? `background-color: ${effectiveHeaderBgColor};` : ""}
-      background-image: url(${defaultHeaderBg ? "/assets/img/default-header-bg.png" : themeSettings.files?.headerBackgroundImage ? "/api/theme/file/" + themeSettings.files?.headerBackgroundImage : ""}) !important;
+      background-image: url(${defaultHeaderBg ? "/assets/img/default-header-bg.png" : themeSettings.files?.headerBackgroundImage ? "/api/v1/theme/file/" + themeSettings.files?.headerBackgroundImage : ""}) !important;
       ${themeSettings.headerBgImagePosition ? `background-position: ${themeSettings.headerBgImagePosition} !important;` : ""}
       ${themeSettings.headerBgImageRepeat ? `background-repeat: ${themeSettings.headerBgImageRepeat} !important;` : ""}
       background-size: ${themeSettings.headerBgImageSize || "cover"} !important;

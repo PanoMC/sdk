@@ -1,0 +1,6 @@
+{
+  "name": "plugin-min-fixture",
+  "private": true,
+  "type": "module",
+  "description": "TC-14 fixture plugin for the kit preset. Test only, never published."
+}

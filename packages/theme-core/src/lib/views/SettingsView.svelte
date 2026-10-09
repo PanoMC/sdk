@@ -39,14 +39,14 @@
     theme.config.js → views: { SettingsView: () => import("./src/views/SettingsView.svelte") }
 -->
 <!-- Settings -->
-<div class="vstack gap-3">
+<div class="pano-settings-view vstack gap-3">
   {#each $contentItems as item (item.id)}
     {#if item.id === "settings-cards"}
       <div class="card mt-3 mt-lg-0">
         <CardHeader>
           <div slot="left">{$_("pages.settings.title")}</div>
         </CardHeader>
-        <div class="card-body">
+        <div class="pano-settings-view__body card-body">
           {#each $cardRowItems as row (row.id)}
             {#if row.id === "change-password"}
               <div class="row">
@@ -55,7 +55,7 @@
                 </label>
                 <div class="col col-form-label">
                   <button
-                    class="btn btn-link"
+                    class="pano-settings-view__action btn btn-link"
                     class:is-invalid={$resetPasswordError}
                     onclick={() =>
                       sendResetPasswordLink(
@@ -123,7 +123,7 @@
                           {:else}
                             <button
                               type="button"
-                              class="btn btn-link"
+                              class="pano-settings-view__description btn btn-link"
                               aria-describedby="userEmail"
                               onclick={() =>
                                 startChangingEmail(
@@ -144,7 +144,7 @@
                             placeholder={$_(
                               "pages.settings.inputs.change-password.new-email-placeholder",
                             )}
-                            class="form-control"
+                            class="pano-settings-view__input form-control"
                             aria-describedby="validationChangingEmail"
                             bind:value={$newEmail}
                             oninput={() => {
@@ -168,7 +168,7 @@
                           class="col-12 col-md-auto d-flex flex-wrap gap-2 align-items-center justify-content-md-end">
                           <button
                             type="reset"
-                            class="btn btn-link link-primary"
+                            class="pano-settings-view__back btn btn-link link-primary"
                             onclick={() =>
                               stopChangingEmail2ndStep(
                                 changingEmail2ndStep,
@@ -178,7 +178,7 @@
                           </button>
                           <button
                             type="submit"
-                            class="btn btn-link link-secondary"
+                            class="pano-settings-view__confirm btn btn-link link-secondary"
                             class:disabled={$changingEmailLoading ||
                               !String($newEmail ?? "").trim()}
                             disabled={$changingEmailLoading ||
@@ -194,7 +194,7 @@
                             placeholder={$_(
                               "pages.settings.inputs.change-email.current-password-placeholder",
                             )}
-                            class="form-control"
+                            class="pano-settings-view__current-password-placeholder form-control"
                             class:is-invalid={$changingEmailError ===
                               "CURRENT_PASSWORD_NOT_CORRECT"}
                             aria-describedby={$changingEmailError ===
@@ -215,7 +215,7 @@
                           class="col-12 col-md-auto d-flex flex-wrap gap-2 align-items-center justify-content-md-end">
                           <button
                             type="reset"
-                            class="btn btn-link link-danger"
+                            class="pano-settings-view__cancel btn btn-link link-danger"
                             onclick={() =>
                               stopChangingEmail(
                                 currentPassword,
@@ -228,7 +228,7 @@
                           </button>
                           <button
                             type="submit"
-                            class="btn btn-link"
+                            class="pano-settings-view__continue btn btn-link"
                             class:disabled={!String($currentPassword ?? "").trim()}
                             disabled={!String($currentPassword ?? "").trim()}
                             >{$_(
@@ -248,7 +248,7 @@
                   </label>
                   <div class="col col-form-label">
                     <select
-                      class="form-control"
+                      class="pano-settings-view__input-2 form-control"
                       id="userLocaleCode"
                       bind:value={$userLocale}>
                       {#each Object.keys($Languages) as language, index (language)}
@@ -291,7 +291,7 @@
 
           {#if $saveButtonVisible}
             <button
-              class="btn btn-secondary"
+              class="pano-settings-view__save btn btn-secondary"
               class:disabled={$saveButtonDisabled}
               aria-disabled={$saveButtonDisabled}
               onclick={handleSave}
@@ -304,7 +304,7 @@
       <div class="card">
         <CardHeader truncateLeft={false}>
           <div slot="left">
-            {$_("pages.settings.inputs.sessions.title")}
+            <div>{$_("pages.settings.inputs.sessions.title")}</div>
             <small class="d-block text-muted"
               >{$_("pages.settings.inputs.sessions.max-sessions-warning")}</small>
           </div>
@@ -316,12 +316,12 @@
             </div>
           </div>
         {:else if sessions.length === 0}
-          <div class="card-body">
+          <div class="pano-settings-view__body-2 card-body">
             <NoContent />
           </div>
         {:else}
           <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="pano-settings-view__table table table-hover">
               <thead>
                 <tr>
                   <th class="align-middle">ID</th>
@@ -356,7 +356,7 @@
                     </td>
                     <td class="align-middle">
                       {#if s.isCurrent}
-                        <span class="badge text-bg-primary"
+                        <span class="pano-settings-view__badge badge text-bg-primary"
                           >{$_(
                             "pages.settings.inputs.sessions.current-session",
                           )}</span>
@@ -376,7 +376,7 @@
                       ><DateComponent time={s.expireDate} /></td>
                     <td class="align-middle text-end">
                       <button
-                        class="btn btn-link text-danger"
+                        class="pano-settings-view__logout btn btn-link text-danger"
                         title={$_("buttons.logout")}
                         aria-label={$_("buttons.logout")}
                         onclick={() => {
@@ -469,3 +469,34 @@
   let sessions = [];
   $: sessions = data.sessions;
 </script>
+
+<style>
+  /* Narrow screens: stack each session as a wrapped row so the dates stay inside the card. */
+  @media (max-width: 575.98px) {
+    .pano-settings-view__table,
+    .pano-settings-view__table tbody {
+      display: block;
+      width: 100%;
+    }
+    .pano-settings-view__table thead {
+      display: none;
+    }
+    .pano-settings-view__table tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.25rem 0.75rem;
+      padding: 0.5rem 0.75rem;
+    }
+    .pano-settings-view__table td {
+      display: block;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .pano-settings-view__table td:last-child {
+      margin-left: auto;
+    }
+  }
+</style>

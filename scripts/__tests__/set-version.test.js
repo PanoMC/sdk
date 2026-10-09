@@ -1,0 +1,61 @@
+import { describe, expect, test } from "bun:test";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+import { PACKAGES, versionFor } from "../set-version.js";
+
+describe("versionFor", () => {
+  test("every package but sdk gets the release version", () => {
+    for (const name of PACKAGES.filter((n) => n !== "sdk")) {
+      expect(versionFor(name, "1.4.0", "2.0.0")).toBe("1.4.0");
+      expect(versionFor(name, "1.4.0-dev.7", "2.0.0")).toBe("1.4.0-dev.7");
+    }
+  });
+
+  test("sdk is lifted to the line while the train is below it, keeping the prerelease suffix", () => {
+    expect(versionFor("sdk", "1.4.0", "2.0.0")).toBe("2.0.0");
+    expect(versionFor("sdk", "1.0.0-dev.12", "2.0.0")).toBe("2.0.0-dev.12");
+  });
+
+  test("sdk follows the train once it reaches the line", () => {
+    expect(versionFor("sdk", "2.0.0", "2.0.0")).toBe("2.0.0");
+    expect(versionFor("sdk", "2.3.1", "2.0.0")).toBe("2.3.1");
+    expect(versionFor("sdk", "3.0.0-dev.1", "2.0.0")).toBe("3.0.0-dev.1");
+  });
+
+  test("no sdkLine: sdk is version-locked like the rest", () => {
+    expect(versionFor("sdk", "1.4.0", undefined)).toBe("1.4.0");
+  });
+
+  test("a malformed line or version is an error", () => {
+    expect(() => versionFor("sdk", "1.4.0", "two")).toThrow();
+    expect(() => versionFor("sdk", "latest", "2.0.0")).toThrow();
+  });
+});
+
+describe("the script", () => {
+  test("stamps the files: sdk 2.0.0, the others the release version", () => {
+    const root = mkdtempSync(join(tmpdir(), "set-version-"));
+
+    try {
+      for (const name of PACKAGES) {
+        mkdirSync(join(root, "packages", name), { recursive: true });
+        writeFileSync(join(root, "packages", name, "package.json"), JSON.stringify({ name: `@panomc/${name}`, version: "0.0.0-development", ...(name === "sdk" ? { sdkLine: "2.0.0" } : {}) }));
+      }
+
+      const proc = Bun.spawnSync([process.execPath, join(import.meta.dir, "..", "set-version.js"), "1.2.3-dev.4"], { cwd: root, stdout: "pipe", stderr: "pipe" });
+
+      expect(proc.exitCode).toBe(0);
+
+      const version = (name) => JSON.parse(readFileSync(join(root, "packages", name, "package.json"), "utf8")).version;
+
+      expect(version("sdk")).toBe("2.0.0-dev.4");
+      expect(version("theme-core")).toBe("1.2.3-dev.4");
+      expect(version("plugin-kit")).toBe("1.2.3-dev.4");
+      expect(JSON.parse(readFileSync(join(root, "packages/sdk/package.json"), "utf8")).sdkLine).toBe("2.0.0");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});

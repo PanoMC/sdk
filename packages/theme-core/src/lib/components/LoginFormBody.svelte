@@ -35,11 +35,11 @@
   const contentItems = panoApiClient.ui.auth.login.content.get();
 </script>
 
-<div class="form-group">
+<div class="pano-login-form-body form-group">
   <div class="form-floating">
     <input
       bind:value={usernameOrEmail}
-      class="form-control rounded-bottom-0"
+      class="pano-login-form-body__input form-control rounded-bottom-0"
       id="lfb-usernameOrEmail"
       on:input={onUsernameInput}
       disabled={loading || usernameDisabled}
@@ -52,7 +52,7 @@
   <div class="form-floating">
     <input
       bind:value={password}
-      class="form-control rounded-top-0"
+      class="pano-login-form-body__input-2 form-control rounded-top-0"
       id="lfb-password"
       disabled={loading}
       type="password" />
@@ -70,9 +70,9 @@
 
 <slot name="beforeSubmit" />
 
-<div class="vstack gap-2">
+<div class="pano-login-form-body vstack gap-2">
   <button
-    class="btn btn-lg btn-secondary"
+    class="pano-login-form-body__action btn btn-lg btn-secondary"
     class:disabled={loading || !usernameOrEmail || !password}
     disabled={loading || !usernameOrEmail || !password}
     type="submit">

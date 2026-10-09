@@ -13,10 +13,10 @@
   Override from a theme:
     theme.config.js → views: { RenewPasswordView: () => import("./src/views/RenewPasswordView.svelte") }
 -->
-<div class="col-lg-4 col-md-6 m-auto">
+<div class="pano-renew-password-view col-lg-4 col-md-6 m-auto">
   <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">{$_("pages.renew-password.title")}</h5>
+    <div class="pano-renew-password-view__body card-body">
+      <h5 class="pano-renew-password-view__title card-title">{$_("pages.renew-password.title")}</h5>
       <ErrorAlert error={$error} />
       <SuccessAlert message={$message} />
       <form
@@ -35,7 +35,7 @@
               <input
                 type="password"
                 id="newPassword"
-                class="form-control"
+                class="pano-renew-password-view__input form-control"
                 disabled={$loading}
                 bind:value={$newPassword} />
               <label for="newPassword"
@@ -45,7 +45,7 @@
               <input
                 type="password"
                 id="newPasswordRepeat"
-                class="form-control"
+                class="pano-renew-password-view__input-2 form-control"
                 disabled={$loading}
                 bind:value={$newPasswordRepeat} />
               <label for="newPasswordRepeat"
@@ -61,7 +61,7 @@
           {/each}
           <button
             type="submit"
-            class="btn btn-lg btn-secondary w-100"
+            class="pano-renew-password-view__action btn btn-lg btn-secondary w-100"
             class:disabled={$loading}
             disabled={$loading}>
             {#if $loading}

@@ -15,6 +15,7 @@
 <script>
   import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
+  import { route } from "$pano/registry/routes.js";
 
   import { stripIdentifierWhitespace } from "$pano/lib/loginInput.util.js";
 
@@ -43,11 +44,11 @@
   }
 </script>
 
-<div class="form-group">
+<div class="pano-register-form form-group">
   <div class="form-floating">
     <input
       bind:value={username}
-      class="form-control rounded-bottom-0"
+      class="pano-register-form__input form-control rounded-bottom-0"
       disabled={loading || usernameDisabled}
       id="registerUserName"
       on:input={onUsernameInput}
@@ -57,7 +58,7 @@
   <div class="form-floating">
     <input
       bind:value={email}
-      class="form-control rounded-top-0"
+      class="pano-register-form__input-2 form-control rounded-top-0"
       disabled={loading}
       id="registerEmail"
       on:input={onEmailInput}
@@ -65,11 +66,11 @@
     <label for="registerEmail">{$_("components.modals.register.inputs.email")}</label>
   </div>
 </div>
-<div class="form-group">
+<div class="pano-register-form form-group">
   <div class="form-floating">
     <input
       bind:value={password}
-      class="form-control rounded-bottom-0"
+      class="pano-register-form__input-3 form-control rounded-bottom-0"
       disabled={loading}
       id="registerPassword"
       type="password" />
@@ -78,7 +79,7 @@
   <div class="form-floating">
     <input
       bind:value={passwordRepeat}
-      class="form-control rounded-top-0"
+      class="pano-register-form__input-4 form-control rounded-top-0"
       disabled={loading}
       id="registerPasswordRepeat"
       type="password" />
@@ -88,26 +89,26 @@
   </div>
 </div>
 {#if $session.siteInfo.hasRegisterAgreement}
-  <div class="form-check">
+  <div class="pano-register-form form-check">
     <input
       bind:checked={agreement}
-      class="form-check-input"
+      class="pano-register-form__check form-check-input"
       disabled={loading}
       id="registerAcceptTerms"
       type="checkbox" />
     <label class="form-check-label" for="registerAcceptTerms">
       {@html $_("components.modals.register.inputs.agreement-text", {
         values: {
-          link: `<a class="rounded focus-ring" href="/rules">${$_("components.modals.register.inputs.server-rules")}</a>`,
+          link: `<a class="rounded focus-ring" href="${route("/rules")}">${$_("components.modals.register.inputs.server-rules")}</a>`,
         },
       })}
     </label>
   </div>
 {/if}
 <slot name="beforeSubmit" />
-<div class="vstack gap-2">
+<div class="pano-register-form vstack gap-2">
   <button
-    class="btn btn-lg btn-secondary"
+    class="pano-register-form__action btn btn-lg btn-secondary"
     class:disabled={loading}
     disabled={loading}
     type="submit">

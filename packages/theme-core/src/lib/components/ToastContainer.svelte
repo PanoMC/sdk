@@ -1,8 +1,9 @@
-<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x mb-3">
-  {#each $toasts as toast, index (toast)}
-    <svelte:component this={toast.component} id={toast.id} {...toast.params} />
-  {/each}
-</div>
+<!--
+  Controller of the engine's <ToastContainer>. The markup lives in views/parts/ToastContainer.svelte; a theme may
+  replace it with the "ToastContainer" entry of theme.config.js views (see skin-contract.json for the props).
+  The module API (show, showSuccess, showError, limitTitle) stays here.
+-->
+<svelte:component this={getOverride("ToastContainer") ?? ToastContainerView} {toasts} />
 
 <script context="module">
   import { tick } from "svelte";
@@ -29,16 +30,17 @@
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  // `options.variant` ('success' | 'danger') colours the toast text. Prefer the
-  // showSuccess/showError wrappers below at call sites — they read as the outcome they
-  // report. Plain `show` stays neutral for toasts that are neither.
+  // `options.variant` ('success' | 'danger' | 'warning') colours the toast text; it is the
+  // 4th argument of showToast(text, params, toastComponent, { variant }) in @panomc/sdk/toasts.
+  // Prefer the showSuccess/showError wrappers below at call sites — they read as the outcome
+  // they report. Plain `show` stays neutral for toasts that are neither.
   export async function show(text, params = {}, toastComponent = DefaultToast, options = {}) {
     if (text) {
       params.text = text;
     }
 
     if (toastComponent === DefaultToast) {
-      params = { text, values: params, variant: options.variant ?? null };
+      params = { text, values: params, variant: options?.variant ?? null };
     }
 
     const toast = { component: toastComponent, params };
@@ -94,4 +96,9 @@
 
     return text;
   }
+</script>
+
+<script>
+  import { getOverride } from "$pano/registry/index.js";
+  import ToastContainerView from "$pano/lib/views/parts/ToastContainer.svelte";
 </script>

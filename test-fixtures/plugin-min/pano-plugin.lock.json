@@ -1,0 +1,29 @@
+{
+  "controllers": {
+    "min/greeter": {
+      "actions": [
+        "setGreeting"
+      ],
+      "state": [
+        "greeting"
+      ],
+      "version": 1
+    }
+  },
+  "format": 1,
+  "views": {
+    "min:HelloPage": {
+      "classes": [
+        "min-hello-page"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "name": {
+          "required": false
+        }
+      },
+      "slots": []
+    }
+  }
+}

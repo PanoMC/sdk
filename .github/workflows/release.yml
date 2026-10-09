@@ -38,7 +38,7 @@ jobs:
         run: bun install
 
       - name: Test
-        run: bun test packages
+        run: bun run test
 
       # Both packages publish with the SAME version: @panomc/sdk is the frozen
       # plugin-facing facade of @panomc/theme-core (one repo, one release train).

@@ -10,8 +10,8 @@
 </script>
 
 {#if title || subtitle}
-  <div class="text-center animate__animated animate__fadeIn">
-    <h1 class="fs-3 mb-0 text-break word-break">
+  <div class="pano-page-title text-center animate__animated animate__fadeIn">
+    <h1 class="pano-page-title__title fs-3 mb-0 text-break word-break">
       <slot name="title">
         {#if title}
           {#if html}

@@ -1,7 +1,7 @@
 <svelte:component this={data?.View ?? View} {data} {page} />
 
 <script context="module">
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView, resolveView } from "$pano/registry/index.js";
 
   // This page is wired as +error.svelte by the shim, and SvelteKit never runs
   // a load function for error pages — so unlike other controllers the view
@@ -27,7 +27,10 @@
   export async function load(event) {
     const parentData = await event.parent();
 
-    return { ...parentData, View: await viewPromise };
+    return {
+      ...parentData,
+      ...(await loadView(event, "ErrorView", () => import("../views/ErrorView.svelte")))
+    };
   }
 </script>
 

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { createRequire } from "module";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -44,6 +45,18 @@ function getLicenseText(packagePath) {
   return null;
 }
 
+/**
+ * Folder of an installed dependency, found the way Node resolves it from the project (a hoisted workspace keeps
+ * it in a parent `node_modules`). A package whose `exports` hide its package.json falls back to the local folder.
+ */
+function findPackageDir(root, name) {
+  try {
+    return dirname(createRequire(join(root, "package.json")).resolve(`${name}/package.json`));
+  } catch {
+    return join(root, "node_modules", name);
+  }
+}
+
 export function collectLicenses(outputDir = null) {
   const packageJsonPath = join(projectRoot, "package.json");
   const packageJson = readPackageJson(packageJsonPath);
@@ -58,10 +71,9 @@ export function collectLicenses(outputDir = null) {
   };
 
   const licenses = [];
-  const nodeModulesPath = join(projectRoot, "node_modules");
 
   for (const [packageName, version] of Object.entries(allDependencies)) {
-    const packagePath = join(nodeModulesPath, packageName);
+    const packagePath = findPackageDir(projectRoot, packageName);
     const packageJsonPath = join(packagePath, "package.json");
 
     if (!existsSync(packageJsonPath)) {

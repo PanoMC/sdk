@@ -1,38 +1,15 @@
-<div
-  aria-hidden="true"
-  class="modal fade"
-  id="{dialogID}"
-  role="dialog"
-  tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" role="dialog">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <div class="pb-3">
-          <i class="fas fa-question-circle fa-3x d-block m-auto text-gray"></i>
-        </div>
-        {$_("components.modals.confirm-remove-all-notifications.title")}
-      </div>
-      <div class="modal-footer flex-nowrap">
-        <button
-          class="btn btn-link col-6 m-0"
-          type="button"
-          class:disabled="{loading}"
-          aria-disabled="{loading}"
-          disabled="{loading}"
-          on:click="{hide}">
-          {$_("buttons.cancel")}
-        </button>
-        <button
-          class="btn btn-danger col-6 m-0"
-          type="button"
-          class:disabled="{loading}"
-          aria-disabled="{loading}"
-          disabled="{loading}"
-          on:click="{onYesClick}">{$_("buttons.yes")}</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!--
+  Controller of the engine's <ConfirmRemoveAllNotificationsModal>. The markup lives in
+  views/parts/ConfirmRemoveAllNotificationsModal.svelte; a theme may replace it with the
+  "ConfirmRemoveAllNotificationsModal" entry of theme.config.js views (see skin-contract.json for the props). The module
+  API (show, hide, setCallback, onHide) stays here.
+-->
+<svelte:component
+  this={getOverride("ConfirmRemoveAllNotificationsModal") ?? ConfirmRemoveAllNotificationsModalView}
+  {dialogID}
+  {loading}
+  {hide}
+  {onYesClick} />
 
 <script context="module">
   const dialogID = "confirmDeleteAllNotifications";
@@ -65,9 +42,10 @@
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
-
   import ApiUtil from "$pano/lib/api.util";
+
+  import { getOverride } from "$pano/registry/index.js";
+  import ConfirmRemoveAllNotificationsModalView from "$pano/lib/views/parts/ConfirmRemoveAllNotificationsModal.svelte";
 
   let loading;
 
@@ -79,9 +57,9 @@
     loading = true;
 
     ApiUtil.delete({
-      path: "/api/notifications",
+      path: "/notifications",
     }).then((body) => {
-      if (body.result === "ok") {
+      if (!body.error) {
         loading = false;
 
         hide();

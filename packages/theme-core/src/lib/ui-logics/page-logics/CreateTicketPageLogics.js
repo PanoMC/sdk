@@ -30,7 +30,7 @@ export async function processLoad(event) {
 
   let data = {
     categories: [],
-    categoryPage: 0
+    categoryPage: 1
   };
 
   await getTicketCategories({
@@ -38,11 +38,11 @@ export async function processLoad(event) {
     request: event
   }).then((body) => {
     if (body.error) {
-      if (body.error === "NOT_EXISTS") {
-        throw throwError(404, body.error);
+      if (body.error.code === "NOT_EXISTS") {
+        throw throwError(404, body.error.code);
       }
 
-      throw throwError(500, body.error);
+      throw throwError(500, body.error.code);
     }
 
     data = body;
@@ -68,7 +68,7 @@ export async function submit(error, loading, title, message, categoryId) {
       loading.set(false);
 
       if (body.error) {
-        error.set(body.error);
+        error.set(body.error.code);
 
         return;
       }

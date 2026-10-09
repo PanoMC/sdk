@@ -17,10 +17,10 @@ const LATENCY = { "en-US": 1, "tr-TR": 30, "de-DE": 5 };
 mock.module("$pano/lib/api.util.js", () => ({
   default: {
     get: async ({ path }) => {
-      if (path === "/api/locales") return { result: "ok", data: LOCALES };
-      const code = path.split("/")[3];
+      if (path === "/locales") return { data: LOCALES };
+      const code = path.split("/")[2];
       await delay(LATENCY[code]);
-      return { result: "ok", data: {} };
+      return { data: {} };
     },
   },
 }));

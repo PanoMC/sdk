@@ -1,0 +1,34 @@
+{
+  "demo/cart": {
+    "version": 1,
+    "scope": "app",
+    "state": [
+      "status",
+      "lines",
+      "count",
+      "replaceRequest"
+    ],
+    "actions": [
+      "add",
+      "setQuantity",
+      "clear",
+      "retry"
+    ],
+    "types": {
+      "state": "CartState",
+      "actions": "CartActions"
+    }
+  },
+  "demo/format": {
+    "version": 1,
+    "scope": "instance",
+    "state": [],
+    "actions": [
+      "money"
+    ],
+    "types": {
+      "state": "FormatState",
+      "actions": "FormatActions"
+    }
+  }
+}

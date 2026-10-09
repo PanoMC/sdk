@@ -16,9 +16,11 @@
  * @property {any} utils.api.ApiUtil
  * @property {function(Record<string, any>): string} utils.api.buildQueryParams
  * @property {string} utils.api.NETWORK_ERROR
- * @property {Object} utils.api.networkErrorBody
- * @property {string} utils.api.networkErrorBody.result
- * @property {string} utils.api.networkErrorBody.error
+ * @property {function(string): any} utils.api.createPluginApi - `createPluginApi(pluginId)` (the full plugin id): a client scoped
+ *   to `/api/plugins/<pluginId>/...` (unversioned; `.get`, `.post`, ... and `.panel.*`); same options and same error envelope as `ApiUtil`
+ * @property {{ error: { code: string, message?: string, details?: any, fields?: Record<string, string> } }} utils.api.networkErrorBody
+ *   The body of a failed call, also the one a network failure produces (code `NETWORK_ERROR`):
+ *   `{ error: { code, message?, details?, fields? } }`. Test `body.error?.code`; a success body has no `error` key.
  * @property {Object} utils.language
  * @property {any} utils.language.init
  * @property {any} utils.language._ - i18n store or function

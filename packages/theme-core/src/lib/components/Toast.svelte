@@ -1,25 +1,27 @@
-<div
-  id="appToast{id}"
-  class="animate__animated animate__bounceInUp toast align-items-center shadow-lg text-bg-tertiary opacity-100 {variantClass}"
-  role="alert"
-  aria-live="assertive"
-  aria-atomic="true"
-  data-bs-dismiss="toast">
-  <div class="toast-body"><slot /></div>
-</div>
+<!--
+  Controller of the engine's <Toast>. The markup lives in views/parts/Toast.svelte; a theme may
+  replace it with the "Toast" entry of theme.config.js views (see skin-contract.json for the props).
+-->
+<svelte:component this={getOverride("Toast") ?? ToastView} {id} {variant} {variantClass}>
+  <slot />
+</svelte:component>
 
 <script>
+  import { getOverride } from "$pano/registry/index.js";
+  import ToastView from "$pano/lib/views/parts/Toast.svelte";
+
   export let id;
 
-  // 'success' | 'danger' | null. Mapped instead of interpolated straight into the class
-  // list so a caller can't inject an arbitrary utility class, and so a neutral toast
+  // 'success' | 'danger' | 'warning' | null. Mapped instead of interpolated straight into the
+  // class list so a caller can't inject an arbitrary utility class, and so a neutral toast
   // keeps text-bg-tertiary's own contrast colour.
   export let variant = null;
 
   const VARIANT_CLASSES = {
-    success: 'text-success',
-    danger: 'text-danger',
+    success: "text-success",
+    danger: "text-danger",
+    warning: "text-warning",
   };
 
-  $: variantClass = VARIANT_CLASSES[variant] ?? '';
+  $: variantClass = VARIANT_CLASSES[variant] ?? "";
 </script>

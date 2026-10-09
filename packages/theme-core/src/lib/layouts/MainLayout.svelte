@@ -4,7 +4,7 @@
 
 <script context="module">
   import { processLoad } from "$pano/lib/ui-logics/layout-logics/MainLayoutLogics";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").LayoutLoad}
@@ -13,21 +13,22 @@
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
-      "MainLayoutView",
-      () => import("../views/MainLayoutView.svelte"),
-    );
-
     const data = await processLoad(event);
 
     // Chrome components resolve through the registry too: forks restyle the
     // navbar/header/footer far more often than whole layouts, so overriding
-    // just `Navbar` must not require ejecting MainLayoutView.
-    const [View, NavbarC, HeaderC, FooterC] = await Promise.all([
-      viewPromise,
-      resolveView("Navbar", () => import("../components/Navbar.svelte")),
-      resolveView("Header", () => import("../components/Header.svelte")),
-      resolveView("Footer", () => import("../components/Footer.svelte")),
+    // just `Navbar` must not require ejecting MainLayoutView. loadView also
+    // returns the `block:` data of every <PluginBlock> placed in each of them.
+    const [
+      { View, ...layoutBlocks },
+      { View: NavbarC, ...navbarBlocks },
+      { View: HeaderC, ...headerBlocks },
+      { View: FooterC, ...footerBlocks },
+    ] = await Promise.all([
+      loadView(event, "MainLayoutView", () => import("../views/MainLayoutView.svelte")),
+      loadView(event, "Navbar", () => import("../components/Navbar.svelte")),
+      loadView(event, "Header", () => import("../components/Header.svelte")),
+      loadView(event, "Footer", () => import("../components/Footer.svelte")),
     ]);
 
     // `mainLayoutView` alias: this load's result is merged into the ROOT
@@ -37,6 +38,10 @@
     // page's own view. The unique key survives that merge.
     return {
       ...data,
+      ...layoutBlocks,
+      ...navbarBlocks,
+      ...headerBlocks,
+      ...footerBlocks,
       mainLayoutView: View,
       mainLayoutChrome: { Navbar: NavbarC, Header: HeaderC, Footer: FooterC },
     };

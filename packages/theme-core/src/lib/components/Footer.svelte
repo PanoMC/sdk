@@ -5,7 +5,7 @@
 </style>
 
 <!-- Footer -->
-<footer class="border-top bg-gray bg-opacity-10 py-5">
+<footer class="pano-footer border-top bg-gray bg-opacity-10 py-5">
   <div class="container py-lg-5 position-relative z-1">
     <div class="row justify-content-center align-items-center g-3">
       <div
@@ -15,7 +15,7 @@
           {#each visibleLinks as link (link.id)}
             <li class="nav-item">
               <a
-                class="nav-link rounded-pill small"
+                class="pano-footer__link nav-link rounded-pill small"
                 href={link.href}
                 target={link.target}
                 title={link.text && link.text.includes(".")
@@ -31,7 +31,7 @@
           {#if moreLinks.length > 0}
             <li class="nav-item dropup">
               <button
-                class="nav-link rounded-pill small dropdown-toggle no-caret"
+                class="pano-footer__toggle nav-link rounded-pill small dropdown-toggle no-caret"
                 data-bs-toggle="dropdown"
                 type="button"
                 aria-label={$_("buttons.toggle")}
@@ -40,11 +40,11 @@
                 on:mousedown|preventDefault>
                 <i class="fa-solid fa-ellipsis"></i>
               </button>
-              <ul class="dropdown-menu dropdown-menu-end">
+              <ul class="pano-footer__menu dropdown-menu dropdown-menu-end">
                 {#each moreLinksInMenuOrder as link (link.id)}
                   <li>
                     <a
-                      class="dropdown-item small"
+                      class="pano-footer__menu-item dropdown-item small"
                       href={link.href}
                       target={link.target}>
                       {link.text && link.text.includes(".")
@@ -63,11 +63,11 @@
           {#if themeSettings.footerLogoEnabled ?? true}
             <a href="/" class="d-inline-block">
               <img
-                class="d-block mx-auto"
+                class="pano-footer__image d-block mx-auto"
                 width="128"
                 height="auto"
                 alt={$_("components.header.alt")}
-                src="/api/websiteLogo?hash={$session.siteInfo.websiteLogoHash}" />
+                src="/api/v1/website-logo?hash={$session.siteInfo.websiteLogoHash}" />
             </a>
           {/if}
           {#if themeSettings.footerTitleEnabled ?? true}
@@ -83,7 +83,7 @@
       <div class="col-lg-4 d-flex justify-content-center align-items-center">
         <button
           type="button"
-          class="badge fs-6 {ipBadgeClass} border-0"
+          class="pano-footer__badge badge fs-6 {ipBadgeClass} border-0"
           on:click={onCopyIpClick}
           aria-label={$session.siteInfo.ipAddress}
           use:tooltip={[

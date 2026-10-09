@@ -1,0 +1,247 @@
+@charset "UTF-8";
+:root,
+[data-bs-theme=light] {
+  --bs-white: #fff;
+  --bs-border-style: solid;
+  --bs-primary: #044389;
+  --bs-primary-rgb: 4, 67, 137;
+  --bs-success-rgb: 78, 205, 196;
+  --bs-light-rgb: 245, 247, 250;
+  --bs-body-bg: #fff;
+  --bs-body-color: #212529;
+  --bs-body-color-rgb: 33, 37, 41;
+  --bs-body-font-family: system-ui;
+  --bs-body-font-size: 1rem;
+  --bs-body-line-height: 1.5;
+  --bs-link-color: #044389;
+  --bs-link-color-rgb: 4, 67, 137;
+  --bs-link-hover-color-rgb: 3, 54, 110;
+  --bs-primary-bg-subtle: #cfe2ff;
+  --bs-heading-color: inherit;
+  --bs-btn-close-filter: ;
+}
+
+[data-bs-theme=dark], [data-bs-theme=copper] {
+  color-scheme: dark;
+  --bs-body-bg: #212529;
+  --bs-body-color-rgb: 222, 226, 230;
+  --bs-code-color: #e685b5;
+  --bs-primary-bg-subtle: #031633;
+  --bs-heading-color: #fff;
+}
+
+[data-bs-theme=copper] {
+  --bs-primary: #b87333;
+  --bs-primary-rgb: 184, 115, 51;
+  --bs-warning-extra: rgba($primary, 0.12);
+  --bs-copper-only: 1px;
+}
+
+:root {
+  --bs-breakpoint-md: 768px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--bs-body-color);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+a {
+  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+  text-decoration: underline;
+}
+
+a:hover {
+  --bs-link-color-rgb: var(--bs-link-hover-color-rgb);
+}
+
+[type=button]:not(:disabled) {
+  cursor: pointer;
+}
+
+optgroup {
+  font-weight: 700;
+}
+
+.btn {
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
+  display: inline-block;
+  padding: 0.375rem var(--bs-btn-padding-x);
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #044389;
+  --bs-btn-focus-shadow-rgb: 42, 95, 155;
+}
+
+.btn-secondary {
+  --bs-btn-color: #000;
+  --bs-btn-bg: #ffc947;
+}
+
+.btn-check:checked + .btn {
+  color: red;
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.65;
+}
+
+.card {
+  display: flex;
+  box-shadow: 0 0 0 1px rgba(var(--bs-body-color-rgb), 0.125), 0 1px 2px rgba(var(--bs-light-rgb), 0.2);
+}
+
+.card-body {
+  flex: 1 1 auto;
+}
+
+.fade {
+  transition: opacity 0.15s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade {
+    transition: none;
+  }
+}
+.fade:not(.show) {
+  opacity: 0;
+}
+
+.collapse:not(.show) {
+  display: none;
+}
+
+.spinner-border {
+  display: inline-block;
+  --bs-spinner-animation-name: spinner-border;
+  animation: 0.75s linear infinite var(--bs-spinner-animation-name);
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes unused-frames {
+  to {
+    opacity: 0;
+  }
+}
+
+.form-select {
+  display: block;
+}
+
+[data-bs-theme=dark] .form-select, [data-bs-theme=copper] .form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3c/svg%3e");
+}
+
+.navbar {
+  display: flex;
+}
+
+.navbar[data-bs-theme=dark] {
+  --bs-navbar-color: rgba(255, 255, 255, 0.55);
+}
+
+.modal {
+  position: fixed;
+}
+
+.modal-backdrop {
+  --bs-backdrop-bg: #000;
+  position: fixed;
+  background-color: var(--bs-backdrop-bg);
+}
+.modal-backdrop.fade {
+  opacity: 0;
+}
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+.modal-open .modal {
+  overflow-y: auto;
+}
+
+.tooltip {
+  --bs-tooltip-color: var(--bs-body-bg);
+  z-index: 1080;
+}
+.tooltip.show {
+  opacity: 0.9;
+}
+.tooltip .tooltip-arrow {
+  display: block;
+}
+
+.popover {
+  position: absolute;
+}
+
+.nav-pills .nav-link.active {
+  color: #fff;
+}
+
+.alert {
+  padding: 1rem;
+}
+
+.alert-danger {
+  --bs-alert-color: #842029;
+}
+
+.badge {
+  display: inline-block;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem !important;
+}
+
+.text-bg-success {
+  color: #000 !important;
+  background-color: RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.border {
+  border: 1px solid #dee2e6 !important;
+  --bs-border-opacity: 1;
+}
+
+.blocks {
+  background-image: none;
+}
+
+[data-bs-theme=dark] .blocks {
+  background-image: url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E");
+}
+
+@font-face {
+  font-family: "Quicksand";
+  src: url("/assets/fonts/q.woff2") format("woff2");
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}

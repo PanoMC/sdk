@@ -1,16 +1,13 @@
-<Sidebar side="{side}">
-  <div class="vstack gap-3">
-    {#each $items as item (item.id)}
-      {#if item.id === 'online-admins'}
-        <!-- Online Admins Snippet -->
-        <OnlineAdmins onlineAdmins="{$data.onlineAdmins}" />
-      {:else}
-        <!-- External Component -->
-        <ViewComponent component={item.component} data={$data} {...item.props} />
-      {/if}
-    {/each}
-  </div>
-</Sidebar>
+<!--
+  Controller of the engine's <SupportSidebar>. The markup lives in views/parts/SupportSidebar.svelte; a
+  theme may replace it with the "SupportSidebar" entry of theme.config.js views (see skin-contract.json
+  for the props).
+-->
+<svelte:component
+  this={getOverride("SupportSidebar") ?? SupportSidebarView}
+  {side}
+  {items}
+  {data} />
 
 <script context="module">
   import ApiUtil from "$pano/lib/api.util.js";
@@ -34,19 +31,19 @@
     // Execute sidebar load and resolve components for SSR
     await executeSidebarLoad('support', event);
 
-    data.set(
-      await ApiUtil.get({
-        path: "/api/sidebars/support",
-        request: event,
-      }),
-    );
+    // The wire shape is { items: string[] } (decision 80); the view contract keeps { onlineAdmins }.
+    const response = await ApiUtil.get({
+      path: "/sidebars/support",
+      request: event,
+    });
+
+    data.set({ onlineAdmins: Array.isArray(response?.items) ? response.items : [] });
   };
 </script>
 
 <script>
-  import Sidebar from "$pano/lib/components/Sidebar.svelte";
-  import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
-  import OnlineAdmins from "$pano/lib/components/OnlineAdmins.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import SupportSidebarView from "$pano/lib/views/parts/SupportSidebar.svelte";
 
   export let side;
 

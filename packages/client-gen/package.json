@@ -1,0 +1,26 @@
+{
+  "name": "@panomc/client-gen",
+  "version": "0.0.0-development",
+  "description": "Generates a typed JavaScript client from a Pano OpenAPI document and scaffolds headless sites (pano-client).",
+  "author": "PanoMC",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/PanoMC/sdk"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "pano-client": "./bin/pano-client.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "templates"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

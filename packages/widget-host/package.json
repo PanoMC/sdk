@@ -1,0 +1,61 @@
+{
+  "name": "@panomc/widget-host",
+  "version": "0.0.0-development",
+  "description": "Host modules and runtime that let Pano plugin views run as web-component widgets outside a theme.",
+  "author": "PanoMC",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/PanoMC/sdk"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./define": "./src/define.js",
+    "./svelte": "./src/svelte.js",
+    "./language": "./src/language.js",
+    "./toasts": "./src/toasts.js",
+    "./api": "./src/api.js",
+    "./controllers": "./src/controllers.js",
+    "./components": "./src/components/index.js",
+    "./views": "./src/views.js",
+    "./auth": "./src/auth.js",
+    "./tooltip": "./src/tooltip.js",
+    "./text": "./src/text.js",
+    "./route": "./src/route.js",
+    "./variables": "./src/variables.js",
+    "./internal": "./src/internal.js",
+    "./components/panel": "./src/components/panel.js",
+    "./utils/component": "./src/component.js",
+    "./runtime-map": "./scripts/runtime-map.js",
+    "./install-local": "./scripts/install-local.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "scripts",
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.js && node scripts/build-zip.js",
+    "build:runtime": "rollup -c rollup.config.js",
+    "build:zip": "node scripts/build-zip.js",
+    "install-local": "node scripts/install-local.js",
+    "test": "bun test"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "svelte-i18n": "^4.0.1"
+  },
+  "peerDependencies": {
+    "svelte": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "happy-dom": "^20.0.0",
+    "rollup": "^4.32.1",
+    "rollup-plugin-svelte": "^7.2.2"
+  }
+}

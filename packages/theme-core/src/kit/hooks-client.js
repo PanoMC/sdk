@@ -59,6 +59,9 @@ const runtimeModules = {
   "@panomc/sdk/variables": () => import("@panomc/sdk/variables"),
   "@panomc/sdk/svelte": () => import("@panomc/sdk/svelte"),
   "@panomc/sdk/internal": () => import("@panomc/sdk/internal"),
+  "@panomc/sdk/views": () => import("@panomc/sdk/views"),
+  "@panomc/sdk/controllers": () => import("@panomc/sdk/controllers"),
+  "@panomc/sdk/utils/route": () => import("@panomc/sdk/utils/route"),
 };
 
 const moduleCache = new Map();

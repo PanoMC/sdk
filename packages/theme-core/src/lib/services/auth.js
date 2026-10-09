@@ -2,27 +2,27 @@ import ApiUtil from "$pano/lib/api.util";
 
 export const sendLogout = async () => {
   return ApiUtil.post({
-    path: "/api/auth/logout",
+    path: "/auth/logout",
   });
 };
 
 export const sendLogin = async (body) => {
   return ApiUtil.post({
-    path: "/api/auth/login",
+    path: "/auth/login",
     body,
   });
 };
 
 export const getCredentials = async (csrfToken) => {
   return ApiUtil.get({
-    path: "/api/auth/credentials",
+    path: "/auth/credentials",
     csrfToken
   });
 };
 
 export const getCredentialsServerSide = async (token) => {
-  return ApiUtil.get({ path: "/api/auth/credentials", token }).then((response) => {
-    if (response.result !== "ok") {
+  return ApiUtil.get({ path: "/auth/credentials", token }).then((response) => {
+    if (!!response.error) {
       return null;
     }
 
@@ -38,28 +38,28 @@ export const getCredentialsServerSide = async (token) => {
 
 export const sendRegister = async (body) => {
   return ApiUtil.post({
-    path: "/api/auth/register",
+    path: "/auth/register",
     body,
   });
 };
 
 export const sendVerifyEmail = async (token) => {
   return ApiUtil.post({
-    path: "/api/auth/verifyEmail",
+    path: "/auth/verify-email",
     body: { token },
   });
 };
 
 export const sendVerifyNewEmail = async (token) => {
   return ApiUtil.post({
-    path: "/api/auth/verifyNewEmail",
+    path: "/auth/verify-new-email",
     body: { token },
   });
 };
 
 export const sendResetPassword = async (usernameOrEmail) => {
   return ApiUtil.post({
-    path: "/api/auth/resetPassword",
+    path: "/auth/reset-password",
     body: { usernameOrEmail },
   });
 };
@@ -71,14 +71,14 @@ export const sendRenewPassword = async (
   token
 ) => {
   return ApiUtil.post({
-    path: "/api/auth/renewPassword",
+    path: "/auth/renew-password",
     body: { newPassword, newPasswordRepeat, token },
   });
 };
 
 export const verifyLinkCode = async (username, code) => {
   return ApiUtil.post({
-    path: "/api/auth/verifyLinkCode",
+    path: "/auth/verify-link-code",
     body: { username, code },
   });
 };

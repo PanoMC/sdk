@@ -1,52 +1,27 @@
+<!--
+  Controller of the engine's <Main>. The markup lives in views/parts/Main.svelte; a theme may
+  replace it with the "Main" entry of theme.config.js views (see skin-contract.json for the props).
+-->
+<svelte:component
+  this={getOverride("Main") ?? MainView}
+  {dev}
+  {devUi}
+  {pageTitle}
+  {resolvedTitle}
+  {sidebar}
+  {sidebarProps}
+  {sidebarEnabled}
+  {sidebarPosition}>
+  <slot />
+</svelte:component>
 
-
-<svelte:head>
-  {#if dev && !devUi}
-    <link rel="stylesheet" href="/style.css" />
-  {/if}
-</svelte:head>
-
-<!-- Main Container -->
-<main class="container">
-
-  {#if $pageTitle && !resolvedTitle.hidden}
-    {@const isString = typeof $pageTitle === "string"}
-    <div class="row">
-      <div class="col-12 mb-3">
-        <PageTitle
-          title={resolvedTitle.title}
-          subtitle={resolvedTitle.subtitle}
-          html={isString ? undefined : $pageTitle.html}
-          subtitleHtml={isString ? undefined : $pageTitle.subtitleHtml} />
-      </div>
-    </div>
-  {/if}
-
-  <div class="row gx-3 align-items-start">
-    {#if sidebarEnabled}
-      <svelte:component
-        this={$sidebar}
-        {...{
-          ...$sidebarProps,
-          side: sidebarPosition === "LEFT" ? "left" : "right",
-        }} />
-    {/if}
-
-    <!-- Content -->
-    <div class:col={!sidebarEnabled} class:col-lg-8={sidebarEnabled && $sidebar}>
-      <slot />
-    </div>
-    <!-- Content End -->
-  </div>
-</main>
-
-<!-- Main Container End -->
 <script>
   import "@theme-style";
   import { getContext } from "svelte";
   import { dev } from "$app/environment";
   import { _ } from "svelte-i18n";
-  import PageTitle from "$pano/lib/components/PageTitle.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import MainView from "$pano/lib/views/parts/Main.svelte";
   import { resolvePageTitle } from "$pano/lib/pageTitle.util.js";
 
 

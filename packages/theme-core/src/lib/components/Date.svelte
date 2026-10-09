@@ -1,4 +1,4 @@
-<span
+<span class="pano-date"
   use:tooltip="{[
     format(new Date(parseInt(date)), 'dd/MM/yyyy, HH:mm'),
     { placement: 'bottom', locale: locales[$currentLanguage['date-fns-code']] },

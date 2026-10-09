@@ -13,7 +13,7 @@
   Override from a theme:
     theme.config.js → views: { ResetPasswordView: () => import("./src/views/ResetPasswordView.svelte") }
 -->
-<div class="vstack gap-3">
+<div class="pano-reset-password-view vstack gap-3">
 
   <ErrorAlert error={$error} />
   <SuccessAlert message={$message} />
@@ -31,7 +31,7 @@
             "pages.reset-password.inputs.email-username.placeholder",
           )}
           id="email"
-          class="form-control"
+          class="pano-reset-password-view__input form-control"
           bind:value={$usernameOrEmail}
           oninput={() => {
             const c = stripIdentifierWhitespace($usernameOrEmail);
@@ -53,7 +53,7 @@
       {/each}
       <button
         type="submit"
-        class="btn btn-lg btn-secondary w-100"
+        class="pano-reset-password-view__action btn btn-lg btn-secondary w-100"
         class:disabled={$loading || !$usernameOrEmail}
         disabled={$loading || !$usernameOrEmail}>
         {#if $loading}

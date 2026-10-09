@@ -1,4 +1,5 @@
 import ApiUtil, { buildQueryParams } from "$pano/lib/api.util.js";
+import { readPage } from "$pano/lib/pageShape.js";
 
 const VIEWER_ID_STORAGE_KEY = "pano:post-viewer-id:v1";
 const VIEW_CACHE_STORAGE_KEY = "pano:post-view-cache:v1";
@@ -6,23 +7,33 @@ const VIEW_CACHE_LIMIT = 300;
 
 const VIEW_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 
-export const getPosts = async ({ page, categoryUrl, request, csrfToken }) => {
-  const queryParams = buildQueryParams({ page, categoryUrl });
+export const getPosts = async ({ page, pageSize, categoryUrl, request, csrfToken }) => {
+  const queryParams = buildQueryParams({ page, pageSize, categoryUrl });
 
   return ApiUtil.get({
-    path: `/api/posts${queryParams}`,
+    path: `/posts${queryParams}`,
     request,
     csrfToken
   }).then((body) => {
-    body.page = parseInt(page);
+    const result = readPage(body);
 
-    return body;
+    if (result.failed) {
+      return result.body;
+    }
+
+    return {
+      ...result.rest,
+      posts: result.items,
+      postCount: result.count,
+      page: parseInt(page),
+      totalPages: result.totalPages
+    };
   });
 };
 
 export const getPostDetail = async ({ url, request, csrfToken }) => {
   return ApiUtil.get({
-    path: `/api/posts/${url}`,
+    path: `/posts/${url}`,
     request,
     csrfToken
   }).then((body) => {
@@ -34,7 +45,7 @@ export const getPostDetail = async ({ url, request, csrfToken }) => {
 
 export const getPostPreview = async ({ id, request, csrfToken }) => {
   return ApiUtil.get({
-    path: `/api/panel/posts/${id}/preview`,
+    path: `/posts/previews/${id}`,
     request,
     csrfToken
   }).then((body) => {
@@ -134,13 +145,13 @@ export const trackPostView = async ({ url, csrfToken }) => {
   const headers = viewerId ? { "X-Post-Viewer-Id": viewerId } : undefined;
 
   return ApiUtil.post({
-    path: `/api/posts/${encodeURIComponent(url)}/view`,
+    path: `/posts/${encodeURIComponent(url)}/view`,
     body: {},
     headers,
     csrfToken
   })
     .then((body) => {
-      if (body?.result === "ok") {
+      if (!body?.error) {
         markViewAsTracked(url);
       }
 

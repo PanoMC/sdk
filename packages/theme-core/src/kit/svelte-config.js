@@ -40,6 +40,9 @@ export async function createSvelteConfig(themeMetaUrl, overrides = {}) {
         name: pkg.version,
       },
       ...overrides,
+      // `$contracts` -> plugin-contracts/ (the snapshots `theme-core contracts pull` keeps, doc 02 section 5.3):
+      // /** @type {import('$contracts/market/controllers.types.js').Controllers['market/cart']} */
+      alias: { $contracts: "plugin-contracts", ...(overrides.alias ?? {}) },
     },
 
     preprocess: SveltePreprocess({

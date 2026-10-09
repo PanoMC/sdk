@@ -1,0 +1,6 @@
+{
+  "name": "proxy-spike-fixture",
+  "private": true,
+  "type": "module",
+  "description": "TC-22 spike fixture for theme-core: a plugin server bundle with its own Svelte copy plus a theme side on the workspace Svelte. Test only, never published."
+}

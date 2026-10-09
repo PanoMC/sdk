@@ -39,10 +39,10 @@ export async function processLoad(event) {
     executeViewLoad("settings-content", event),
     executeViewLoad("settings-card-rows", event),
     loadSidebar(event),
-    ApiUtil.get({ path: "/api/profile/sessions", request: event })
+    ApiUtil.get({ path: "/profile/sessions", request: event })
   ]);
 
-  const sessions = !sessionsBody.error ? sessionsBody.sessions : [];
+  const sessions = !sessionsBody.error ? sessionsBody.items : [];
 
   return { sidebar: ProfileSidebar, sessions, pageTitle: "pages.settings.title" };
 }
@@ -60,13 +60,13 @@ export async function sendResetPasswordLink(
     .then((body) => {
       resetPasswordLoading.set(false);
 
-      if (body.result === "ok") {
+      if (!body.error) {
         resetPasswordSuccess.set(true);
 
         return;
       }
 
-      resetPasswordError.set(body.error || NETWORK_ERROR);
+      resetPasswordError.set(body.error.code || NETWORK_ERROR);
     })
     .catch(() => {
       resetPasswordLoading.set(false);
@@ -96,7 +96,7 @@ export async function sendChangeEmailLink(
     .then((body) => {
       changingEmailLoading.set(false);
 
-      if (body.result === "ok") {
+      if (!body.error) {
         changingEmail.set(false);
         changingEmail2ndStep.set(false);
 
@@ -105,7 +105,7 @@ export async function sendChangeEmailLink(
         return;
       }
 
-      const err = body.error || NETWORK_ERROR;
+      const err = body.error.code || NETWORK_ERROR;
       if (err === "CURRENT_PASSWORD_NOT_CORRECT") {
         changingEmail2ndStep.set(false);
       }
@@ -178,7 +178,7 @@ export async function onLogoutSession(sessionId, loadingSessionId, showToast, in
   loadingSessionId.set(sessionId);
 
   ApiUtil.delete({
-    path: `/api/profile/sessions/${sessionId}`,
+    path: `/profile/sessions/${sessionId}`,
     handler: async (body) => {
       loadingSessionId.set(null);
 
@@ -186,7 +186,7 @@ export async function onLogoutSession(sessionId, loadingSessionId, showToast, in
         // The variant rides on `show`'s options argument rather than a separate
         // showError parameter: onLogoutSession receives the toast function from the
         // view, and widening that signature would be a breaking controller-props change.
-        await showToast('errors.' + body.error, {}, undefined, { variant: 'danger' });
+        await showToast('errors.' + body.error.code, {}, undefined, { variant: 'danger' });
         return;
       }
 

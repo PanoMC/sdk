@@ -1,0 +1,25 @@
+{
+  "name": "@panomc/client",
+  "version": "0.0.0-development",
+  "description": "Typed JavaScript client for the Pano HTTP API (JSDoc types, no dependencies, no framework).",
+  "author": "PanoMC",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "https://github.com/PanoMC/sdk"
+  },
+  "exports": {
+    ".": "./src/client.js",
+    "./core": "./src/core/index.js",
+    "./core/types": "./src/core/types.js",
+    "./core/openapi.json": "./src/core/openapi.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "scripts"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

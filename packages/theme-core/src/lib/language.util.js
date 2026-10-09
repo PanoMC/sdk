@@ -5,6 +5,7 @@ import { browser } from "$app/environment";
 
 import { base } from "$app/paths";
 import ApiUtil from "$pano/lib/api.util.js";
+import { mergeTranslationLayers } from "./translationLayers.js";
 
 export const languageLoading = writable(false);
 export const currentLanguage = writable(null);
@@ -12,10 +13,10 @@ export const Languages = writable({});
 
 async function fetchLanguages(event) {
   const response = await ApiUtil.get({
-    path: `/api/locales`,
+    path: `/locales`,
     request: event
   });
-  const locales = response.data;
+  const locales = response.items ?? response.data;
 
   Languages.set(Object.fromEntries(locales.map(item => [item.code, item])));
 }
@@ -81,21 +82,68 @@ export function getAcceptedLanguage(headers) {
   return headers.get("accept-language").split(",")[0];
 }
 
+/**
+ * `lang/<locale>.plugins.json` is optional: any failure (missing file, non-200, bad JSON) is `{}`.
+ * @param {(url: string) => Promise<any>} useFetch
+ * @param {string} code
+ */
+async function fetchThemePluginTexts(useFetch, code) {
+  try {
+    const response = await useFetch(base + `/theme-api/languages/${code}.plugins.json`);
+
+    if (!response || response.ok === false || (response.status != null && response.status !== 200)) {
+      return {};
+    }
+
+    const body = await response.json();
+
+    return body && typeof body === "object" && !Array.isArray(body) ? body : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * The installed plugins behind the `plugins.<id>` keys of the translations API: the namespace of
+ * an id is the id without a leading `pano-plugin-` (doc 01 section 1).
+ * @param {Record<string, any>} apiData
+ * @returns {{ id: string, namespace: string }[]}
+ */
+function pluginsOf(apiData) {
+  const tree = apiData?.plugins;
+
+  if (!tree || typeof tree !== "object") {
+    return [];
+  }
+
+  return Object.keys(tree).map((id) => ({ id, namespace: id.replace(/^pano-plugin-/, "") }));
+}
+
 export async function loadLanguage(language, event) {
   const useFetch = event ? event.fetch : fetch;
 
-  const [localTranslationsResponse, translationsResponse] = await Promise.all([
+  const [localTranslationsResponse, translationsResponse, themePlugins] = await Promise.all([
     useFetch(base + `/theme-api/languages/${language.code}.json`),
     ApiUtil.get({
-      path: `/api/locales/${language.code}/translations/types/THEME`,
+      path: `/locales/${language.code}/translations/types/THEME`,
       request: event
-    })
+    }),
+    fetchThemePluginTexts(useFetch, language.code)
   ]);
 
   const languageFile = await localTranslationsResponse.json();
-  const customTranslations = translationsResponse.result !== "ok" ? {} : translationsResponse.data;
+  const ok = !translationsResponse.error;
+  const api = ok ? translationsResponse.data ?? {} : {};
 
-  const translations = unflattenObject({ ...flattenObject(languageFile), ...flattenObject(customTranslations) });
+  // Plugin default < theme file < theme's plugin overrides < admin edit (doc 03 section 5.3).
+  // The merged dictionary is flat: svelte-i18n resolves a flat key first, so dotted plugin ids work.
+  const translations = mergeTranslationLayers({
+    theme: languageFile,
+    themePlugins,
+    api,
+    pluginAdminKeys: ok ? translationsResponse.meta?.pluginAdminKeys : undefined,
+    plugins: pluginsOf(api)
+  });
 
   register(language.code, async () => translations);
 
@@ -136,33 +184,4 @@ export function getLanguageByLocale(locale) {
   });
 
   return foundLanguage;
-}
-
-function flattenObject(obj, prefix = "", result = {}) {
-  for (const key in obj) {
-    const value = obj[key];
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      flattenObject(value, newKey, result);
-    } else {
-      result[newKey] = value;
-    }
-  }
-  return result;
-}
-
-function unflattenObject(flatObj) {
-  const result = {};
-  for (const flatKey in flatObj) {
-    const keys = flatKey.split(".");
-    keys.reduce((acc, key, idx) => {
-      if (idx === keys.length - 1) {
-        acc[key] = flatObj[flatKey];
-      } else {
-        acc[key] = acc[key] || {};
-      }
-      return acc[key];
-    }, result);
-  }
-  return result;
 }

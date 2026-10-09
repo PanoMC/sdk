@@ -1,41 +1,14 @@
-<Sidebar side={side}>
-  <div class="vstack gap-3">
-    {#each $items as item (item.id)}
-      {#if item.id === 'player-info'}
-        <!-- Player Info Snippet -->
-        <div class="card border-0 square-card-desktop">
-          <div class="card-body vstack gap-3">
-            <PlayerHead
-              username={$data.username}
-              inGame={$data.inGame}
-              banned={$data.banned}
-              lastActivityTime={$data.lastActivityTime}
-              checkTime={checkTime}
-              width="64"
-              height="64" />
-
-            <PageTitle title={$data.username} breadcrumb={false} />
-
-            <div class="text-center">
-              <PlayerStatusBadge
-                banned={$data.banned}
-                lastActivityTime={$data.lastActivityTime}
-                inGame={$data.inGame}
-                checkTime={checkTime} />
-            </div>
-            <div class="text-center">
-              <PlayerPermissionBadge
-                permissionGroupName={$data.permissionGroupName} />
-            </div>
-          </div>
-        </div>
-      {:else}
-        <!-- External Component -->
-        <ViewComponent component={item.component} data={$data} checkTime={checkTime} {...item.props} />
-      {/if}
-    {/each}
-  </div>
-</Sidebar>
+<!--
+  Controller of the engine's <PlayerDetailSidebar>. The markup lives in views/parts/PlayerDetailSidebar.svelte; a
+  theme may replace it with the "PlayerDetailSidebar" entry of theme.config.js views (see skin-contract.json
+  for the props).
+-->
+<svelte:component
+  this={getOverride("PlayerDetailSidebar") ?? PlayerDetailSidebarView}
+  {side}
+  {items}
+  {data}
+  {checkTime} />
 
 <script context="module">
   import ApiUtil from "$pano/lib/api.util.js";
@@ -65,7 +38,7 @@
 
     data.set({
       ...(await ApiUtil.get({
-        path: `/api/sidebars/profile/${event.params.player}`,
+        path: `/sidebars/profile/${event.params.player}`,
         request: event,
       })),
       username: event.params.player,
@@ -79,14 +52,9 @@
 
 <script>
   import { onDestroy, onMount } from "svelte";
-  import { _ } from "svelte-i18n";
 
-  import Sidebar from "$pano/lib/components/Sidebar.svelte";
-  import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
-  import PlayerPermissionBadge from "$pano/lib/components/PlayerPermissionBadge.svelte";
-  import PlayerStatusBadge from "$pano/lib/components/PlayerStatusBadge.svelte";
-  import PlayerHead from "$pano/lib/components/PlayerHead.svelte";
-  import PageTitle from "../PageTitle.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import PlayerDetailSidebarView from "$pano/lib/views/parts/PlayerDetailSidebar.svelte";
 
   let checkTime = 0;
   let interval;
@@ -105,20 +73,3 @@
 
   const items = panoApi.ui.sidebar.get("player-detail");
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .square-card-desktop {
-      aspect-ratio: 1 / 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .square-card-desktop :global(.card-body) {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-  }
-</style>

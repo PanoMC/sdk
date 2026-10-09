@@ -46,6 +46,7 @@
   import { base } from "$app/paths";
   import { hasPermission } from "$pano/lib/auth.util.js";
   import { loginRedirectFor } from "$pano/lib/returnTo.util.js";
+  import { resolveCanonical } from "$pano/registry/routes.js";
 
 
   // Static imports instead of import.meta.glob: the glob's transform emits
@@ -83,7 +84,17 @@
     } = event;
     const { session: { user } } = await parent();
 
-    const registeredPage = findMatch(registeredPages, removePrefix(pathname, base));
+    // The URL carries the theme's public path (`/shop`); plugins register canonical paths
+    // (`/store`). A disabled route is `null`, and `/__pano*` can never be registered by a plugin
+    // (it is where `reroute` sends a disabled route), so both answer 404.
+    const sitePath = removePrefix(pathname, base);
+    const canonicalPath = resolveCanonical(sitePath);
+
+    if (canonicalPath === null || canonicalPath.startsWith("/__pano")) {
+      throw error(404);
+    }
+
+    const registeredPage = findMatch(registeredPages, canonicalPath);
 
     if (registeredPage === undefined || registeredPage === null) {
       throw error(404);

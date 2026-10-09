@@ -15,7 +15,8 @@ import {
   renameSync,
   copyFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
 
 const libRootDir = "./static/lib";
@@ -56,7 +57,18 @@ if (existsSync(tempBundleDir))
   rmSync(tempBundleDir, { recursive: true, force: true });
 mkdirSync(join(tempBundleDir, "bootstrap"), { recursive: true });
 
-const bootstrapSrc = "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js";
+// Resolved from the theme's package.json, not from ./node_modules: inside a Bun workspace the
+// package is hoisted to the workspace root.
+function resolveBootstrapBundle() {
+  try {
+    const require = createRequire(join(process.cwd(), "package.json"));
+    return join(dirname(require.resolve("bootstrap/package.json")), "dist", "js", "bootstrap.bundle.min.js");
+  } catch {
+    return "bootstrap (not installed)";
+  }
+}
+
+const bootstrapSrc = resolveBootstrapBundle();
 if (existsSync(bootstrapSrc)) {
   copyFileSync(
     bootstrapSrc,

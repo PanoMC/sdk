@@ -32,8 +32,8 @@ describe("page head plumbing (TC-2 / TC-3 wiring)", () => {
     expect(source).toContain('name="keywords"');
   });
 
-  test("meta is lifted to page.data by Page.svelte and Layout.svelte", () => {
-    for (const file of ["Page.svelte", "Layout.svelte"]) {
+  test("meta is lifted to page.data by the plugin page load (load.js) and Layout.svelte", () => {
+    for (const file of ["load.js", "Layout.svelte"]) {
       expect(read(routes, file)).toMatch(
         /\["pageTitle", "breadcrumbs", "sidebar", "sidebarProps", "meta"\]/,
       );
@@ -55,10 +55,11 @@ describe("page head plumbing (TC-2 / TC-3 wiring)", () => {
 
   test("Main skips the visible title when hidden and uses the shared helper", () => {
     const source = read(lib, "components", "Main.svelte");
+    const part = read(lib, "views", "parts", "Main.svelte");
 
     expect(source).toContain("resolvePageTitle($pageTitle, $_)");
-    expect(source).toContain("!resolvedTitle.hidden");
-    expect(source).not.toMatch(/\$_\(\$pageTitle/);
+    expect(part).toContain("!resolvedTitle.hidden");
+    expect(source + part).not.toMatch(/\$_\(\$pageTitle/);
   });
 
   test("PageHead emits the JSON-LD script with a split closing tag", () => {

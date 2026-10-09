@@ -25,16 +25,16 @@ export async function onSubmit(error, message, loading, newPassword, newPassword
     .then((body) => {
       loading.set(false);
 
-      if (body.result === "ok") {
+      if (!body.error) {
         message.set("RENEW_PASSWORD_SUCCESSFUL");
 
         return;
       }
 
-      if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-        error.set(body.reason);
+      if (body.error.code === "PLUGIN_DENIED_LOGIN" && body.error.details?.reason) {
+        error.set(body.error.details.reason);
       } else {
-        error.set(body.error);
+        error.set(body.error.code);
       }
     })
     .catch(() => {

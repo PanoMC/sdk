@@ -4,7 +4,7 @@
   import { error } from "@sveltejs/kit";
 
   import ApiUtil from "$pano/lib/api.util";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   /**
    * @type {import("@sveltejs/kit").PageLoad}
@@ -13,11 +13,6 @@
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
-      "RulesView",
-      () => import("../views/RulesView.svelte"),
-    );
-
     const parentData = await event.parent();
     const session = parentData.session;
 
@@ -29,7 +24,7 @@
     let registerAgreement;
     try {
       const body = await ApiUtil.get({
-        path: "/api/registerAgreement",
+        path: "/register-agreement",
         request: event,
         csrfToken
       });
@@ -42,7 +37,7 @@
       ...parentData,
       pageTitle: "pages.rules.title",
       registerAgreement,
-      View: await viewPromise
+      ...(await loadView(event, "RulesView", () => import("../views/RulesView.svelte")))
     };
   }
 </script>

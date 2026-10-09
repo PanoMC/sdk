@@ -1,0 +1,3702 @@
+[
+  {
+    "method": "GET",
+    "path": "/_pano/:target",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "ROOT",
+    "class": "FallbackPageRoute",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/FallbackPageRoute.kt",
+    "declared": "/_pano/:target"
+  },
+  {
+    "method": "GET",
+    "path": "/_pano/assets/fallback.css",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "ROOT",
+    "class": "FallbackPageRoute",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/FallbackPageRoute.kt",
+    "declared": "/_pano/assets/fallback.css"
+  },
+  {
+    "method": "GET",
+    "path": "/_pano/assets/fallback.js",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "ROOT",
+    "class": "FallbackPageRoute",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/FallbackPageRoute.kt",
+    "declared": "/_pano/assets/fallback.js"
+  },
+  {
+    "method": "ANY",
+    "path": "/*",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "ROOT",
+    "class": "IndexTemplate",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/template/IndexTemplate.kt",
+    "declared": "/*"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/complete-pending",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "CompletePendingAuthAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/CompletePendingAuthAPI.kt",
+    "declared": "/auth/complete-pending"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/credentials",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetCredentialsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/GetCredentialsAPI.kt",
+    "declared": "/auth/credentials"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/auth/csrf",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetCsrfTokenAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/GetCsrfTokenAPI.kt",
+    "declared": "/auth/csrf"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/login",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "LoginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/LoginAPI.kt",
+    "declared": "/auth/login"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/logout",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "LogoutAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/LogoutAPI.kt",
+    "declared": "/auth/logout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/register",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "RegisterAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/RegisterAPI.kt",
+    "declared": "/auth/register"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/renew-password",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "RenewPasswordAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/RenewPasswordAPI.kt",
+    "declared": "/auth/renew-password"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/reset-password",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ResetPasswordAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/ResetPasswordAPI.kt",
+    "declared": "/auth/reset-password"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/verify-email",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "VerifyEmailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/VerifyEmailAPI.kt",
+    "declared": "/auth/verify-email"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/verify-link-code",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "VerifyLinkCodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/VerifyLinkCodeAPI.kt",
+    "declared": "/auth/verify-link-code"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/verify-new-email",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "VerifyNewEmailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/VerifyNewEmailAPI.kt",
+    "declared": "/auth/verify-new-email"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/auth/ws-ticket",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "CreateWsTicketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/CreateWsTicketAPI.kt",
+    "declared": "/auth/ws-ticket"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/favicon",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetFaviconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetFaviconAPI.kt",
+    "declared": "/favicon"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/frontend/settings",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetFrontendSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetFrontendSettingsAPI.kt",
+    "declared": "/frontend/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/frontend/urls",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetFrontendUrlsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetFrontendUrlsAPI.kt",
+    "declared": "/frontend/urls"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/health",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "HealthAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/HealthAPI.kt",
+    "declared": "/health"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/locales",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetLocalesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetLocalesAPI.kt",
+    "declared": "/locales"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/locales/:code/translations/types/:type",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetTranslationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetTranslationsAPI.kt",
+    "declared": "/locales/:code/translations/types/:type"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/maintenance/exit",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MaintenanceExitAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/maintenance/MaintenanceExitAPI.kt",
+    "declared": "/maintenance/exit"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/maintenance/exit",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MaintenanceExitAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/maintenance/MaintenanceExitAPI.kt",
+    "declared": "/maintenance/exit"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/maintenance/login",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MaintenanceLoginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/maintenance/MaintenanceLoginAPI.kt",
+    "declared": "/maintenance/login"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/maintenance/skip",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MaintenanceSkipAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/maintenance/MaintenanceSkipAPI.kt",
+    "declared": "/maintenance/skip"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/node/connect",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeConnectNewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeConnectNewAPI.kt",
+    "declared": "/node/connect"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/connection",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeConnectAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeConnectAPI.kt",
+    "declared": "/node/connection"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/install.ps1",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeInstallScriptWindowsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeInstallScriptWindowsAPI.kt",
+    "declared": "/node/install.ps1"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/install.sh",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeInstallScriptAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeInstallScriptAPI.kt",
+    "declared": "/node/install.sh"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/pano-agent.jar",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeJarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeJarAPI.kt",
+    "declared": "/node/pano-agent.jar"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/pano-agent.jar.sha256",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeJarChecksumAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeJarChecksumAPI.kt",
+    "declared": "/node/pano-agent.jar.sha256"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/pano-node.jar",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeJarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeJarAPI.kt",
+    "declared": "/node/pano-node.jar"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/pano-node.jar.sha256",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeJarChecksumAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeJarChecksumAPI.kt",
+    "declared": "/node/pano-node.jar.sha256"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/plugin-jars/:platform",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodePluginJarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodePluginJarAPI.kt",
+    "declared": "/node/plugin-jars/:platform"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/node/transfer/:ticket",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeTransferDownloadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeTransferDownloadAPI.kt",
+    "declared": "/node/transfer/:ticket"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/node/transfer/:ticket",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "NodeTransferUploadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/node/NodeTransferUploadAPI.kt",
+    "declared": "/node/transfer/:ticket"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/notifications",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "DeleteAllNotificationAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/DeleteAllNotificationAPI.kt",
+    "declared": "/notifications"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/GetNotificationsAPI.kt",
+    "declared": "/notifications"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/notifications/:id",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "DeleteNotificationAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/DeleteNotificationAPI.kt",
+    "declared": "/notifications/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications/:id/more",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetMoreNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/GetMoreNotificationsAPI.kt",
+    "declared": "/notifications/:id/more"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/notifications/:id/read",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MarkNotificationAsReadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/MarkNotificationAsReadAPI.kt",
+    "declared": "/notifications/:id/read"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/notifications/quick",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetQuickNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/GetQuickNotificationsAPI.kt",
+    "declared": "/notifications/quick"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/notifications/quick/mark-as-read",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "MarkQuickNotificationsAsReadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/notification/MarkQuickNotificationsAsReadAPI.kt",
+    "declared": "/notifications/quick/mark-as-read"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/openapi.json",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetOpenApiAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/openapi/GetOpenApiAPI.kt",
+    "declared": "/openapi.json"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/access/proxy-status",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetProxyStatusAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/access/PanelGetProxyStatusAPI.kt",
+    "declared": "/access/proxy-status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/PanelGetPluginsAPI.kt",
+    "declared": "/addons"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/addons/:pluginId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeletePluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/PanelDeletePluginAPI.kt",
+    "declared": "/addons/:pluginId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/:pluginId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/PanelGetPluginAPI.kt",
+    "declared": "/addons/:pluginId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/addons/:pluginId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/PanelUpdatePluginAPI.kt",
+    "declared": "/addons/:pluginId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/:pluginId/license",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPluginLicenseAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/license/PanelGetPluginLicenseAPI.kt",
+    "declared": "/addons/:pluginId/license"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/:pluginId/license/embed",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetLicenseEmbedAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/license/PanelGetLicenseEmbedAPI.kt",
+    "declared": "/addons/:pluginId/license/embed"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/addons/:pluginId/license/refresh",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRefreshPluginLicenseAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/license/PanelRefreshPluginLicenseAPI.kt",
+    "declared": "/addons/:pluginId/license/refresh"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/addons/:pluginId/license/tiers/refresh",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRefreshPluginTiersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/license/PanelRefreshPluginTiersAPI.kt",
+    "declared": "/addons/:pluginId/license/tiers/refresh"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/:pluginId/logo",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPluginLogoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/PanelGetPluginLogoAPI.kt",
+    "declared": "/addons/:pluginId/logo"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/search",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSearchPluginCatalogueAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/catalogue/PanelSearchPluginCatalogueAPI.kt",
+    "declared": "/addons/search"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/addons/search/:source/:projectId/versions",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPluginCatalogueVersionsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/plugins/catalogue/PanelGetPluginCatalogueVersionsAPI.kt",
+    "declared": "/addons/search/:source/:projectId/versions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/alerts",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetAlertsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/alert/PanelGetAlertsAPI.kt",
+    "declared": "/alerts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/banned-ips",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBanIpAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelBanIpAPI.kt",
+    "declared": "/banned-ips"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/banned-ips/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUnbanIpAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelUnbanIpAPI.kt",
+    "declared": "/banned-ips/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/basicData",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetBasicDataAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelGetBasicDataAPI.kt",
+    "declared": "/basicData"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/compatibility",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetCompatibilityAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/compatibility/PanelGetCompatibilityAPI.kt",
+    "declared": "/compatibility"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/compatibility/reconcile",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelReconcileCompatibilityAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/compatibility/PanelReconcileCompatibilityAPI.kt",
+    "declared": "/compatibility/reconcile"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/cron/preview",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetCronPreviewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/cron/PanelGetCronPreviewAPI.kt",
+    "declared": "/cron/preview"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/dashboard",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetDashboardAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelGetDashboardAPI.kt",
+    "declared": "/dashboard"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/dashboard/closeConnectServerCard",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCloseConnectServerCardAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/dashboard/PanelCloseConnectServerCardAPI.kt",
+    "declared": "/dashboard/closeConnectServerCard"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/dashboard/closeDevModeAlert",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCloseDevModeAlertAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/dashboard/PanelCloseDevModeAlertAPI.kt",
+    "declared": "/dashboard/closeDevModeAlert"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/dashboard/closeGettingStartedCard",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCloseGettingStartedCardAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/dashboard/PanelCloseGettingStartedCardAPI.kt",
+    "declared": "/dashboard/closeGettingStartedCard"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/dismissWhatsNew",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDismissWhatsNewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelDismissWhatsNewAPI.kt",
+    "declared": "/dismissWhatsNew"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/frontend",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetFrontendAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/mode/PanelGetFrontendAPI.kt",
+    "declared": "/frontend"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/frontend",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateFrontendAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/mode/PanelUpdateFrontendAPI.kt",
+    "declared": "/frontend"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/frontend/custom-apps",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadCustomAppAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/mode/PanelUploadCustomAppAPI.kt",
+    "declared": "/frontend/custom-apps"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/frontend/custom-apps/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteCustomAppAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/mode/PanelDeleteCustomAppAPI.kt",
+    "declared": "/frontend/custom-apps/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/frontend/descriptor/refresh",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRefreshFrontendDescriptorAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/settings/PanelRefreshFrontendDescriptorAPI.kt",
+    "declared": "/frontend/descriptor/refresh"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/frontend/keys",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetFrontendKeysAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/keys/PanelGetFrontendKeysAPI.kt",
+    "declared": "/frontend/keys"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/frontend/keys",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateFrontendKeyAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/keys/PanelCreateFrontendKeyAPI.kt",
+    "declared": "/frontend/keys"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/frontend/keys/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteFrontendKeyAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/keys/PanelDeleteFrontendKeyAPI.kt",
+    "declared": "/frontend/keys/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/frontend/origins",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetFrontendOriginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/origins/PanelGetFrontendOriginsAPI.kt",
+    "declared": "/frontend/origins"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/frontend/origins",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateFrontendOriginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/origins/PanelUpdateFrontendOriginsAPI.kt",
+    "declared": "/frontend/origins"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/frontend/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetFrontendSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/settings/PanelGetFrontendSettingsAPI.kt",
+    "declared": "/frontend/settings"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/frontend/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateFrontendSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/settings/PanelUpdateFrontendSettingsAPI.kt",
+    "declared": "/frontend/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/frontend/urls",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetFrontendUrlsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/urls/PanelGetFrontendUrlsAPI.kt",
+    "declared": "/frontend/urls"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/frontend/urls",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateFrontendUrlsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/frontend/urls/PanelUpdateFrontendUrlsAPI.kt",
+    "declared": "/frontend/urls"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/hosted",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetHostedAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelGetHostedAPI.kt",
+    "declared": "/hosted"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/install/local/:type/:fileName/stream",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetInstallResourceLocalStreamAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/install/PanelGetInstallResourceLocalStreamAPI.kt",
+    "declared": "/install/local/:type/:fileName/stream"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/install/store/:versionId/info",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetInstallResourceInfoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/install/PanelGetInstallResourceInfoAPI.kt",
+    "declared": "/install/store/:versionId/info"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/install/store/:versionId/stream",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetInstallResourceStoreStreamAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/install/PanelGetInstallResourceStoreStreamAPI.kt",
+    "declared": "/install/store/:versionId/stream"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/install/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadResourceFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/install/PanelUploadResourceFileAPI.kt",
+    "declared": "/install/upload"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/licenses/oss",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetLicensesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelGetLicensesAPI.kt",
+    "declared": "/licenses/oss"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/locales",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetLocalesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelGetLocalesAPI.kt",
+    "declared": "/locales"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/locales",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateLocaleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelCreateLocaleAPI.kt",
+    "declared": "/locales"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/locales/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteLocaleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelDeleteLocaleAPI.kt",
+    "declared": "/locales/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/locales/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateLocaleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelUpdateLocaleAPI.kt",
+    "declared": "/locales/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/locales/:localeId/types/:type/translations",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetLocaleTranslationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelGetLocaleTranslationsAPI.kt",
+    "declared": "/locales/:localeId/types/:type/translations"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/locales/:localeId/types/:type/translations",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateLocaleTranslationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/locale/PanelUpdateLocaleTranslationsAPI.kt",
+    "declared": "/locales/:localeId/types/:type/translations"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/logs/activity",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetActivityLogsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelGetActivityLogsAPI.kt",
+    "declared": "/logs/activity"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/maintenance/banned-ips",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetMaintenanceBannedIpsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelGetMaintenanceBannedIpsAPI.kt",
+    "declared": "/maintenance/banned-ips"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/maintenance/banned-ips/clear",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelClearMaintenanceBannedIpsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelClearMaintenanceBannedIpsAPI.kt",
+    "declared": "/maintenance/banned-ips/clear"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/maintenance/banned-ips/remove",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRemoveMaintenanceBannedIpsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelRemoveMaintenanceBannedIpsAPI.kt",
+    "declared": "/maintenance/banned-ips/remove"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/maintenance/page",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetMaintenancePageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelGetMaintenancePageAPI.kt",
+    "declared": "/maintenance/page"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/maintenance/page",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSaveMaintenancePageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelSaveMaintenancePageAPI.kt",
+    "declared": "/maintenance/page"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/maintenance/page/reset",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelResetMaintenancePageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelResetMaintenancePageAPI.kt",
+    "declared": "/maintenance/page/reset"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/maintenance/preview",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPreviewMaintenancePageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/maintenance/PanelPreviewMaintenancePageAPI.kt",
+    "declared": "/maintenance/preview"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/authme/import",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAuthMeMigrationImportAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelAuthMeMigrationImportAPI.kt",
+    "declared": "/migration/authme/import"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/authme/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAuthMeMigrationUploadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelAuthMeMigrationUploadAPI.kt",
+    "declared": "/migration/authme/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/luckperms/import",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelLuckPermsMigrationImportAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelLuckPermsMigrationImportAPI.kt",
+    "declared": "/migration/luckperms/import"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/luckperms/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelLuckPermsMigrationUploadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelLuckPermsMigrationUploadAPI.kt",
+    "declared": "/migration/luckperms/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/server/banned-ips/import",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBannedIpsMigrationImportAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelBannedIpsMigrationImportAPI.kt",
+    "declared": "/migration/server/banned-ips/import"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/server/banned-ips/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBannedIpsMigrationUploadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelBannedIpsMigrationUploadAPI.kt",
+    "declared": "/migration/server/banned-ips/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/server/banned/import",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBannedPlayersMigrationImportAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelBannedPlayersMigrationImportAPI.kt",
+    "declared": "/migration/server/banned/import"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/migration/server/banned/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBannedPlayersMigrationUploadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelBannedPlayersMigrationUploadAPI.kt",
+    "declared": "/migration/server/banned/upload"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNodesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetNodesAPI.kt",
+    "declared": "/nodes"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetNodeAPI.kt",
+    "declared": "/nodes/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/nodes/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelUpdateNodeAPI.kt",
+    "declared": "/nodes/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/:id/accept",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAcceptNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelAcceptNodeAPI.kt",
+    "declared": "/nodes/:id/accept"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/:id/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelDeleteNodeAPI.kt",
+    "declared": "/nodes/:id/delete"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes/:id/delete-preview",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNodeDeletePreviewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetNodeDeletePreviewAPI.kt",
+    "declared": "/nodes/:id/delete-preview"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes/:id/java",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNodeJavaAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetNodeJavaAPI.kt",
+    "declared": "/nodes/:id/java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/:id/java",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelInstallNodeJavaAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelInstallNodeJavaAPI.kt",
+    "declared": "/nodes/:id/java"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/:id/java/:major/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteNodeJavaAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelDeleteNodeJavaAPI.kt",
+    "declared": "/nodes/:id/java/:major/delete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/:id/update",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateNodeDaemonAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelUpdateNodeDaemonAPI.kt",
+    "declared": "/nodes/:id/update"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/coolify-bootstrap",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCoolifyBootstrapNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelCoolifyBootstrapNodeAPI.kt",
+    "declared": "/nodes/coolify-bootstrap"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes/local",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetLocalNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetLocalNodeAPI.kt",
+    "declared": "/nodes/local"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/local/setup",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSetupLocalNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelSetupLocalNodeAPI.kt",
+    "declared": "/nodes/local/setup"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/nodes/pairing-code",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNodePairingCodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelGetNodePairingCodeAPI.kt",
+    "declared": "/nodes/pairing-code"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/ssh-bootstrap",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSshBootstrapNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelSshBootstrapNodeAPI.kt",
+    "declared": "/nodes/ssh-bootstrap"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/nodes/ssh-bootstrap/:taskId/confirm",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelConfirmSshBootstrapNodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/node/PanelConfirmSshBootstrapNodeAPI.kt",
+    "declared": "/nodes/ssh-bootstrap/:taskId/confirm"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/notifications",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteAllNotificationAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelDeleteAllNotificationAPI.kt",
+    "declared": "/notifications"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/notifications",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelGetNotificationsAPI.kt",
+    "declared": "/notifications"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/notifications/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteNotificationAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelDeleteNotificationAPI.kt",
+    "declared": "/notifications/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/notifications/:id/more",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetMoreNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelGetMoreNotificationsAPI.kt",
+    "declared": "/notifications/:id/more"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/notifications/:id/read",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelMarkNotificationAsReadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelMarkNotificationAsReadAPI.kt",
+    "declared": "/notifications/:id/read"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/notifications/quick",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetQuickNotificationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelGetQuickNotificationsAPI.kt",
+    "declared": "/notifications/quick"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/notifications/quick/markAsRead",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelMarkQuickNotificationsAsReadAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/notification/PanelMarkQuickNotificationsAsReadAPI.kt",
+    "declared": "/notifications/quick/markAsRead"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/openapi.json",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetOpenApiAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/openapi/PanelGetOpenApiAPI.kt",
+    "declared": "/openapi.json"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/panelTheme/select",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSelectPanelThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/PanelSelectPanelThemeAPI.kt",
+    "declared": "/panelTheme/select"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/pano-backups",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPanoBackupsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelGetPanoBackupsAPI.kt",
+    "declared": "/pano-backups"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/pano-backups",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreatePanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelCreatePanoBackupAPI.kt",
+    "declared": "/pano-backups"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/pano-backups/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeletePanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelDeletePanoBackupAPI.kt",
+    "declared": "/pano-backups/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/pano-backups/:id/download",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDownloadPanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelDownloadPanoBackupAPI.kt",
+    "declared": "/pano-backups/:id/download"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/pano-backups/:id/restore",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRestorePanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelRestorePanoBackupAPI.kt",
+    "declared": "/pano-backups/:id/restore"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/pano-backups/job",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPanoBackupJobAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelGetPanoBackupJobAPI.kt",
+    "declared": "/pano-backups/job"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/pano-backups/remote",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPanoBackupRemoteAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote"
+  },
+  {
+    "method": "ANY",
+    "path": "/api/v1/panel/pano-backups/remote/backups",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteBackupsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/backups"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/pano-backups/remote/backups/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/backups/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/pano-backups/remote/backups/:id/restore",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/backups/:id/restore"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/pano-backups/remote/passphrase",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePanoBackupRemoteAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/passphrase"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/pano-backups/remote/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePanoBackupRemoteAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/settings"
+  },
+  {
+    "method": "ANY",
+    "path": "/api/v1/panel/pano-backups/remote/transfers",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteTransfersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/transfers"
+  },
+  {
+    "method": "ANY",
+    "path": "/api/v1/panel/pano-backups/remote/transfers/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteTransfersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/transfers/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/pano-backups/remote/workloads",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPanoBackupRemoteTransfersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/pano-backups/remote/workloads"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/pano-backups/restore",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRestoreUploadedPanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelRestoreUploadedPanoBackupAPI.kt",
+    "declared": "/pano-backups/restore"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/pano-backups/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePanoBackupSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/PanelUpdatePanoBackupSettingsAPI.kt",
+    "declared": "/pano-backups/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/permission/registered",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPermissionGetRegisteredAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/permission/PanelPermissionGetRegisteredAPI.kt",
+    "declared": "/permission/registered"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/permission/snapshot",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPermissionSnapshotGetAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/permission/PanelPermissionSnapshotGetAPI.kt",
+    "declared": "/permission/snapshot"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/permission/snapshot",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPermissionSnapshotSaveAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/permission/PanelPermissionSnapshotSaveAPI.kt",
+    "declared": "/permission/snapshot"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/platform/code",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "CreatePlatformConnectCodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platform/CreatePlatformConnectCodeAPI.kt",
+    "declared": "/platform/code"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/platform/connect",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "ConnectPlatformAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platform/ConnectPlatformAPI.kt",
+    "declared": "/platform/connect"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/platform/disconnect",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "DisconnectPlatformAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platform/DisconnectPlatformAPI.kt",
+    "declared": "/platform/disconnect"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/platform/store/authorize/token",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "GetStoreAuthorizeTokenAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platform/GetStoreAuthorizeTokenAPI.kt",
+    "declared": "/platform/store/authorize/token"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/platformAuth/refreshKey",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetRefreshKeyAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platformAuth/PanelGetRefreshKeyAPI.kt",
+    "declared": "/platformAuth/refreshKey"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/platformAuth/toggle",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "TogglePlatformConnectAuthAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/platformAuth/TogglePlatformConnectAuthAPI.kt",
+    "declared": "/platformAuth/toggle"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/player/search",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSearchPlayersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelSearchPlayersAPI.kt",
+    "declared": "/player/search"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/players",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPlayersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelGetPlayersAPI.kt",
+    "declared": "/players"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/players/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePlayerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelUpdatePlayerAPI.kt",
+    "declared": "/players/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/players/:username",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPlayerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelGetPlayerAPI.kt",
+    "declared": "/players/:username"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/players/:username/ban",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelBanPlayerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelBanPlayerAPI.kt",
+    "declared": "/players/:username/ban"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/players/:username/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeletePlayerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelDeletePlayerAPI.kt",
+    "declared": "/players/:username/delete"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/players/:username/exists",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelIsUserExistsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelIsUserExistsAPI.kt",
+    "declared": "/players/:username/exists"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/players/:username/sessions",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPlayerSessionsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelGetPlayerSessionsAPI.kt",
+    "declared": "/players/:username/sessions"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/players/:username/sessions/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelLogoutPlayerSessionAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelLogoutPlayerSessionAPI.kt",
+    "declared": "/players/:username/sessions/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/players/:username/unban",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUnbanPlayerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelUnbanPlayerAPI.kt",
+    "declared": "/players/:username/unban"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/players/:username/verificationMail",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSendValidationEmailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/players/PanelSendValidationEmailAPI.kt",
+    "declared": "/players/:username/verificationMail"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/post",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateOrUpdatePostAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelCreateOrUpdatePostAPI.kt",
+    "declared": "/post"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/post/categories",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPostCategoriesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/category/PanelGetPostCategoriesAPI.kt",
+    "declared": "/post/categories"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/post/categories",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAddPostCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/category/PanelAddPostCategoryAPI.kt",
+    "declared": "/post/categories"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/post/categories/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeletePostCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/category/PanelDeletePostCategoryAPI.kt",
+    "declared": "/post/categories/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/post/categories/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePostCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/category/PanelUpdatePostCategoryAPI.kt",
+    "declared": "/post/categories/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/posts",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPostsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelGetPostsAPI.kt",
+    "declared": "/posts"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/posts/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeletePostAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelDeletePostAPI.kt",
+    "declared": "/posts/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/posts/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPostAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelGetPostAPI.kt",
+    "declared": "/posts/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/posts/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateOrUpdatePostAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelCreateOrUpdatePostAPI.kt",
+    "declared": "/posts/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/posts/:id/status",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePostStatusAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/post/PanelUpdatePostStatusAPI.kt",
+    "declared": "/posts/:id/status"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetConnectedServersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetConnectedServersAPI.kt",
+    "declared": "/servers"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers-metrics",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServersMetricsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/metrics/PanelGetServersMetricsAPI.kt",
+    "declared": "/servers-metrics"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerAPI.kt",
+    "declared": "/servers/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/accept",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAcceptServerConnectRequestAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelAcceptServerConnectRequestAPI.kt",
+    "declared": "/servers/:id/accept"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/activity",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerActivityAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerActivityAPI.kt",
+    "declared": "/servers/:id/activity"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/activity-chart",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerActivityChartAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/metrics/PanelGetServerActivityChartAPI.kt",
+    "declared": "/servers/:id/activity-chart"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/agent/update",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerAgentAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelUpdateServerAgentAPI.kt",
+    "declared": "/servers/:id/agent/update"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/backups",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerBackupsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelGetServerBackupsAPI.kt",
+    "declared": "/servers/:id/backups"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/backups",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateServerBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelCreateServerBackupAPI.kt",
+    "declared": "/servers/:id/backups"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/backups/:backupId/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteServerBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelDeleteServerBackupAPI.kt",
+    "declared": "/servers/:id/backups/:backupId/delete"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/backups/:backupId/download",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDownloadServerBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelDownloadServerBackupAPI.kt",
+    "declared": "/servers/:id/backups/:backupId/download"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/backups/:backupId/pano-backup",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadServerBackupToPanoBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/panoBackup/remote/PanelPanoBackupRemoteAPIs.kt",
+    "declared": "/servers/:id/backups/:backupId/pano-backup"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/backups/:backupId/pin",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelPinServerBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelPinServerBackupAPI.kt",
+    "declared": "/servers/:id/backups/:backupId/pin"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/backups/:backupId/restore",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRestoreServerBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelRestoreServerBackupAPI.kt",
+    "declared": "/servers/:id/backups/:backupId/restore"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/backups/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerBackupSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelUpdateServerBackupSettingsAPI.kt",
+    "declared": "/servers/:id/backups/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/backups/worlds",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerBackupWorldsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/backups/PanelGetServerBackupWorldsAPI.kt",
+    "declared": "/servers/:id/backups/worlds"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/console",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerConsoleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/console/PanelGetServerConsoleAPI.kt",
+    "declared": "/servers/:id/console"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/console/command",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSendServerCommandAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/console/PanelSendServerCommandAPI.kt",
+    "declared": "/servers/:id/console/command"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/console/search",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSearchServerConsoleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/console/PanelSearchServerConsoleAPI.kt",
+    "declared": "/servers/:id/console/search"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/dashboard",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerDashboardAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerDashboardAPI.kt",
+    "declared": "/servers/:id/dashboard"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelDeleteServerAPI.kt",
+    "declared": "/servers/:id/delete"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/files",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerFilesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelGetServerFilesAPI.kt",
+    "declared": "/servers/:id/files"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/archive",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelArchiveServerFilesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelArchiveServerFilesAPI.kt",
+    "declared": "/servers/:id/files/archive"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/chmod",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelChmodServerFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelChmodServerFileAPI.kt",
+    "declared": "/servers/:id/files/chmod"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/files/content",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerFileContentAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelGetServerFileContentAPI.kt",
+    "declared": "/servers/:id/files/content"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/files/content",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerFileContentAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelUpdateServerFileContentAPI.kt",
+    "declared": "/servers/:id/files/content"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteServerFilesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelDeleteServerFilesAPI.kt",
+    "declared": "/servers/:id/files/delete"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/files/download",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDownloadServerFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelDownloadServerFileAPI.kt",
+    "declared": "/servers/:id/files/download"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/mkdir",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateServerDirectoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelCreateServerDirectoryAPI.kt",
+    "declared": "/servers/:id/files/mkdir"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/rename",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRenameServerFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelRenameServerFileAPI.kt",
+    "declared": "/servers/:id/files/rename"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/unarchive",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUnarchiveServerFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelUnarchiveServerFileAPI.kt",
+    "declared": "/servers/:id/files/unarchive"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/files/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadServerFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/files/PanelUploadServerFileAPI.kt",
+    "declared": "/servers/:id/files/upload"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/icon",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerIconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerIconAPI.kt",
+    "declared": "/servers/:id/icon"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/icon",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadServerIconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelUploadServerIconAPI.kt",
+    "declared": "/servers/:id/icon"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/main",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelMakeMainServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelMakeMainServerAPI.kt",
+    "declared": "/servers/:id/main"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/metrics",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerMetricsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/metrics/PanelGetServerMetricsAPI.kt",
+    "declared": "/servers/:id/metrics"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/pano-plugin/jar",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPanoPluginJarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelGetPanoPluginJarAPI.kt",
+    "declared": "/servers/:id/pano-plugin/jar"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/pano-plugin/update",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePanoPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelUpdatePanoPluginAPI.kt",
+    "declared": "/servers/:id/pano-plugin/update"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/players",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerPlayersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/players/PanelGetServerPlayersAPI.kt",
+    "declared": "/servers/:id/players"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/players/:uuid/action",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelServerPlayerActionAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/players/PanelServerPlayerActionAPI.kt",
+    "declared": "/servers/:id/players/:uuid/action"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/plugins",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelGetServerPluginsAPI.kt",
+    "declared": "/servers/:id/plugins"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/plugins/:name/enabled",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSetServerPluginEnabledAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelSetServerPluginEnabledAPI.kt",
+    "declared": "/servers/:id/plugins/:name/enabled"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/identify",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelIdentifyServerPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelIdentifyServerPluginsAPI.kt",
+    "declared": "/servers/:id/plugins/identify"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/install",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelInstallServerPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelInstallServerPluginAPI.kt",
+    "declared": "/servers/:id/plugins/install"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/remove",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRemoveServerPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelRemoveServerPluginAPI.kt",
+    "declared": "/servers/:id/plugins/remove"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/plugins/search",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSearchServerPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelSearchServerPluginsAPI.kt",
+    "declared": "/servers/:id/plugins/search"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/plugins/search/:source/:projectId/versions",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerPluginVersionsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelGetServerPluginVersionsAPI.kt",
+    "declared": "/servers/:id/plugins/search/:source/:projectId/versions"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/plugins/sources",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerPluginSourcesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelGetServerPluginSourcesAPI.kt",
+    "declared": "/servers/:id/plugins/sources"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/update",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelUpdateServerPluginAPI.kt",
+    "declared": "/servers/:id/plugins/update"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/update-all",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateAllServerPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelUpdateAllServerPluginsAPI.kt",
+    "declared": "/servers/:id/plugins/update-all"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/plugins/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadServerPluginAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelUploadServerPluginAPI.kt",
+    "declared": "/servers/:id/plugins/upload"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/power",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelServerPowerActionAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/power/PanelServerPowerActionAPI.kt",
+    "declared": "/servers/:id/power"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/reinstall",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelReinstallServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelReinstallServerAPI.kt",
+    "declared": "/servers/:id/reinstall"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/reinstall-preview",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerReinstallPreviewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerReinstallPreviewAPI.kt",
+    "declared": "/servers/:id/reinstall-preview"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/reject",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRejectServerConnectRequestAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelRejectServerConnectRequestAPI.kt",
+    "declared": "/servers/:id/reject"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/schedules",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerSchedulesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelGetServerSchedulesAPI.kt",
+    "declared": "/servers/:id/schedules"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/schedules",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateServerScheduleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelCreateServerScheduleAPI.kt",
+    "declared": "/servers/:id/schedules"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/schedules/:sid",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerScheduleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelUpdateServerScheduleAPI.kt",
+    "declared": "/servers/:id/schedules/:sid"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/schedules/:sid/delete",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteServerScheduleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelDeleteServerScheduleAPI.kt",
+    "declared": "/servers/:id/schedules/:sid/delete"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/schedules/:sid/run",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRunServerScheduleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelRunServerScheduleAPI.kt",
+    "declared": "/servers/:id/schedules/:sid/run"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/schedules/:sid/toggle",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelToggleServerScheduleAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/schedules/PanelToggleServerScheduleAPI.kt",
+    "declared": "/servers/:id/schedules/:sid/toggle"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/:id/select",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSelectServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelSelectServerAPI.kt",
+    "declared": "/servers/:id/select"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelUpdateServerSettingsAPI.kt",
+    "declared": "/servers/:id/settings"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/:id/startup",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateServerStartupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/startup/PanelUpdateServerStartupAPI.kt",
+    "declared": "/servers/:id/startup"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/:id/startup/properties",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerStartupPropertiesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/startup/PanelGetServerStartupPropertiesAPI.kt",
+    "declared": "/servers/:id/startup/properties"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/agent-link",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerAgentLinkAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetServerAgentLinkAPI.kt",
+    "declared": "/servers/agent-link"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/servers/agent-link/toggle",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelToggleServerAgentLinkAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelToggleServerAgentLinkAPI.kt",
+    "declared": "/servers/agent-link/toggle"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/create",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateServerAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelCreateServerAPI.kt",
+    "declared": "/servers/create"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/servers/pano-plugin/update-all",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateAllPanoPluginsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/plugins/PanelUpdateAllPanoPluginsAPI.kt",
+    "declared": "/servers/pano-plugin/update-all"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/pending",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPendingServersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetPendingServersAPI.kt",
+    "declared": "/servers/pending"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/servers/players",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetAllServerPlayersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/players/PanelGetAllServerPlayersAPI.kt",
+    "declared": "/servers/players"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelGetSettingsAPI.kt",
+    "declared": "/settings"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelUpdateSettingsAPI.kt",
+    "declared": "/settings"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/settings/alerts",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetAlertSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelGetAlertSettingsAPI.kt",
+    "declared": "/settings/alerts"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/settings/alerts",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateAlertSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelUpdateAlertSettingsAPI.kt",
+    "declared": "/settings/alerts"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/settings/restart-pano",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRestartPanoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelRestartPanoAPI.kt",
+    "declared": "/settings/restart-pano"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/settings/reveal-ssl",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelGetSettingsAPI.kt",
+    "declared": "/settings/reveal-ssl"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/settings/stop-pano",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelStopPanoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelStopPanoAPI.kt",
+    "declared": "/settings/stop-pano"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/settings/verify/mail",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSettingsVerifyMailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/settings/PanelSettingsVerifyMailAPI.kt",
+    "declared": "/settings/verify/mail"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/software",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetSoftwareAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/software/PanelGetSoftwareAPI.kt",
+    "declared": "/software"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/software/:id/versions/:version",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetSoftwareVersionAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/software/PanelGetSoftwareVersionAPI.kt",
+    "declared": "/software/:id/versions/:version"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/statistics",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetStatisticsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelGetStatisticsAPI.kt",
+    "declared": "/statistics"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/tasks/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTaskAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/task/PanelGetTaskAPI.kt",
+    "declared": "/tasks/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/telemetry/preview",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTelemetryPreviewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/telemetry/PanelGetTelemetryPreviewAPI.kt",
+    "declared": "/telemetry/preview"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/theme/compatibility",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetThemeCompatibilityAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelGetThemeCompatibilityAPI.kt",
+    "declared": "/theme/compatibility"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/theme/home",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetThemeHomeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelGetThemeHomeAPI.kt",
+    "declared": "/theme/home"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/theme/home",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateThemeHomeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelUpdateThemeHomeAPI.kt",
+    "declared": "/theme/home"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/theme/settings",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateThemeSettingsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelUpdateThemeSettingsAPI.kt",
+    "declared": "/theme/settings"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/themes",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelStopCurrentThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelStopCurrentThemeAPI.kt",
+    "declared": "/themes"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/themes",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetThemesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelGetThemesAPI.kt",
+    "declared": "/themes"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/themes",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelStartCurrentThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelStartCurrentThemeAPI.kt",
+    "declared": "/themes"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/themes",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelReloadThemesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelReloadThemesAPI.kt",
+    "declared": "/themes"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/themes/:themeId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelDeleteThemeAPI.kt",
+    "declared": "/themes/:themeId"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/themes/:themeId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelGetThemeAPI.kt",
+    "declared": "/themes/:themeId"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/themes/:themeId",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelActivateThemeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelActivateThemeAPI.kt",
+    "declared": "/themes/:themeId"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/themes/:themeId/license/refresh",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRefreshThemeLicenseAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelRefreshThemeLicenseAPI.kt",
+    "declared": "/themes/:themeId/license/refresh"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/themes/:themeId/screenshots/*",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetThemeScreenshotAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/theme/PanelGetThemeScreenshotAPI.kt",
+    "declared": "/themes/:themeId/screenshots/*"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/ticket/categories",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTicketCategoriesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/category/PanelGetTicketCategoriesAPI.kt",
+    "declared": "/ticket/categories"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/ticket/categories/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteTicketCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/category/PanelDeleteTicketCategoryAPI.kt",
+    "declared": "/ticket/categories/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/ticket/categories/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateTicketCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/category/PanelUpdateTicketCategoryAPI.kt",
+    "declared": "/ticket/categories/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/ticket/category",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelAddTicketCategoryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/category/PanelAddTicketCategoryAPI.kt",
+    "declared": "/ticket/category"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/tickets",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteTicketsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelDeleteTicketsAPI.kt",
+    "declared": "/tickets"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/tickets",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTicketsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelGetTicketsAPI.kt",
+    "declared": "/tickets"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/tickets",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateTicketsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelUpdateTicketsAPI.kt",
+    "declared": "/tickets"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/tickets/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTicketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelGetTicketAPI.kt",
+    "declared": "/tickets/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/tickets/:id/messages",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetTicketMessagesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelGetTicketMessagesAPI.kt",
+    "declared": "/tickets/:id/messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/tickets/:id/messages",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelSendTicketMessageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/ticket/PanelSendTicketMessageAPI.kt",
+    "declared": "/tickets/:id/messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/transfers/upload",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUploadTransferAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/transfers/PanelUploadTransferAPI.kt",
+    "declared": "/transfers/upload"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/icon/:filename",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetUpdateIconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelGetUpdateIconAPI.kt",
+    "declared": "/updates/icon/:filename"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/updates/node-auto-update",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateNodeAutoUpdateAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelUpdateNodeAutoUpdateAPI.kt",
+    "declared": "/updates/node-auto-update"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/platform",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCheckPlatformUpdateAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelCheckPlatformUpdateAPI.kt",
+    "declared": "/updates/platform"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/platform/plan",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetPlatformUpdatePlanAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelGetPlatformUpdatePlanAPI.kt",
+    "declared": "/updates/platform/plan"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/platform/stream",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdatePlatformAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelUpdatePlatformAPI.kt",
+    "declared": "/updates/platform/stream"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/resources/:resourceId/stream",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateResourceAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelUpdateResourceAPI.kt",
+    "declared": "/updates/resources/:resourceId/stream"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/updates/servers",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetServerUpdatesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/updates/PanelGetServerUpdatesAPI.kt",
+    "declared": "/updates/servers"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/webhook-deliveries",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetWebhookDeliveriesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelGetWebhookDeliveriesAPI.kt",
+    "declared": "/webhook-deliveries"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/webhook-deliveries/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetWebhookDeliveryAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelGetWebhookDeliveryAPI.kt",
+    "declared": "/webhook-deliveries/:id"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/webhook-deliveries/:id/redeliver",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelRedeliverWebhookAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelRedeliverWebhookAPI.kt",
+    "declared": "/webhook-deliveries/:id/redeliver"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/webhooks",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetWebhooksAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelGetWebhooksAPI.kt",
+    "declared": "/webhooks"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/webhooks",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelCreateWebhookAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelCreateWebhookAPI.kt",
+    "declared": "/webhooks"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/panel/webhooks/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelDeleteWebhookAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelDeleteWebhookAPI.kt",
+    "declared": "/webhooks/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/panel/webhooks/:id",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelUpdateWebhookAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelUpdateWebhookAPI.kt",
+    "declared": "/webhooks/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/webhooks/:id/deliveries",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetWebhookEndpointDeliveriesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelGetWebhookEndpointDeliveriesAPI.kt",
+    "declared": "/webhooks/:id/deliveries"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/panel/webhooks/:id/test",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelTestWebhookAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelTestWebhookAPI.kt",
+    "declared": "/webhooks/:id/test"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/webhooks/events",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelGetWebhookEventsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/webhook/PanelGetWebhookEventsAPI.kt",
+    "declared": "/webhooks/events"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/panel/ws",
+    "pluginId": null,
+    "namespace": "PANEL",
+    "mount": "API",
+    "class": "PanelWebSocketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/PanelWebSocketAPI.kt",
+    "declared": "/ws"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/plugin-packages",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPluginPackagesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginPackagesAPI.kt",
+    "declared": "/plugin-packages"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/plugins/:pluginId/_/openapi.json",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPluginOpenApiAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginOpenApiAPI.kt",
+    "declared": "/plugins/:pluginId/_/openapi.json"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/plugins/:pluginId/_/translations/:locale",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPluginTranslationsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginTranslationsAPI.kt",
+    "declared": "/plugins/:pluginId/_/translations/:locale"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/plugins/:pluginId/_/ui.zip",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPluginUiZipAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginUiZipAPI.kt",
+    "declared": "/plugins/:pluginId/_/ui.zip"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/plugins/:pluginId/_/ui/*",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPluginUiFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/plugins/GetPluginUiFileAPI.kt",
+    "declared": "/plugins/:pluginId/_/ui/*"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/posts",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPostsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/posts/GetPostsAPI.kt",
+    "declared": "/posts"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/posts/:url",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPostDetailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/posts/GetPostDetailAPI.kt",
+    "declared": "/posts/:url"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/posts/:url/view",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "TrackPostViewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/posts/TrackPostViewAPI.kt",
+    "declared": "/posts/:url/view"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/posts/previews/:id",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPostPreviewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/posts/GetPostPreviewAPI.kt",
+    "declared": "/posts/previews/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/posts/thumbnails/:filename",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPostThumbnailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetPostThumbnailAPI.kt",
+    "declared": "/posts/thumbnails/:filename"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/profile",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetProfileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/GetProfileAPI.kt",
+    "declared": "/profile"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/profile",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "UpdateProfileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/UpdateProfileAPI.kt",
+    "declared": "/profile"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/profile/change-email",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ChangeEmailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/ChangeEmailAPI.kt",
+    "declared": "/profile/change-email"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/profile/picture/:username",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetProfilePictureAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/GetProfilePictureAPI.kt",
+    "declared": "/profile/picture/:username"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/profile/reset-password",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SendResetPasswordEmailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/SendResetPasswordEmailAPI.kt",
+    "declared": "/profile/reset-password"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/profile/sessions",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetMySessionsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/GetMySessionsAPI.kt",
+    "declared": "/profile/sessions"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/v1/profile/sessions/:id",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "LogoutMySessionAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/LogoutMySessionAPI.kt",
+    "declared": "/profile/sessions/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/profiles/:username",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetPlayerProfileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/profile/GetPlayerProfileAPI.kt",
+    "declared": "/profiles/:username"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/register-agreement",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetRegisterAgreementAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetRegisterAgreementAPI.kt",
+    "declared": "/register-agreement"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/server/connect",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ServerConnectNewAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/server/ServerConnectNewAPI.kt",
+    "declared": "/server/connect"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/server/connection",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ServerConnectAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/server/ServerConnectAPI.kt",
+    "declared": "/server/connection"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/server/disconnect",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ServerDisconnectAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/server/ServerDisconnectAPI.kt",
+    "declared": "/server/disconnect"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/server/icon/default",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "PanelGetDefaultServerIconAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/panel/server/PanelGetDefaultServerIconAPI.kt",
+    "declared": "/server/icon/default"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/server/pano-plugin/jar",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ServerPanoPluginJarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/server/ServerPanoPluginJarAPI.kt",
+    "declared": "/server/pano-plugin/jar"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/servers",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetServersAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/server/GetServersAPI.kt",
+    "declared": "/servers"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/finish",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "FinishAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/FinishAPI.kt",
+    "declared": "/setup/finish"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/setup/pano-host/backups",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupGetPanoHostBackupsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupPanoHostAPIs.kt",
+    "declared": "/setup/pano-host/backups"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/setup/pano-host/instances",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupGetPanoHostInstancesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupPanoHostAPIs.kt",
+    "declared": "/setup/pano-host/instances"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/pano-host/instances/:id/move",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupMovePanoHostInstanceAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupPanoHostAPIs.kt",
+    "declared": "/setup/pano-host/instances/:id/move"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/pano-host/restore",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupRestorePanoHostBackupAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupPanoHostAPIs.kt",
+    "declared": "/setup/pano-host/restore"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/setup/restore",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupGetRestoreAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupGetRestoreAPI.kt",
+    "declared": "/setup/restore"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/restore",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SetupRestoreAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/SetupRestoreAPI.kt",
+    "declared": "/setup/restore"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/setup/step",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetCurrentStepAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/GetCurrentStepAPI.kt",
+    "declared": "/setup/step"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/setup/step",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "UpdateStepAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/UpdateStepAPI.kt",
+    "declared": "/setup/step"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/2/install-portable",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step2InstallPortableDBAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step2InstallPortableDBAPI.kt",
+    "declared": "/setup/steps/2/install-portable"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/2/verify",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step2VerifyDBAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step2VerifyDBAPI.kt",
+    "declared": "/setup/steps/2/verify"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/3/verify",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step3VerifyMailAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step3VerifyMailAPI.kt",
+    "declared": "/setup/steps/3/verify"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/4/platform/code",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step4CreatePlatformConnectCodeAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step4CreatePlatformConnectCodeAPI.kt",
+    "declared": "/setup/steps/4/platform/code"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/4/platform/connect",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step4ConnectPlatformAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step4ConnectPlatformAPI.kt",
+    "declared": "/setup/steps/4/platform/connect"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/setup/steps/4/platform/disconnect",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "Step4DisconnectPlatformAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/setup/step/Step4DisconnectPlatformAPI.kt",
+    "declared": "/setup/steps/4/platform/disconnect"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/sidebars/home",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "HomeSidebarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/sidebar/HomeSidebarAPI.kt",
+    "declared": "/sidebars/home"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/sidebars/profile",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "ProfileSidebarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/sidebar/ProfileSidebarAPI.kt",
+    "declared": "/sidebars/profile"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/sidebars/profile/:username",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "PlayerProfileSidebarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/sidebar/PlayerProfileSidebarAPI.kt",
+    "declared": "/sidebars/profile/:username"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/sidebars/support",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SupportSidebarAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/sidebar/SupportSidebarAPI.kt",
+    "declared": "/sidebars/support"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/site-info",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetSiteInfoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSiteInfoAPI.kt",
+    "declared": "/site-info"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/sitemap",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetSitemapAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetSitemapAPI.kt",
+    "declared": "/sitemap"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/theme/file/:filename",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetThemeSettingResourceAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetThemeSettingResourceAPI.kt",
+    "declared": "/theme/file/:filename"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ticket-categories",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetTicketCategoriesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/GetTicketCategoriesAPI.kt",
+    "declared": "/ticket-categories"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/tickets",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetTicketsAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/GetTicketsAPI.kt",
+    "declared": "/tickets"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tickets",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "CreateTicketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/CreateTicketAPI.kt",
+    "declared": "/tickets"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/tickets/:id",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetTicketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/GetTicketAPI.kt",
+    "declared": "/tickets/:id"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/v1/tickets/:id",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "UpdateTicketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/UpdateTicketAPI.kt",
+    "declared": "/tickets/:id"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/tickets/:id/messages",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetTicketMessagesAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/GetTicketMessagesAPI.kt",
+    "declared": "/tickets/:id/messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tickets/:id/messages",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "SendTicketMessageAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/ticket/SendTicketMessageAPI.kt",
+    "declared": "/tickets/:id/messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/visitor-visit",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "VisitorVisitAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/VisitorVisitAPI.kt",
+    "declared": "/visitor-visit"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/website-logo",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetWebsiteLogoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/GetWebsiteLogoAPI.kt",
+    "declared": "/website-logo"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/widgets/index.json",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetWidgetIndexAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/widget/GetWidgetIndexAPI.kt",
+    "declared": "/widgets/index.json"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/widgets/loader.js",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetWidgetLoaderAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/widget/GetWidgetLoaderAPI.kt",
+    "declared": "/widgets/loader.js"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/widgets/runtime/*",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "GetWidgetRuntimeFileAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/widget/GetWidgetRuntimeFileAPI.kt",
+    "declared": "/widgets/runtime/*"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/ws",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "API",
+    "class": "WebsiteWebSocketAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/WebsiteWebSocketAPI.kt",
+    "declared": "/ws"
+  },
+  {
+    "method": "GET",
+    "path": "/panel/host-sso",
+    "pluginId": null,
+    "namespace": "SITE",
+    "mount": "ROOT",
+    "class": "HostSsoAPI",
+    "file": "Pano/src/main/kotlin/com/panomc/platform/route/api/auth/HostSsoAPI.kt",
+    "declared": "/panel/host-sso"
+  }
+]

@@ -62,6 +62,8 @@
 <script>
   import { _ } from "svelte-i18n";
 
+  import { route } from "$pano/registry/routes.js";
+
   import ErrorAlert from "$pano/lib/components/ErrorAlert.svelte";
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
   import LinkCodeInput from "$pano/lib/components/LinkCodeInput.svelte";
@@ -98,15 +100,15 @@
 {#each $contentItems as item (item.id)}
   {#if item.id === "login-form"}
     {#if $viewState === "LOGIN"}
-      <form on:submit|preventDefault={onSubmit}>
+      <form class="pano-login-view" on:submit|preventDefault={onSubmit}>
         <div class="vstack gap-3">
           {#if $session.siteInfo.isDemo}
-            <div class="alert alert-info py-2" role="alert">
+            <div class="pano-login-view__alert alert alert-info py-2" role="alert">
               {$_("pages.login.demo-mode-alert")}
             </div>
           {/if}
           {#if $emailRequired && !$emailVerificationSent}
-            <div class="alert alert-info py-2" role="alert">
+            <div class="pano-login-view__register-email-required-info alert alert-info py-2" role="alert">
               {$_("pages.login.register-email-required-info")}
             </div>
           {/if}
@@ -116,7 +118,7 @@
               <div class="form-floating">
                 <input
                   bind:value={$usernameOrEmail}
-                  class="form-control {$passwordVisible ? 'rounded-bottom-0' : 'rounded'}"
+                  class="pano-login-view__input form-control {$passwordVisible ? 'rounded-bottom-0' : 'rounded'}"
                   id="usernameOrEmail"
                   on:input={onUsernameOrEmailFieldInput}
                   disabled={$loading || $emailRequired}
@@ -130,7 +132,7 @@
                 <div class="form-floating">
                   <input
                     bind:value={$password}
-                    class="form-control rounded-0 {$emailRequired ? '' : 'rounded-bottom'}"
+                    class="pano-login-view__input-2 form-control rounded-0 {$emailRequired ? '' : 'rounded-bottom'}"
                     id="password"
                     on:input={() => {
                       $error = null;
@@ -147,7 +149,7 @@
                 <div class="form-floating">
                   <input
                     bind:value={$email}
-                    class="form-control rounded-top-0 rounded-bottom {$error ? 'border-danger' : ''}"
+                    class="pano-login-view__input-3 form-control rounded-top-0 rounded-bottom {$error ? 'border-danger' : ''}"
                     id="email"
                     on:input={onRegisterEmailFieldInput}
                     disabled={$loading}
@@ -165,7 +167,7 @@
             {/each}
             <div class="vstack gap-2">
               <button
-                class="btn btn-lg btn-secondary"
+                class="pano-login-view__action btn btn-lg btn-secondary"
                 class:disabled={$loading || !$usernameOrEmail || ($emailRequired && !$email.includes('@'))}
                 disabled={$loading || !$usernameOrEmail || ($emailRequired && !$email.includes('@'))}
                 type="submit">
@@ -181,20 +183,20 @@
               </button>
               {#if $passwordVisible && !$emailRequired}
                 <a
-                  class="btn btn-link {$loading ? 'disabled pe-none' : ''}"
+                  class="pano-login-view__forgot-password btn btn-link {$loading ? 'disabled pe-none' : ''}"
                   aria-disabled={$loading}
                   tabindex={$loading ? -1 : undefined}
-                  href="/reset-password">
+                  href={route("/reset-password")}>
                   {$_("buttons.forgot-password")}
                 </a>
               {/if}
             </div>
           {:else}
-            <div class="alert alert-info py-2" role="alert">
+            <div class="pano-login-view__email-verification-sent-info alert alert-info py-2" role="alert">
               {$_("pages.login.email-verification-sent-info")}
             </div>
             <button
-              class="btn btn-link"
+              class="pano-login-view__back btn btn-link"
               type="button"
               on:click={() => {
                 $emailVerificationSent = false;
@@ -210,7 +212,7 @@
         </div>
       </form>
     {:else if $viewState === "LINK_CODE"}
-      <form on:submit|preventDefault={onVerifyLink}>
+      <form class="pano-login-view" on:submit|preventDefault={onVerifyLink}>
         <div class="vstack gap-3">
           <p class="text-center text-muted mb-0">
             {@html $_("components.modals.login.link-code.description")}
@@ -222,7 +224,7 @@
             <div class="form-floating">
               <input
                 bind:value={$usernameOrEmail}
-                class="form-control"
+                class="pano-login-view__input-4 form-control"
                 id="usernameOrEmail"
                 disabled={true}
                 type="text" />
@@ -253,7 +255,7 @@
 
           <div class="vstack gap-2">
             <button
-              class="btn btn-lg btn-secondary"
+              class="pano-login-view__verify btn btn-lg btn-secondary"
               class:disabled={$loading || $linkCode.length !== 6}
               disabled={$loading || $linkCode.length !== 6}
               type="submit">
@@ -268,7 +270,7 @@
               {/if}
             </button>
             <button
-              class="btn btn-link"
+              class="pano-login-view__action-2 btn btn-link"
               disabled={$loading}
               type="button"
               on:click={() => {
@@ -284,7 +286,7 @@
         </div>
       </form>
     {:else if $viewState === "REGISTER"}
-      <form on:submit|preventDefault={onCompleteRegister}>
+      <form class="pano-login-view" on:submit|preventDefault={onCompleteRegister}>
         <div class="vstack gap-3">
           <ErrorAlert error={$error} />
 
@@ -299,7 +301,7 @@
         </div>
       </form>
     {:else if $viewState === "SET_USERNAME"}
-      <form on:submit|preventDefault={onSubmit}>
+      <form class="pano-login-view" on:submit|preventDefault={onSubmit}>
         <div class="vstack gap-3">
           <PageTitle title={$_("pages.login.set-username-title")} />
           <p class="text-center text-muted mb-0">
@@ -310,7 +312,7 @@
             <div class="form-floating">
               <input
                 bind:value={$newUsername}
-                class="form-control"
+                class="pano-login-view__input-5 form-control"
                 id="newUsername"
                 on:input={onNewUsernameFieldInput}
                 disabled={$loading}
@@ -323,7 +325,7 @@
           </div>
           <div class="vstack gap-2">
             <button
-              class="btn btn-lg btn-secondary"
+              class="pano-login-view__save btn btn-lg btn-secondary"
               class:disabled={$loading || !$newUsername || $newUsername.length < 3}
               disabled={$loading || !$newUsername || $newUsername.length < 3}
               type="submit">
@@ -338,7 +340,7 @@
               {/if}
             </button>
             <button
-              class="btn btn-link"
+              class="pano-login-view__action-3 btn btn-link"
               disabled={$loading}
               type="button"
               on:click={() => {
@@ -361,10 +363,10 @@
 {/each}
 
 {#if $viewState !== "SET_USERNAME" && $altMethods && $altMethods.length > 0}
-  <div class="alt-methods-divider">
+  <div class="pano-login-view alt-methods-divider">
     <span>{$_("pages.login.or")}</span>
   </div>
-  <div class="vstack gap-2">
+  <div class="pano-login-view vstack gap-2">
     {#each $altMethods as method (method.id)}
       <ViewComponent component={method.component} data={{ pageType: 'login' }} />
     {/each}

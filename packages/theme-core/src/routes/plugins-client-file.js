@@ -11,8 +11,9 @@ const HASHED_CHUNK_RE = /-[0-9a-zA-Z_]{8,}\.m?js$/;
  * Pick a Cache-Control (and optional ETag) for a plugin client asset.
  * @param {string} fileName
  * @param {Buffer} data
+ * @param {boolean} [versioned]  the request carries `?v=<hash>`: the URL changes with the content (doc 03 section 4.4)
  */
-function cacheHeadersFor(fileName, data) {
+export function cacheHeadersFor(fileName, data, versioned = false) {
   if (fileName === "client.mjs") {
     // The entry point is not content-hashed, so it must always be revalidated. A trivial strong
     // ETag (content hash) lets the browser get a cheap 304 when nothing changed.
@@ -22,11 +23,15 @@ function cacheHeadersFor(fileName, data) {
   if (HASHED_CHUNK_RE.test(fileName)) {
     return { "Cache-Control": "public, max-age=31536000, immutable" };
   }
+  // `fallback.css` / `plugin.css` are linked as `...css?v=<hash>`, so a version is its own URL
+  if (versioned && fileName.endsWith(".css")) {
+    return { "Cache-Control": "public, max-age=31536000, immutable" };
+  }
   return { "Cache-Control": "no-cache" };
 }
 
 /** @type {import("@sveltejs/kit").RequestHandler} */
-export async function GET({ params, request }) {
+export async function GET({ params, request, url }) {
   const { pluginId, fileName } = params;
 
   // Ensure pluginId and fileName are safe and sanitize inputs
@@ -57,7 +62,7 @@ export async function GET({ params, request }) {
     // Use mime-types to automatically determine the content type
     const contentType = mime.lookup(fileName) || "application/octet-stream"; // Default to 'application/octet-stream' if mime type is unknown
 
-    const cacheHeaders = cacheHeadersFor(safeFileName, data);
+    const cacheHeaders = cacheHeadersFor(safeFileName, data, Boolean(url?.searchParams?.has("v")));
 
     // Honor conditional requests when we expose an ETag (client.mjs).
     if (cacheHeaders.ETag && request.headers.get("if-none-match") === cacheHeaders.ETag) {

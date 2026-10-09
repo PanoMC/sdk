@@ -15,17 +15,12 @@
 
 <script context="module">
   import { executeLifecycle, executeViewLoad, panoApiServer } from "$pano/lib/PluginAPI";
-  import { resolveView } from "$pano/registry/index.js";
+  import { loadView } from "$pano/registry/index.js";
 
   export async function load(event) {
     // Resolved in load (not {#await} in markup): universal load data is not
     // serialized, so the component class can travel in it, and SSR renders the
     // view instead of an await-pending branch.
-    const viewPromise = resolveView(
-      "RegisterView",
-      () => import("../views/RegisterView.svelte"),
-    );
-
     const { parent } = event;
     await parent();
 
@@ -43,7 +38,7 @@
       initialError: lifecycleData.error || null,
       initialUsername: lifecycleData.username || null,
       pageTitle: "components.modals.register.title",
-      View: await viewPromise
+      ...(await loadView(event, "RegisterView", () => import("../views/RegisterView.svelte")))
     };
   }
 </script>
@@ -99,7 +94,7 @@
       recaptcha: "",
     })
       .then(async (body) => {
-        if (body.result === "ok") {
+        if (!body.error) {
           if (body.login) {
             const csrfToken = body.csrfToken;
             const credsBody = await getCredentials(csrfToken);
@@ -126,10 +121,10 @@
           successMessage.set("REGISTER_SUCCESSFUL");
           loading.set(false);
         } else {
-          if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-            error.set(body.reason);
+          if (body.error.code === "PLUGIN_DENIED_LOGIN" && body.error.details?.reason) {
+            error.set(body.error.details.reason);
           } else {
-            error.set(body.result === "error" ? body.error : NETWORK_ERROR);
+            error.set(body.error.code || NETWORK_ERROR);
           }
           loading.set(false);
         }

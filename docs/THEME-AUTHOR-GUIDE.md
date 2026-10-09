@@ -6,21 +6,26 @@ build pipeline) arrives as a package and updates with `bun update`.
 
 ## The three tiers
 
+Every theme sits in one of three tiers. There is no tier 0: a theme is always a build of the engine.
+
 | Tier | You write | Migration cost on core updates |
 |---|---|---|
-| 1 — Tokens | `src/styles/tokens.scss` + `lang-overrides/` + assets | **Zero edits, even across majors** |
-| 2 — Views | + `src/views/*.svelte` overrides (typed props) | Minors: zero. Majors: only the views you overrode |
-| 3 — Eject | + owned route files (`@theme-core-eject`) | Ejected files are yours to maintain |
+| 1 - Tokens | `src/styles/tokens.scss` + `lang-overrides/` + assets | **Zero edits, even across majors** |
+| 2 - Views | + `src/views/*.svelte` overrides of engine views and of plugin views (typed props) | Minors: zero. Majors: only the views you overrode |
+| 3 - Eject | + owned route files (`@theme-core-eject`), route config, home pages | Ejected files are yours to maintain |
 
-see `skin-runtime/launcher.js`), for pure-CSS restyles that must never rebuild.
+The `tier` key in `core-meta.json` is yours and only informative. A plugin's views are redrawn the same way as the
+engine's: see `PLUGIN-VIEWS.md`. Logic shared with plugins is in `CONTROLLERS.md`. The fast path for a new theme is
+`QUICKSTART-THEME.md`.
 
 ## Anatomy of a theme
 
 ```
 my-theme/
 ├─ manifest.json          id, title, version, author, panoVersion, screenshots
-├─ core-meta.json         { "tier": 1 }  (coreVersion stamped at build)
-├─ theme.config.js        view overrides + settings-schema extensions
+├─ core-meta.json         { "tier": 1 }  (coreVersion and the generated data stamped at build)
+├─ plugin-contracts/      plugin view contracts, written by `theme-core contracts pull` (commit it)
+├─ theme.config.js        views, controllers, claims, routes, home, provides, settingsSchema
 ├─ package.json           svelte pinned EXACTLY to core's version
 ├─ svelte.config.js       export default await createSvelteConfig(import.meta.url)
 ├─ vite.config.js         export default createViteConfig()
@@ -32,7 +37,7 @@ my-theme/
 │  ├─ lib/                generated artifacts + sdk host-provides stubs
 │  ├─ styles/tokens.scss  YOUR design tokens (colors, radii, fonts, shadows)
 │  ├─ styles/style.scss   tokens first, then the engine SCSS, then your CSS
-│  └─ views/              YOUR view overrides (only the ones you eject)
+│  └─ views/              YOUR view overrides (only the ones you eject; plugin views in views/<ns>/)
 └─ static/                your assets
 ```
 
@@ -50,7 +55,8 @@ bun run dev          # against a local pano-web-platform (VITE_API_URL in .env)
 **Change markup (Tier 2):**
 
 ```sh
-bunx theme-core eject-view LoginView
+bunx @panomc/theme-core eject-view LoginView
+bunx @panomc/theme-core eject-view market:ProductCard
 ```
 
 copies core's default view into `src/views/LoginView.svelte` and registers it in
@@ -63,11 +69,16 @@ The chrome components (`Navbar`, `Header`, `Footer`) and the plugin-facing
 components (`LoginFormBody`, `RegisterForm`, `Pagination`, …) are individually
 overridable the same way — no need to eject a whole layout for a navbar.
 
+**Develop:** `bun run dev:ui` starts with `theme-core dev-hint`, which prints where the dev server URL goes (Panel -> Appearance
+-> Front-end -> Theme dev server) and that Development Mode must be on. Details in `QUICKSTART-THEME.md`.
+
 **Update core:**
 
 ```sh
-bun update @panomc/theme-core && bunx theme-core sync && bun run build
+bun update @panomc/theme-core && bunx @panomc/theme-core sync && bun run build
 ```
+
+`sync` also refreshes `plugin-contracts/` and prints the plugin views whose contract changed.
 
 Tokens-only themes: nothing else, ever. View overrides: read core's changelog
 on majors; `theme-core check` lists every contract violation before you ship.
@@ -76,9 +87,130 @@ on majors; `theme-core check` lists every contract violation before you ship.
 
 ```sh
 bun run build          # reproducible: kit version pinned, licenses deterministic
-bunx theme-core check
-bunx theme-core package   # deterministic zip — its sha256 is the license identity
+bunx @panomc/theme-core check --strict
+bunx @panomc/theme-core package   # deterministic zip — its sha256 is the license identity
 ```
+
+## Plugin UI in your theme
+
+A plugin's default views are the vanilla look. Vanilla overrides none of them: the plugin carries its own look on
+semantic classes (`market-product-card__title`) and, where it needs more, in a `<style>` block of the view (`PLUGIN-VIEWS.md`
+section 6). A theme chooses per plugin how far it goes:
+
+1. Do nothing: the plugin's own look is drawn.
+2. Restyle it. Write rules on the semantic classes in your CSS. Your unlayered CSS beats the plugin's `@layer pano-plugin`
+   sheet, so `.market-product-card__title { margin: 1rem }` just works.
+3. Eject a view (`eject-view market:ProductCard`) and draw it yourself.
+4. Place a block yourself: `<PluginBlock id="market:GoalWidget" />` claims it, and the automatic copy is dropped.
+
+`bunx theme-core check` (C4, C14) keeps slots and root classes when you eject. Every view id of the official plugins is in
+`PLUGIN-VIEWS.md` section 8. Plugin views you leave alone count as `default look kept`.
+
+## When a plugin is or is not installed
+
+"If plugin X is there, look like this, otherwise like that" has three answers, from most to least work:
+
+1. **Behaviour and layout: `hasPlugin(siteInfo, idOrNamespace)`** from `$pano/lib/plugins.js`. It reads `siteInfo.plugins`
+   (the installed, running plugins, keyed by plugin id) and keeps no state, so it is safe in SSR. Give it the
+   full id (`"pano-plugin-market"`, canonical) or the short namespace (`"market"`). `pluginInfo(siteInfo, "market")`
+   returns the entry `{ version, uiHash, dependencies }` or `null`.
+   ```js
+   // load(): decide on the server
+   const { session } = await parent();
+   return { shop: hasPlugin(session.siteInfo, "market") };
+   ```
+   ```svelte
+   <!-- component: $session.siteInfo follows the store -->
+   <Hero cta={hasPlugin($session.siteInfo, "market") ? "store" : "register"} />
+   ```
+2. **Show this block, or that: `<PluginBlock>` with a `fallback` snippet.** No check needed; the snippet renders when the
+   plugin is missing.
+   ```svelte
+   <PluginBlock id="market:GoalWidget">
+     {#snippet fallback()}<p>{$_("landing.join")}</p>{/snippet}
+   </PluginBlock>
+   ```
+3. **Overridden views and plugin CSS need no guard.** A view override or a rule on a plugin's classes stays unused when
+   the plugin is missing, and the panel lists it as "plugin not installed", not as an error.
+
+Do not call a plugin's API or controller without the check (`createPluginApi("pano-plugin-market")` on a site without the
+market is a 404). Do not hard-code a menu entry to a plugin page: build the entry only when `hasPlugin` is true.
+
+## Routes
+
+`theme.config.js` can add, disable and rename routes. Canonical paths (the ones in route files and in plugin pages) never
+change; the config only changes what visitors see.
+
+```js
+routes: {
+  add:     { "/staff-team": "./src/pages/StaffTeam.svelte" },
+  disable: ["/rules", "/store/[slug]"],
+  rename:  { "/store": "/shop", "/store/[slug]": "/shop/[slug]", "/post/[url]": "/news/[url]" },
+},
+```
+
+- Patterns use `[param]`; both sides of a rename need the same parameter names.
+- A renamed-away path answers 308 to the new one, a disabled path is a 404, `add` on a path that exists is an error.
+- Links the engine writes follow the map. In your own markup write `href={route("/store")}` (`route` comes from
+  `$pano/registry/index.js`, or `@panomc/sdk/utils/route` in a plugin).
+- Mails and redirects from the backend follow a rename too, through `routes` in `core-meta.json`.
+- Nothing may target `/posts` or `/__pano*`; `check` rule C9 reports it.
+
+## Home page
+
+The admin picks the home page from a select in the panel. You declare the options:
+
+```js
+home: {
+  default: "landing",
+  options: {
+    posts:   { label: "Posts" },                                          // built in
+    landing: { label: { "en-US": "Landing", tr: "Acilis" }, page: "./src/pages/Landing.svelte" },
+    store:   { label: "Store", path: "/store" },                         // a plugin page by its canonical path
+    custom:  { label: "Custom page", path: "*" },                        // the admin types a site path
+  },
+},
+```
+
+With no `home` key the options are `posts`, every installed plugin page that has `view.home`, and `custom`. A choice that
+cannot be shown (plugin removed, unknown option) falls back to `default`, then to the posts feed, with one console
+warning. The posts feed is always at `/posts`. Rule C10 checks the block.
+
+## `provides`: Bootstrap and Font Awesome
+
+A theme that ships Bootstrap and Font Awesome (all five official themes do) writes nothing. A theme with its own CSS says so:
+
+```js
+provides: { bootstrap: false, fontawesome: false },
+```
+
+Then the engine links a scoped fallback stylesheet (the Bootstrap-free twin of the vanilla look) for every default plugin view the theme did not override, bound to
+the `--pano-*` variables (34 of them, see `packages/plugin-kit/src/styles/tokens.map.js`). Set them in your own CSS:
+
+```css
+:root { --pano-color-primary: #7c3aed; --pano-radius: 0.5rem; }
+```
+
+`check` (rule C13) fails when `provides.bootstrap` is `false` but your SCSS still imports Bootstrap, and warns when
+the opposite holds.
+
+**Browser floor.** The fallback sheet uses `@scope`, `color-mix()` and `@layer`: Chrome 118, Safari 17.4, Firefox 146.
+Below that, a default plugin view in a Bootstrap-free theme is unstyled. Themes that keep Bootstrap are not affected.
+
+**Wrapper caveats.** In a Bootstrap-free theme each plugin's default view tree sits in one wrapper element
+(`display: contents`), and an override nested in it gets a stop wrapper. So:
+
+- a CSS child combinator (`.a > .b`) that crosses a plugin boundary or a stop wrapper does not match;
+- a table-row view gets no wrapper, it is styled only inside its own plugin's scope, and an override of it inherits the
+  fallback;
+- your unlayered CSS beats the fallback, so `.market-product-card__title { margin: 1rem }` just works.
+
+The wrapper is applied by the engine's `views.wrap`, which is the identity in a Bootstrap theme. A plugin without
+fallback styles renders unwrapped.
+
+**Icons.** Default plugin views use `<i class="fa-solid fa-...">`, and icon names can arrive as data, so the fallback is the
+whole Font Awesome Free stylesheet (`assets/css/pano-fallback-icons.css`). With `fontawesome: false` it is linked for every
+default view. To use your own icons in a plugin view, override that view.
 
 ## Extending theme settings
 
@@ -115,11 +247,15 @@ noting it.
 
 - `svelte` pinned exactly to core's version (plugins share the host runtime;
   skew silently drops plugins)
-- every registered view exists and is a known contract name
+- every registered view exists and is a known contract name (engine views from the package, plugin views from
+  `plugin-contracts/`); an outdated `contract` is a warning, the default view renders until you update
 - overridden views keep every plugin slot/hook the default mounts
+- routes, home, claims, controller pins and styles are valid (rules C9 to C13)
 - `lang-overrides/*.json` parse; merging is additive (you cannot delete a key)
 - `settingsSchema` (when present) is shape-valid, appends only, puts no key in a
   different tab than the base does, and its `defaultTab` is a real tab
 - `manifest.json` carries the required keys; `id` ≠ `vanilla-theme`
 
-The machine-readable contract lives in `skin-contract.json` inside the package.
+`check --strict` turns warnings into errors; run it before `package`. `check --fix` writes missing controller pins.
+The machine-readable contract of the engine views lives in `packages/theme-core/skin-contract.json`; the rule list is at
+the top of `packages/theme-core/bin/check.js`.

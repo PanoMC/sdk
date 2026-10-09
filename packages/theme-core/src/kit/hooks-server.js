@@ -24,9 +24,10 @@ import {
   updateApiUrl,
   updatePanoWebsiteUrl,
 } from "../lib/variables.js";
-import { dev } from "$app/environment";
+import * as environment from "$app/environment";
 import { getCredentialsServerSide } from "../lib/services/auth.js";
 import { createLicenseRuntime } from "./license-runtime.js";
+import { resolveCanonical, route } from "../registry/routes.js";
 import { RUNTIME_SPECIFIERS } from "./specifiers.js";
 
 function stripModulePreload(linkHeader) {
@@ -90,6 +91,37 @@ function renderLicenseBlocked(reason, message) {
       "content-type": "text/html; charset=utf-8",
       "cache-control": "no-store",
     },
+  });
+}
+
+/**
+ * A canonical path the theme renamed (`/store` when the theme publishes `/shop`) answers a 308 to
+ * the public path; `null` for every other request. Page navigations only: SvelteKit's data
+ * requests (`__data.json`) and non-GET methods go through, so the client keeps resolving the
+ * canonical path. Doc 01 section 9.
+ * @param {{ url: URL, request: { method: string }, isDataRequest?: boolean }} event
+ * @param {string} [base]  `kit.paths.base`
+ * @returns {Response | null}
+ */
+export function redirectRenamedPath(event, base = "") {
+  const { url, request } = event;
+
+  if (event.isDataRequest || (request.method !== "GET" && request.method !== "HEAD")) {
+    return null;
+  }
+
+  const sitePath = base && url.pathname.startsWith(base) ? url.pathname.slice(base.length) || "/" : url.pathname;
+  const publicPath = route(sitePath);
+
+  // Renamed away = it has a public path of its own, and it is not also the public path of another
+  // rename (a swap `/a` <-> `/b` redirects nothing).
+  if (publicPath === sitePath || resolveCanonical(sitePath) !== sitePath) {
+    return null;
+  }
+
+  return new Response(null, {
+    status: 308,
+    headers: { location: base + publicPath + url.search },
   });
 }
 
@@ -159,6 +191,7 @@ ${importMapEntries}
   // every production build (baked into the bundle — cannot be spoofed with
   // NODE_ENV at runtime). Premium authors can develop locally without a license;
   // shipped zips keep enforcing.
+  const dev = Boolean(environment.dev);
   const licenseEnforced = license.isPremiumBuild() && !dev;
   if (license.isPremiumBuild() && dev) {
     console.log(
@@ -210,6 +243,11 @@ ${importMapEntries}
       }
     }
 
+    const renamed = redirectRenamedPath(event, base);
+    if (renamed) {
+      return renamed;
+    }
+
     const locals = {};
 
     // noinspection JSUnresolvedReference
@@ -242,7 +280,7 @@ ${importMapEntries}
     );
 
     if (resolveLocals) {
-      // Profile-specific (panel: /api/panel/basicData → locals.basicData/jwt).
+      // Profile-specific (panel: /api/v1/panel/basicData → locals.basicData/jwt).
       await resolveLocals({ event, locals, jwt, csrfToken, pathname });
     } else {
       locals.user =
@@ -296,48 +334,68 @@ ${importMapEntries}
     };
   }
 
-  /** @type {import("@sveltejs/kit").HandleFetch} */
+  /**
+   * Requests to the Pano backend carry the visitor's cookie. With `PANO_FRONTEND_KEY` set (Pano
+   * gives the internal key to the UI it starts) they also carry `X-Pano-Frontend-Key` and
+   * `X-Pano-Client-Ip`, so the backend sees the visitor instead of this server; without the key
+   * neither header is sent, never an empty one. No `Origin` header is set: the key lets a server
+   * request skip the origin gate (doc 05 sections 3 and 4).
+   * @type {import("@sveltejs/kit").HandleFetch}
+   */
   async function handleFetch({ event, request, fetch }) {
     // Rewrite relative /api/ requests to the backend URL during SSR.
     // Load functions use relative paths for consistent SSR↔CSR fetch dedup.
+    let toBackend = false;
+
     if (request.url.startsWith(event.url.origin + "/api/")) {
       const apiPath =
         new URL(request.url).pathname + new URL(request.url).search;
       const backendUrl = API_URL.replace(/\/api\/?$/, "") + apiPath;
       request = new Request(backendUrl, request);
-      request.headers.set("cookie", event.request.headers.get("cookie") || "");
-      request.headers.set("Origin", API_URL);
+      toBackend = true;
     } else if (request.url.startsWith(API_URL)) {
-      request.headers.set("cookie", event.request.headers.get("cookie") || "");
-      request.headers.set("Origin", API_URL);
+      toBackend = true;
     }
 
-    // The visit is recorded from SSR, so the backend's peer is this server: without the
-    // visitor's address every visit counted as 127.0.0.1 and the panel showed one visitor a
-    // day. Only this request carries it, so rate limits keep bucketing SSR as before.
-    if (new URL(request.url).pathname.endsWith("/api/visitorVisit")) {
-      const clientAddress = getVisitorAddress(event);
+    if (toBackend) {
+      request.headers.set("cookie", event.request.headers.get("cookie") || "");
 
-      if (clientAddress) {
-        request.headers.set("X-Forwarded-For", clientAddress);
+      const key = process.env.PANO_FRONTEND_KEY?.trim();
+
+      if (key) {
+        request.headers.set("X-Pano-Frontend-Key", key);
+
+        const clientIp = getVisitorAddress(event);
+
+        if (clientIp) {
+          request.headers.set("X-Pano-Client-Ip", clientIp);
+        }
       }
     }
 
-    return fetch(request);
+    // Backend calls use the runtime's own fetch, not the hook's: on a direct install the site
+    // origin (the forwarded host) can equal the API_URL origin, and SvelteKit's fetch would then
+    // route the "same-origin" request into this app's own routes instead of the network.
+    return toBackend ? globalThis.fetch(request) : fetch(request);
   }
 
   /**
-   * Cloudflare's header first (Pano Host sits behind it), then the first hop a reverse proxy
-   * declared (Pano's own UI proxy always fills one), then the socket peer.
+   * The single `X-Forwarded-For` value Pano's UI proxy writes (it always rewrites the header with
+   * the resolved client address), then the socket peer when the server is reached directly. No
+   * `cf-connecting-ip`: the backend resolves Cloudflare itself.
    */
   function getVisitorAddress(event) {
-    const headers = event.request.headers;
-    const forwardedFor = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+    const forwardedFor = event.request.headers
+      .get("x-forwarded-for")
+      ?.split(",")[0]
+      ?.trim();
+
+    if (forwardedFor) return forwardedFor;
 
     try {
-      return headers.get("cf-connecting-ip")?.trim() || forwardedFor || event.getClientAddress();
+      return event.getClientAddress() || null;
     } catch {
-      return forwardedFor || null;
+      return null;
     }
   }
 

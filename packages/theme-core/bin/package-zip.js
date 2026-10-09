@@ -8,16 +8,30 @@
  * (The build itself is reproducible because the core svelte-config factory
  * pins kit.version.name; see docs/P0-SPIKE.md.)
  *
+ * `check.js --strict` runs first and a failure stops the packaging, so every published theme passes the
+ * same contract check.
+ *
  * Usage: theme-core package [outfile.zip]   (default: <id>-<version>.zip)
  */
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync, utimesSync, readdirSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { pc } from "./ui.js";
 
 const ROOT = process.cwd();
 
 const BUILD = join(ROOT, "build");
+
+const checked = spawnSync(process.execPath, [join(dirname(fileURLToPath(import.meta.url)), "check.js"), "--strict"], {
+  stdio: "inherit",
+  cwd: ROOT,
+});
+
+if (checked.status !== 0) {
+  console.error(`[theme-core] \`check --strict\` failed — nothing was packaged; fix the problems above and run \`theme-core package\` again`);
+  process.exit(checked.status ?? 1);
+}
 
 if (!existsSync(join(BUILD, "manifest.json"))) {
   console.error("[theme-core] build/manifest.json missing — run `bun run build` first");

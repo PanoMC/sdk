@@ -1,0 +1,4 @@
+{
+  "market/cart": { "version": 2, "scope": "app", "state": ["lines", "count"], "actions": ["add", "clear"], "types": { "state": "CartState", "actions": "CartActions" } },
+  "market/format": { "version": 1, "scope": "app", "state": [], "actions": ["price"], "types": { "state": "FormatState", "actions": "FormatActions" } }
+}

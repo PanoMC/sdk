@@ -1,79 +1,21 @@
-<div class="toast-container position-fixed bottom-0 end-0 p-3 d-xl-block d-none">
-  {#each $notifications as notification, index (notification)}
-    <article
-      id="notificationToast{notification.id}"
-      class="toast position-relative"
-      aria-live="assertive"
-      aria-atomic="true">
-
-      <div class="toast-header text-bg-primary">
-        <strong class="me-auto">
-          {$_("components.notification-container.notification")}
-        </strong>
-        <small>
-          {getTime(
-            checkTime,
-            parseInt(notification.createdAt),
-            locales[$currentLanguage.dateFnsCode],
-          )}
-        </small>
-
-        <button
-          type="button"
-          class="btn-close btn-close-white position-relative z-3"
-          aria-label="{$_('buttons.close')}"
-          data-bs-dismiss="toast"
-          on:click|stopPropagation>
-        </button>
-      </div>
-
-      <div class="toast-body">
-        <div
-          class="fw-normal list-group-item list-group-item-action d-flex align-items-center gap-3 text-wrap">
-          <button
-            type="button"
-            title={$_("buttons.view")}
-            on:click={() => onNotificationClick(notification, navigate)}
-            class="text-start border-0 bg-transparent p-0 d-flex align-items-center gap-3">
-
-          <span class="d-flex align-items-center">
-            {#if notification.details.faIcon}
-              <i class="{notification.details.faIcon} fa-fw"></i>
-            {:else if notification.details.image || notification.details.username}
-              <img
-                src="{notification.details.image || `/api/profile/picture/${notification.details.username}?${$avatarVersion}`}"
-                alt="{$_('buttons.view')}"
-                width="48"
-                height="48"
-                class="rounded" />
-            {:else}
-              <i class="fa fa-fw fa-bolt"></i>
-            {/if}
-          </span>
-
-            <span class="text-start">
-            <span class="text-wrap markdown-renderer text-break">
-              {@html $_(notificationTextKey(notification), {
-                values: { ...sanitizeObject(notification.details || {}) },
-                default: $_('notifications.UNKNOWN')
-              })}
-            </span>
-          </span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Invisible button covering whole area without creating spacing -->
-      <button
-        type="button"
-        class="stretched-link p-0 border-0 bg-transparent position-absolute top-0 start-0 w-100 h-100"
-        aria-label={$_("buttons.view")}
-        on:click={() => onClick(notification)}>
-      </button>
-    </article>
-
-  {/each}
-</div>
+<!--
+  Controller of the engine's <NotificationContainer>. The markup lives in views/parts/NotificationContainer.svelte; a
+  theme may replace it with the "NotificationContainer" entry of theme.config.js views (see skin-contract.json for the
+  props). The module API (show, hide) and the realtime / polling logic stay here.
+-->
+<svelte:component
+  this={getOverride("NotificationContainer") ?? NotificationContainerView}
+  {notifications}
+  {checkTime}
+  {currentLanguage}
+  {locales}
+  {avatarVersion}
+  {getTime}
+  {onNotificationClick}
+  {navigate}
+  {notificationTextKey}
+  {sanitizeObject}
+  {onClick} />
 
 <script context="module">
   import { tick } from "svelte";
@@ -141,7 +83,6 @@
   import { getContext, onDestroy, onMount } from "svelte";
   import { formatDistanceToNow } from "date-fns";
   import { sanitize } from "@jill64/universal-sanitizer";
-  import { _ } from "svelte-i18n";
 
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
@@ -153,6 +94,8 @@
   import { onNotificationClick, notificationTextKey } from "$pano/lib/NotificationManager.js";
   import * as locales from "date-fns/locale";
   import { currentLanguage } from "$pano/lib/language.util.js";
+  import { getOverride } from "$pano/registry/index.js";
+  import NotificationContainerView from "$pano/lib/views/parts/NotificationContainer.svelte";
 
   let quickNotificationProcessID = 0;
 
@@ -229,11 +172,11 @@
     await delay();
 
     ApiUtil.get({
-      path: "/api/notifications/quick",
+      path: "/notifications/quick",
     }).then((body) => {
       if (quickNotificationProcessID === id) {
-        if (body.result === "ok") {
-          setNotifications(body.notifications);
+        if (!body.error) {
+          setNotifications(body.items);
 
           notificationsCount.set(body.notificationCount);
         }
@@ -268,7 +211,7 @@
 
   function markRead(id) {
     ApiUtil.post({
-      path: `/api/notifications/${id}/read`,
+      path: `/notifications/${id}/read`,
     });
   }
 

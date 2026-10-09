@@ -38,11 +38,11 @@ export async function processLoad(event) {
     request: event
   }).then((body) => {
     if (body.error) {
-      if (body.error === "NOT_EXISTS" || body.error === "BAD_REQUEST") {
-        throw error(404, body.error);
+      if (body.error.code === "NOT_EXISTS" || body.error.code === "BAD_REQUEST") {
+        throw error(404, body.error.code);
       }
 
-      throw error(500, body.error);
+      throw error(500, body.error.code);
     }
 
     data = body;

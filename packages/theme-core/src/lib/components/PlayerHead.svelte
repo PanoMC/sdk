@@ -1,7 +1,7 @@
 {#if lastActivityTime}
   <img
-    src="/api/profile/picture/{username}?{$avatarVersion}"
-    class="img-thumbnail rounded d-block m-auto"
+    src="/api/v1/profile/picture/{username}?{$avatarVersion}"
+    class="pano-player-head img-thumbnail rounded d-block m-auto"
     width="{width}"
     height="{height}"
     alt="{username}"
@@ -17,8 +17,8 @@
     ]}" />
 {:else}
   <img
-    src="/api/profile/picture/{username}?{$avatarVersion}"
-    class="rounded d-block m-auto"
+    src="/api/v1/profile/picture/{username}?{$avatarVersion}"
+    class="pano-player-head rounded d-block m-auto"
     width="{width}"
     height="{height}"
     alt="{username}"

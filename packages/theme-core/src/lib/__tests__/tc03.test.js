@@ -58,15 +58,19 @@ describe("pano.features (spec 15 section 4.1, theme ids)", () => {
     const { panoApi, THEME_FEATURE_IDS } = await import("../PluginAPI.js");
 
     const expected = [
+      "blocks",
       "context-components",
       "decoded-route-params",
       "layout-route-params",
       "login-return-url",
+      "named-views",
       "page-meta",
       "page-sidebar-id",
       "page-title-options",
       "plugin-notifications",
+      "plugin-slots",
       "profile-nav",
+      "route-map",
       "toast-escaped-values",
     ];
 
@@ -132,16 +136,20 @@ describe("source wiring", () => {
     expect(read(lib, "PluginAPI.js")).toMatch(/lifecycle\.reset\(\);\s*resetPluginListeners\(\);/);
   });
 
-  test("Page.svelte resolves the string sidebar after the lifted keys, before returning", () => {
-    const source = read(pkg, "src", "routes", "plugin-ui", "Page.svelte");
+  test("the plugin page load (load.js) resolves the string sidebar after the lifted keys, before returning; Page.svelte injects the sidebars", () => {
+    const source = read(pkg, "src", "routes", "plugin-ui", "load.js");
 
     expect(source).toContain("resolveSidebarSpec");
     expect(source.indexOf("for (const key of")).toBeLessThan(source.indexOf("await resolveSidebarSpec"));
     expect(source.indexOf("await resolveSidebarSpec")).toBeLessThan(source.lastIndexOf("return output;"));
-    expect(source).toContain("HomeSidebar.svelte");
-    expect(source).toContain("ProfileSidebar.svelte");
-    expect(source).toContain("PluginSidebar.svelte");
-    expect(source).toContain("get(panoApi.ui.sidebar.get(sidebarId)).length");
+
+    const page = read(pkg, "src", "routes", "plugin-ui", "Page.svelte");
+
+    expect(page).toContain("loadPluginPage(event, registeredPage, sidebarDeps)");
+    expect(page).toContain("HomeSidebar.svelte");
+    expect(page).toContain("ProfileSidebar.svelte");
+    expect(page).toContain("PluginSidebar.svelte");
+    expect(page).toContain("get(panoApi.ui.sidebar.get(sidebarId)).length");
   });
 
   test("ProfileSidebar registers the profile-nav item (priority 95), merges the built-ins and renders the card", () => {
@@ -150,9 +158,11 @@ describe("source wiring", () => {
     expect(source).toMatch(/id: "profile-nav",\s*component: "local:profile-nav",\s*priority: 95/);
     expect(source).toContain("panoApi.ui.profile.nav.edit");
     expect(source).toContain("mergeProfileNav(navItems)");
-    expect(source).toContain('item.id === "profile-nav"');
-    expect(source).toContain("<ProfileNavCard entries={navEntries} />");
     expect(source).toContain("panoApi.ui.profile.nav.get()");
+    // the card itself is in the part (FX-05)
+    const part = read(lib, "views", "parts", "ProfileSidebar.svelte");
+    expect(part).toContain('item.id === "profile-nav"');
+    expect(part).toContain("<ProfileNavCard entries={navEntries} />");
   });
 
   test("AppLayoutLogics completes the context (T9)", () => {
@@ -177,7 +187,8 @@ describe("source wiring", () => {
   });
 
   test("NotificationContainer pop-up uses notificationTextKey, the UNKNOWN default and the href navigator", () => {
-    const source = read(lib, "components", "NotificationContainer.svelte");
+    // the markup lives in the part, the navigator and the click handlers in the controller (TC-32)
+    const source = read(lib, "components", "NotificationContainer.svelte") + read(lib, "views", "parts", "NotificationContainer.svelte");
 
     expect(source).toContain("notificationTextKey(notification)");
     expect(source).toContain("notifications.UNKNOWN");
@@ -253,10 +264,13 @@ describe.skipIf(!svelteDir)("server render", () => {
       components: {
         "$pano/lib/components/sidebars/PluginSidebar.svelte": join(sidebars, "PluginSidebar.svelte"),
         "$pano/lib/components/Sidebar.svelte": join(lib, "components", "Sidebar.svelte"),
+        "$pano/lib/views/parts/Sidebar.svelte": join(lib, "views", "parts", "Sidebar.svelte"),
         "$pano/lib/components/ViewComponent.svelte": join(lib, "components", "ViewComponent.svelte"),
         "$pano/lib/components/Probe.svelte": join(import.meta.dir, "fixtures", "Probe.svelte"),
       },
       modules: {
+        "$pano/registry/index.js": `export const getOverride = () => null;`,
+        "@panomc/sdk/internal": `export const getPanoContext = () => ({});`,
         "$pano/lib/PluginAPI": `
           import { readable } from "svelte/store";
           import Probe from "$pano/lib/components/Probe.svelte";
@@ -278,7 +292,7 @@ describe.skipIf(!svelteDir)("server render", () => {
       { sidebarId: "fixture", side: "left" },
     );
 
-    expect(body).toContain('<aside class="col-lg-4 order-first order-lg-first">');
+    expect(body).toContain('<aside class="pano-sidebar col-lg-4 order-first order-lg-first">');
     expect(body).toContain('<div class="vstack gap-3">');
     expect(body).toContain("First");
     expect(body).toContain("Second");
@@ -291,7 +305,7 @@ describe.skipIf(!svelteDir)("server render", () => {
       sidebarId: "fixture",
     });
 
-    expect(body).toContain('class="col-lg-4 order-first order-lg-last"');
+    expect(body).toContain('class="pano-sidebar col-lg-4 order-first order-lg-last"');
   });
 
   test("DefaultToast escapes markup in values but keeps markup of the locale string", async () => {
@@ -300,9 +314,12 @@ describe.skipIf(!svelteDir)("server render", () => {
       components: {
         "#toast": join(lib, "components", "DefaultToast.svelte"),
         "$pano/lib/components/Toast.svelte": join(lib, "components", "Toast.svelte"),
+        "$pano/lib/views/parts/DefaultToast.svelte": join(lib, "views", "parts", "DefaultToast.svelte"),
+        "$pano/lib/views/parts/Toast.svelte": join(lib, "views", "parts", "Toast.svelte"),
       },
       modules: {
         "svelte-i18n": i18nStub,
+        "$pano/registry/index.js": "export const getOverride = () => null;",
         "@panomc/sdk/core/js/html.util.js": `export * from ${JSON.stringify(html)};`,
       },
       props: { id: 1, text: "<b>Hello</b> {name}", values: { name: "<img src=x onerror=alert(1)>", n: 4 } },
@@ -320,9 +337,12 @@ describe.skipIf(!svelteDir)("server render", () => {
       components: {
         "#toast": join(lib, "components", "DefaultToast.svelte"),
         "$pano/lib/components/Toast.svelte": join(lib, "components", "Toast.svelte"),
+        "$pano/lib/views/parts/DefaultToast.svelte": join(lib, "views", "parts", "DefaultToast.svelte"),
+        "$pano/lib/views/parts/Toast.svelte": join(lib, "views", "parts", "Toast.svelte"),
       },
       modules: {
         "svelte-i18n": i18nStub,
+        "$pano/registry/index.js": "export const getOverride = () => null;",
         "@panomc/sdk/core/js/html.util.js": `export * from ${JSON.stringify(html)};`,
       },
       props: { id: 2, text: "Plain", values: undefined, variant: "success" },

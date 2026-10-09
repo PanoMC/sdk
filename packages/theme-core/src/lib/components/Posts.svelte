@@ -1,19 +1,12 @@
-<div class="row g-3">
-  {#each posts as post, index (post)}
-    <div class="col-md-6">
-      <Post post="{post}" />
-    </div>
-  {:else}
-    <div class="col-12">
-      <NoContent />
-    </div>
-  {/each}
-</div>
+<!--
+  Controller of the engine's <Posts>. The markup lives in views/parts/Posts.svelte; a theme may
+  replace it with the "Posts" entry of theme.config.js views (see skin-contract.json for the props).
+-->
+<svelte:component this={getOverride("Posts") ?? PostsView} {posts} />
 
-<!-- Post Card End -->
 <script>
-  import Post from "$pano/lib/components/Post.svelte";
-  import NoContent from "$pano/lib/components/NoContent.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import PostsView from "$pano/lib/views/parts/Posts.svelte";
 
   export let posts;
 </script>

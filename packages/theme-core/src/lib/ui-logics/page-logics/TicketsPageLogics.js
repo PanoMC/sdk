@@ -43,11 +43,13 @@ export async function processLoad(event) {
   });
 
   if (data.error) {
-    if (data.error === "PAGE_NOT_FOUND" || data.error === "NOT_EXISTS" || data.error === "BAD_REQUEST") {
-      throw error(404, data.error);
+    const code = data.error.code;
+
+    if (code === "PAGE_NOT_FOUND" || code === "NOT_EXISTS" || code === "BAD_REQUEST") {
+      throw error(404, code);
     }
 
-    throw error(500, data.error);
+    throw error(500, code);
   }
 
   data.pageType = pageType;

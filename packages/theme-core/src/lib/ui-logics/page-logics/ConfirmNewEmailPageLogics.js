@@ -25,13 +25,13 @@ export async function verifyEmail(error, successMessage, loading, data) {
   await sendVerifyNewEmail(data.token)
     .then((body) => {
       loading.set(false);
-      if (body.result === "ok") {
+      if (!body.error) {
         successMessage.set("VALIDATION_SUCCESSFUL");
       } else {
-        if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-          error.set(body.reason);
+        if (body.error.code === "PLUGIN_DENIED_LOGIN" && body.error.details?.reason) {
+          error.set(body.error.details.reason);
         } else {
-          error.set(body.error);
+          error.set(body.error.code);
         }
       }
     })

@@ -32,11 +32,11 @@ export async function processLoad(event) {
   await getPostDetail({ url: event.params.url, request: event }).then(
     (body) => {
       if (body.error) {
-        if (body.error === "POST_NOT_FOUND") {
-          throw error(404, body.error);
+        if (body.error.code === "POST_NOT_FOUND") {
+          throw error(404, body.error.code);
         }
 
-        throw error(500, body.error);
+        throw error(500, body.error.code);
       }
 
       data = body;

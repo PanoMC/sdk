@@ -1,0 +1,73 @@
+{
+  "controllers": {
+    "goals/plain": {
+      "actions": [
+        "bump"
+      ],
+      "state": [
+        "count"
+      ],
+      "version": 1
+    },
+    "goals/stats": {
+      "actions": [
+        "refresh"
+      ],
+      "state": [
+        "total",
+        "signedIn"
+      ],
+      "version": 1
+    }
+  },
+  "format": 1,
+  "views": {
+    "goals:GoalWidget": {
+      "classes": [
+        "goals-goal-widget"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "data": {
+          "required": true
+        },
+        "title": {
+          "required": false
+        }
+      },
+      "slots": []
+    },
+    "goals:GoalsPage": {
+      "classes": [
+        "goals-goals-page"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {},
+      "slots": []
+    },
+    "goals:StatsWidget": {
+      "classes": [
+        "goals-stats-widget"
+      ],
+      "contract": 1,
+      "hooks": [],
+      "props": {
+        "compact": {
+          "required": false
+        },
+        "goalId": {
+          "required": true
+        },
+        "limit": {
+          "required": false
+        },
+        "stats": {
+          "required": true
+        }
+      },
+      "slots": []
+    }
+  }
+}

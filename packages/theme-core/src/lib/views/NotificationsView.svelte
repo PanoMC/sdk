@@ -4,7 +4,7 @@
   Props:
     data                       object — page data from load (notifications, notificationCount, sidebar config)
     notifications              store — list of the user's currently loaded notifications
-    count                      store — total notification count on the server
+    count                      store — notifications on the server as far as the cursor says: above the loaded list while page.nextCursor is set, equal to it when the list is complete
     page                       store — zero-based "load more" page index
     loadMoreLoading            store — true while the next page of notifications is being fetched
     checkTime                  store — tick counter handed to getTime so relative timestamps refresh
@@ -20,15 +20,15 @@
   Override from a theme:
     theme.config.js → views: { NotificationsView: () => import("./src/views/NotificationsView.svelte") }
 -->
-<div class="vstack gap-3">
+<div class="pano-notifications-view vstack gap-3">
 
   <!-- Notifications -->
   <div class="card mt-3 mt-lg-0">
-    <div class="card-body">
-      <div class="list-group" class:d-none={$notifications.length === 0}>
+    <div class="pano-notifications-view__body card-body">
+      <div class="pano-notifications-view__list list-group" class:d-none={$notifications.length === 0}>
         {#each $notifications as notification, index (notification.id)}
           <div
-            class="site-notification-row fw-normal list-group-item list-group-item-action d-flex align-items-center gap-3 text-wrap"
+            class="pano-notifications-view__item site-notification-row fw-normal list-group-item list-group-item-action d-flex align-items-center gap-3 text-wrap"
             class:notification-unread={notification.status === "NOT_READ"}>
             <button
               type="button"
@@ -43,11 +43,11 @@
                 {:else if notification.details.image || notification.details.username}
                   <img
                     src={notification.details.image ||
-                      `/api/profile/picture/${notification.details.username}?${$avatarVersion}`}
+                      `/api/v1/profile/picture/${notification.details.username}?${$avatarVersion}`}
                     alt={$_("buttons.view")}
                     width="30"
                     height="30"
-                    class="rounded" />
+                    class="pano-notifications-view__image rounded" />
                 {:else}
                   <i class="fa fa-bolt fa-xl fa-fw text-primary"></i>
                 {/if}
@@ -88,10 +88,10 @@
         <NoContent />
       {/if}
 
-      {#if $notifications.length < $count && $count > 10 + 10 * $page}
+      {#if $notifications.length < $count}
         <div class="mt-3">
           <button
-            class="btn btn-primary d-block m-auto"
+            class="pano-notifications-view__action btn btn-primary d-block m-auto"
             class:disabled={$loadMoreLoading}
             on:click={() => loadMore(notifications, loadMoreLoading)}
             >{$_("pages.notifications.show-more", {

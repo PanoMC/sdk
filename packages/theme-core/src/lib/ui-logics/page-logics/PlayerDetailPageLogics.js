@@ -22,11 +22,11 @@ export async function processLoad(event) {
   ]);
 
   if (profileBody.error) {
-    if (profileBody.error === "NOT_EXISTS") {
-      throw error(404, profileBody.error);
+    if (profileBody.error.code === "NOT_EXISTS") {
+      throw error(404, profileBody.error.code);
     }
 
-    throw error(500, profileBody.error);
+    throw error(500, profileBody.error.code);
   }
 
   data = profileBody;

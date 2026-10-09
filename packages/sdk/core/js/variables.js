@@ -16,6 +16,39 @@ export const JWT_COOKIE_NAME = 'auth_token';
 
 export const CSRF_HEADER = 'X-CSRF-Token';
 
+/** Dev-only tool pages (the view catalogue) live in the vite dev server alone: the Pano dev server cannot serve them. */
+const DEV_ONLY_PREFIX = '/__pano/';
+
+/**
+ * Where a page opened on a vite dev port bounces to, or null when it stays. Pure, so a test can run it.
+ * @param {{ apiUrl: string, currentHref: string, basePath?: string }} input
+ * @returns {string | null}
+ */
+export function devBounceTarget({ apiUrl, currentHref, basePath = '/' }) {
+  const api = new URL(apiUrl);
+  const currentUrl = new URL(currentHref);
+
+  // Only bounce when the page was opened on the vite port of the SAME machine
+  // (localhost:3000 -> localhost:8088). Reaching the Pano dev server through another
+  // hostname — a LAN address, ngrok, cloudflared — is legitimate: Pano already proxies vite
+  // for that visitor, and API_URL's host means nothing on their machine.
+  if (!isSameDevHost(currentUrl.hostname, api.hostname)) return null;
+
+  if (currentUrl.port === api.port && currentUrl.protocol === api.protocol) return null;
+
+  // The view catalogue (`/__pano/...`) exists in `vite dev` only; the Pano on the API port serves the built theme,
+  // where the same path is a 404. Bouncing there made every catalogue page a 404.
+  if (currentUrl.pathname.startsWith(DEV_ONLY_PREFIX)) return null;
+
+  let pathname = currentUrl.pathname;
+
+  if (basePath !== '/' && !pathname.startsWith(basePath)) {
+    pathname = basePath + (pathname === '/' ? '' : pathname);
+  }
+
+  return new URL(pathname + currentUrl.search + currentUrl.hash, api.origin).toString();
+}
+
 export function checkDomainRedirection() {
   if (typeof window === 'undefined' || !API_URL || API_URL.startsWith('/')) return;
 
@@ -27,26 +60,13 @@ export function checkDomainRedirection() {
   if (!import.meta.env.DEV) return;
 
   try {
-    const apiUrl = new URL(API_URL);
-    const currentUrl = new URL(window.location.href);
+    const target = devBounceTarget({
+      apiUrl: API_URL,
+      currentHref: window.location.href,
+      basePath: UI_URL || PANEL_URL || SETUP_URL || '/',
+    });
 
-    // Only bounce when the page was opened on the vite port of the SAME machine
-    // (localhost:3000 -> localhost:8088). Reaching the Pano dev server through another
-    // hostname — a LAN address, ngrok, cloudflared — is legitimate: Pano already proxies vite
-    // for that visitor, and API_URL's host means nothing on their machine.
-    if (!isSameDevHost(currentUrl.hostname, apiUrl.hostname)) return;
-
-    if (currentUrl.port !== apiUrl.port || currentUrl.protocol !== apiUrl.protocol) {
-      const basePath = UI_URL || PANEL_URL || SETUP_URL || '/';
-      let pathname = currentUrl.pathname;
-
-      if (basePath !== '/' && !pathname.startsWith(basePath)) {
-        pathname = basePath + (pathname === '/' ? '' : pathname);
-      }
-
-      const targetUrl = new URL(pathname + currentUrl.search + currentUrl.hash, apiUrl.origin);
-      window.location.href = targetUrl.toString();
-    }
+    if (target) window.location.href = target;
   } catch (e) {
     console.error('Failed to check domain redirection:', e);
   }

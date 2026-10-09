@@ -8,7 +8,7 @@
 </style>
 
 <div
-  class="row d-flex align-items-center gy-3 justify-content-lg-between justify-content-center">
+  class="pano-page-actions row d-flex align-items-center gy-3 justify-content-lg-between justify-content-center">
   {#if (leftClasses !== null && $$slots.left) || (leftClasses !== null && leftClasses !== undefined)}
     <div
       class="col-lg-auto col-12 d-flex justify-content-lg-start overflow-x-auto scroll-center {leftClasses ||

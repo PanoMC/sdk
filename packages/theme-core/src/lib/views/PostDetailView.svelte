@@ -39,14 +39,14 @@
   }
 </style>
 
-<div class="vstack gap-3">
+<div class="pano-post-detail-view vstack gap-3">
   {#if data.post.category.title !== "-"}
     <div class="text-center">
       <a
-        class="badge {data.post.category.title !== '-'
+        class="pano-post-detail-view__badge badge {data.post.category.title !== '-'
           ? 'text-bg-secondary'
           : 'text-bg-primary'} text-decoration-none rounded-pill focus-ring"
-        href="/?category={data.post.category.url}"
+        href="{feedPath}?category={data.post.category.url}"
         use:tooltip={[$_("buttons.filter"), { placement: "bottom" }]}>
         {data.post.category.title}
       </a>
@@ -61,7 +61,7 @@
         <img
           id="thumbnail"
           src={data.post.thumbnailUrl}
-          class="d-block"
+          class="pano-post-detail-view__image d-block"
           alt={data.post.title}
           title={data.post.title} />
       </div>
@@ -85,14 +85,14 @@
           <div
             class="col-lg-3 d-flex align-items-end justify-content-end opacity-75">
             <a
-              href="/player/{data.post.writer.username}"
+              href={route(`/player/${data.post.writer.username}`)}
               class="d-inline-block focus-ring rounded-circle ms-2"
               hidden={typeof themeSettings.postAuthorImageEnabled ===
               "undefined"
                 ? false
                 : !themeSettings.postAuthorImageEnabled}>
               <img
-                src="/api/profile/picture/{data.post.writer
+                src="/api/v1/profile/picture/{data.post.writer
                   .username}?{$avatarVersion}"
                 alt={data.post.writer.username}
                 width="24"
@@ -101,7 +101,7 @@
                   data.post.writer.username,
                   { placement: "bottom" },
                 ]}
-                class="rounded-circle" />
+                class="pano-post-detail-view__image-2 rounded-circle" />
             </a>
           </div>
         </div>
@@ -110,13 +110,13 @@
   {/if}
 
   <div class="card">
-    <div class="card-body">
+    <div class="pano-post-detail-view__body card-body">
       <div class="card-text text-break word-break">
         {@html data.post.text}
       </div>
     </div>
     {#if !(data.post.thumbnailUrl && (typeof themeSettings.postCoverImageEnabled === "undefined" ? true : themeSettings.postCoverImageEnabled))}
-      <div class="card-footer">
+      <div class="pano-post-detail-view__footer card-footer">
         <div class="d-flex align-items-center justify-content-between small">
           {#if typeof themeSettings.postViewCountEnabled === "undefined" ? true : themeSettings.postViewCountEnabled}
             <div>
@@ -128,14 +128,14 @@
           <div class="d-flex align-items-center">
             <Date time={data.post.date} />
             <a
-              href="/player/{data.post.writer.username}"
+              href={route(`/player/${data.post.writer.username}`)}
               class="d-inline-block rounded focus-ring rounded-circle ms-2"
               hidden={typeof themeSettings.postAuthorImageEnabled ===
               "undefined"
                 ? false
                 : !themeSettings.postAuthorImageEnabled}>
               <img
-                src="/api/profile/picture/{data.post.writer
+                src="/api/v1/profile/picture/{data.post.writer
                   .username}?{$avatarVersion}"
                 alt={data.post.writer.username}
                 width="28"
@@ -144,7 +144,7 @@
                   data.post.writer.username,
                   { placement: "bottom" },
                 ]}
-                class="rounded-circle" />
+                class="pano-post-detail-view__image-3 rounded-circle" />
             </a>
           </div>
         </div>
@@ -155,8 +155,8 @@
   <div class="row justify-content-between">
     <div class="col-auto">
       <a
-        href="/post/{data.previousPost === '-' ? '' : data.previousPost.url}"
-        class="btn btn-link ps-0"
+        href={route(`/post/${data.previousPost === "-" ? "" : data.previousPost.url}`)}
+        class="pano-post-detail-view__action btn btn-link ps-0"
         class:disabled={data.previousPost === "-"}
         hidden={typeof themeSettings.postPreviousPageEnabled === "undefined"
           ? false
@@ -169,8 +169,8 @@
 
     <div class="col-auto">
       <a
-        href="/post/{data.nextPost === '-' ? '' : data.nextPost.url}"
-        class="btn btn-link pe-0"
+        href={route(`/post/${data.nextPost === "-" ? "" : data.nextPost.url}`)}
+        class="pano-post-detail-view__next-post btn btn-link pe-0"
         class:disabled={data.nextPost === "-"}
         hidden={typeof themeSettings.postNextPageEnabled === "undefined"
           ? false
@@ -186,8 +186,11 @@
 </div>
 
 <script>
+  import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
 
+  import { route } from "$pano/registry/routes.js";
+  import { postsPath } from "$pano/lib/home.js";
   import tooltip from "$pano/lib/tooltip.util";
 
   import Date from "$pano/lib/components/Date.svelte";
@@ -196,4 +199,9 @@
   export let data;
   export let themeSettings;
   export let avatarVersion;
+
+  // Category filters are served by the posts feed: "/" while the home page is the feed, "/posts" otherwise.
+  const session = getContext("session");
+
+  $: feedPath = postsPath($session?.siteInfo);
 </script>

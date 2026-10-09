@@ -28,22 +28,22 @@ export async function onSubmit(error, message, loading, usernameOrEmail) {
     .then((body) => {
       loading.set(false);
 
-      if (body.result === "ok") {
+      if (!body.error) {
         message.set("RESET_PASSWORD_SUCCESSFUL");
 
         return;
       }
 
-      if (body.error === "NOT_EXISTS") {
+      if (body.error.code === "NOT_EXISTS") {
         message.set("RESET_PASSWORD_SUCCESSFUL");
 
         return;
       }
 
-      if (body.error === "PLUGIN_DENIED_LOGIN" && body.reason) {
-        error.set(body.reason);
+      if (body.error.code === "PLUGIN_DENIED_LOGIN" && body.error.details?.reason) {
+        error.set(body.error.details.reason);
       } else {
-        error.set(body.error);
+        error.set(body.error.code);
       }
     })
     .catch(() => {

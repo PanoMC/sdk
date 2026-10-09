@@ -14,7 +14,7 @@
   }
 </style>
 
-<div class="container mx-auto">
+<div class="pano-auth-layout-view container mx-auto">
   <slot />
 </div>
 

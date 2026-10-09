@@ -91,6 +91,35 @@ export function createSeq() {
   return () => n++;
 }
 
+/**
+ * Profile-supplied item policy shared by the hook engine and the slot registry (doc 01 section 3 and 5).
+ *
+ * @typedef {Object} ItemPolicy
+ * @property {(item: any) => any} [normalizeItem]  run on every registered / edited / upserted item; returns
+ *   the item to keep (it may be the same object, mutated) or a falsy value to drop it. Must be idempotent.
+ * @property {(item: any) => boolean} [isSuppressed]  true = the theme places this item itself, so the
+ *   automatic copy is left out of reads, loads and hook positions (`getClaims().has(item.view)`).
+ */
+
+/** @param {ItemPolicy} [policy] */
+function policyOf(policy) {
+  const normalizeItem = typeof policy?.normalizeItem === "function" ? policy.normalizeItem : null;
+  const isSuppressed = typeof policy?.isSuppressed === "function" ? policy.isSuppressed : null;
+  return {
+    /** keep = item, drop = null */
+    keep: (item) => (normalizeItem ? (normalizeItem(item) ?? null) : item),
+    suppressed: (item) => {
+      if (!isSuppressed || !item || typeof item !== "object") return false;
+      try {
+        return Boolean(isSuppressed(item));
+      } catch (e) {
+        console.error("[pano] isSuppressed failed; showing the item", e);
+        return false;
+      }
+    },
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Lifecycle registry
 // ---------------------------------------------------------------------------
@@ -140,17 +169,29 @@ export function createLifecycleRegistry() {
  * server/client prop synchronization; without it SSR and CSR insertion order drift and hydrate
  * out of sync.
  */
-export function createHookEngine() {
+export function createHookEngine(policy) {
+  const { keep, suppressed } = policyOf(policy);
   const hooks = writable({});
   const nextSeq = createSeq();
 
   const hookExecutionCache = new WeakMap();
   const componentLoadCache = new WeakMap();
 
+  /**
+   * The hooks of one name in render order, theme-claimed entries left out. `getHook` and
+   * `executeHookLoad` both read this, so `hookProps[i]` always belongs to `hooks[i]`.
+   */
+  function visibleList(all, name) {
+    return sortHooks(all[name] || []).filter((entry) => !suppressed(entry));
+  }
+
   function register(options) {
     const { name } = options;
+    // A copy: normalizeItem fills in the component of a `view` entry and must not touch the plugin's object.
+    const normalized = keep({ ...options });
+    if (!normalized) return;
     // Stamp a stable registration index so server and client sort hooks identically.
-    const entry = options._seq === undefined ? { ...options, _seq: nextSeq() } : options;
+    const entry = normalized._seq === undefined ? { ...normalized, _seq: nextSeq() } : normalized;
     hooks.update((h) => {
       if (!h[name]) h[name] = [];
       h[name].push(entry);
@@ -162,7 +203,7 @@ export function createHookEngine() {
     return derived(hooks, ($h) => {
       // Sort by stable registration order. Deterministic order is crucial for server-client
       // prop synchronization (see sortHooks).
-      return sortHooks($h[name] || []);
+      return visibleList($h, name);
     });
   }
 
@@ -197,7 +238,7 @@ export function createHookEngine() {
 
     const $h = get(hooks);
     // MUST match the sort order used in the 'get' accessor (see sortHooks).
-    let list = sortHooks($h[name] || []);
+    const list = visibleList($h, name);
 
     // Resolve all modules and execute load functions in parallel
     const results = await Promise.all(
@@ -301,8 +342,18 @@ export function createHookEngine() {
  * @param {(name: string, data: any, event: any) => Promise<void>} [deps.executeLifecycle]
  *   the lifecycle registry's executor, used by executeViewLoad/executeSidebarLoad.
  * @param {string} [deps.lifecyclePrefix]  lifecycle-event namespace (default "theme").
+ * @param {ItemPolicy["normalizeItem"]} [deps.normalizeItem]  see {@link ItemPolicy}
+ * @param {ItemPolicy["isSuppressed"]} [deps.isSuppressed]  see {@link ItemPolicy}
  */
-export function createSlotRegistry({ getPlugins, browser, executeLifecycle, lifecyclePrefix = "theme" }) {
+export function createSlotRegistry({
+  getPlugins,
+  browser,
+  executeLifecycle,
+  lifecyclePrefix = "theme",
+  normalizeItem,
+  isSuppressed,
+}) {
+  const { keep, suppressed } = policyOf({ normalizeItem, isSuppressed });
   const uiItems = writable({});
   const nextSeq = createSeq();
 
@@ -330,12 +381,19 @@ export function createSlotRegistry({ getPlugins, browser, executeLifecycle, life
       if (!items[slotId]) items[slotId] = [];
       callback(items[slotId]);
       deduplicateById(items[slotId]);
+      if (normalizeItem) {
+        // In place: callers hold the array they were given.
+        const kept = items[slotId].map((item) => keep(item)).filter(Boolean);
+        items[slotId].splice(0, items[slotId].length, ...kept);
+      }
       return items;
     });
   }
 
   /** Upsert a raw item by id (no dedup/priority/seq stamping) — used by alternativeMethods.add. */
-  function upsert(slotId, item) {
+  function upsert(slotId, rawItem) {
+    const item = keep(rawItem);
+    if (!item) return;
     uiItems.update((items) => {
       if (!items[slotId]) items[slotId] = [];
       const existing = items[slotId].findIndex((i) => i.id === item.id);
@@ -348,21 +406,26 @@ export function createSlotRegistry({ getPlugins, browser, executeLifecycle, life
     });
   }
 
-  function register(options) {
-    const { viewId, id, component, priority = 10 } = options;
+  function register(rawOptions) {
+    // A copy: normalizeItem fills in the component of a `view` item and must not touch the plugin's object.
+    const options = keep({ ...rawOptions });
+    if (!options) return;
+    const { viewId, id, component, priority = 10, ...extra } = options;
+    // `view`, `_view`, `props`, `pluginId` ... travel with the item; `viewId` is the container, not part of it.
     uiItems.update((items) => {
       if (!items[viewId]) items[viewId] = [];
       const existingIdx = items[viewId].findIndex((i) => i.id === id);
       if (existingIdx !== -1) {
         items[viewId][existingIdx] = {
           ...items[viewId][existingIdx],
+          ...extra,
           component,
           priority,
           // Keep the original registration sequence on re-registration so order stays stable.
           _seq: items[viewId][existingIdx]._seq ?? nextSeq(),
         };
       } else {
-        items[viewId].push({ id, component, priority, hidden: false, _seq: nextSeq() });
+        items[viewId].push({ ...extra, id, component, priority, hidden: false, _seq: nextSeq() });
       }
       return items;
     });
@@ -397,7 +460,9 @@ export function createSlotRegistry({ getPlugins, browser, executeLifecycle, life
 
   function getView(viewId) {
     return derived(uiItems, ($items) => {
-      return ($items[viewId] || []).filter((item) => !item.hidden).sort(compareViewItems);
+      return ($items[viewId] || [])
+        .filter((item) => !item.hidden && !suppressed(item))
+        .sort(compareViewItems);
     });
   }
 
@@ -406,7 +471,10 @@ export function createSlotRegistry({ getPlugins, browser, executeLifecycle, life
 
     // Cache check removed because UI items are dynamic and rebuilt on navigation
 
-    const items = get(uiItems)[containerId] || [];
+    const allItems = get(uiItems)[containerId] || [];
+    // Items the theme places itself are not loaded (no wasted `load`) and not shown; they stay in the store.
+    const items = allItems.filter((item) => !suppressed(item));
+    const claimed = allItems.filter((item) => suppressed(item));
 
     const resolvedItems = await Promise.all(
       items.map(async (item) => {
@@ -450,7 +518,7 @@ export function createSlotRegistry({ getPlugins, browser, executeLifecycle, life
       }),
     );
 
-    uiItems.update((current) => ({ ...current, [containerId]: resolvedItems }));
+    uiItems.update((current) => ({ ...current, [containerId]: [...resolvedItems, ...claimed] }));
     uiLoadedCacheKeys.set(containerId, freshPluginCacheKey);
 
     return resolvedItems;

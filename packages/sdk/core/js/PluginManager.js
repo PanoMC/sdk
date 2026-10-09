@@ -9,7 +9,7 @@ import { base } from "$app/paths";
 import { init as initPluginAPI, panoApiClient, panoApiServer } from "$lib/PluginAPI.js";
 import { PanoPlugin } from "@panomc/sdk";
 import { findMatch } from "./RouteMatcher.js";
-import { removePluginUiFiles, replacePluginUiFiles } from "./pluginFolder.util.js";
+import { removePluginUiFiles, replacePluginUiFiles, readPluginPackage } from "./pluginFolder.util.js";
 
 export let registeredPages = {};
 
@@ -50,9 +50,41 @@ if (!browser) {
 
 export const plugins = writable({});
 
+/** pluginId -> namespace, from each plugin folder's pano-plugin.json (old plugins have none). */
+const pluginNamespaces = new Map();
+let namespaceSink = null;
+
+/** @returns {Record<string,string>} the pluginId -> ns table (the alias rule of the view registry) */
+export function getPluginNamespaces() {
+  return Object.fromEntries(pluginNamespaces);
+}
+
+/** The view registry hands in a function that receives the pluginId -> ns table on every change. */
+export function setNamespaceSink(fn) {
+  namespaceSink = typeof fn === 'function' ? fn : null;
+  if (namespaceSink) namespaceSink(getPluginNamespaces());
+}
+
+/** Reads pano-plugin.json into the plugin entry and the namespace table (theme process only). */
+function applyPluginPackage(pluginId, plugin, pluginFolder) {
+  const pkg = readPluginPackage(pluginFolder);
+  const before = pluginNamespaces.get(pluginId);
+  if (pkg?.namespace) {
+    plugin.namespace = pkg.namespace;
+    if (pkg.styles !== undefined) plugin.styles = pkg.styles;
+    if (pkg.views !== undefined) plugin.views = pkg.views;
+    pluginNamespaces.set(pluginId, pkg.namespace);
+  } else {
+    delete plugin.namespace;
+    delete plugin.styles;
+    delete plugin.views;
+    pluginNamespaces.delete(pluginId);
+  }
+  if (namespaceSink && before !== pluginNamespaces.get(pluginId)) namespaceSink(getPluginNamespaces());
+}
+
 const pluginsFolder = 'plugins';
 const manifestFileName = 'manifest.json';
-const pluginUiZipFileName = 'plugin-ui.zip';
 
 function log(message) {
   if (dev) console.log(`[Plugin Manager] ${message}`);
@@ -116,9 +148,10 @@ function readPluginsFromFolder(siteInfo) {
   return plugins;
 }
 
-async function downloadPluginUiZip(pluginId) {
+// Core endpoint GetPluginUiZipAPI; the path is relative to the API root, ApiUtil adds the version prefix (doc 04).
+export async function downloadPluginUiZip(pluginId) {
   return await ApiUtil.get({
-    path: `/api/plugins/${pluginId}/resources/${pluginUiZipFileName}`,
+    path: `/plugins/${pluginId}/_/ui.zip`,
     blob: true,
   });
 }
@@ -582,6 +615,33 @@ function topologicalSortPlugins(graph) {
   return levels;
 }
 
+/**
+ * SDK 2.0: a plugin client or server module must export `panoSdk = 2` (the plugin kit's generated
+ * entry does). Anything else was built for @panomc/sdk 1.x and is dropped from the plugins store.
+ * @returns {string[]} ids of the skipped plugins
+ */
+export function dropOldSdkPlugins() {
+  const skipped = [];
+
+  for (const [pluginId, plugin] of Object.entries(get(plugins))) {
+    if (!plugin?.module || plugin.module.panoSdk === 2) continue;
+
+    console.error(
+      `[Plugin Manager] ${pluginId} was built for @panomc/sdk 1.x and does not load on this Pano; rebuild it with @panomc/plugin-kit`,
+    );
+    skipped.push(pluginId);
+  }
+
+  if (skipped.length) {
+    plugins.update((p) => {
+      for (const pluginId of skipped) delete p[pluginId];
+      return p;
+    });
+  }
+
+  return skipped;
+}
+
 async function loadPlugins(siteInfo) {
   // Phase 1: Import all plugin modules in parallel for faster loading
   const pluginIds = Object.keys(get(plugins));
@@ -665,6 +725,7 @@ async function loadPlugins(siteInfo) {
         }
       } else {
         const pluginFolder = path.join(pluginsFolder, pluginId);
+        applyPluginPackage(pluginId, plugin, pluginFolder);
         const pluginManifest = plugin;
         const pluginHash = pluginManifest.uiHash || "no-hash";
         const cacheKey = `${pluginId}-${pluginHash}`;
@@ -733,6 +794,8 @@ async function loadPlugins(siteInfo) {
       }
     })
   );
+
+  dropOldSdkPlugins();
 
   // Phase 2: Initialize plugins with dependency-aware batching (topological sort)
   // Plugins at the same dependency level run in parallel; levels execute sequentially

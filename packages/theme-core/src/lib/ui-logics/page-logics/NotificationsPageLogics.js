@@ -75,13 +75,26 @@ function setNotifications(notifications, newNotifications) {
   }
 }
 
+/**
+ * The `count` the view compares the loaded list with ("Show more" shows while the list is shorter than it). The
+ * cursor decides: `page.nextCursor` null means the list is complete, so the count is the loaded length; a cursor
+ * means more is there, so the count is at least one above it, whatever `totalItems` says.
+ * @param {{ totalItems?: string | number, nextCursor?: string | null } | undefined} page
+ * @param {number} loaded
+ */
+export function countByCursor(page, loaded) {
+  if (page?.nextCursor == null) return loaded;
+
+  return Math.max(parseInt(String(page.totalItems ?? 0)) || 0, loaded + 1);
+}
+
 async function loadData({ request }) {
   return new Promise((resolve, reject) => {
     ApiUtil.get({
-      path: "/api/notifications",
+      path: "/notifications",
       request
     }).then((body) => {
-      if (body.result === "ok") {
+      if (!body.error) {
         resolve(body);
       } else {
         reject(body);
@@ -107,14 +120,14 @@ export async function processLoad(event) {
   //   return output;
   // }
 
-  const [{ notifications, notificationCount }] = await Promise.all([
+  const [{ items: notifications, page }] = await Promise.all([
     loadData({ request: event }),
     loadSidebar(event)
   ]);
 
   return {
     notifications,
-    notificationCount: parseInt(notificationCount),
+    notificationCount: countByCursor(page, notifications.length),
     sidebar: ProfileSidebar,
     sidebarProps: { showDeleteAll: true },
     pageTitle: "pages.notifications.page-title"
@@ -126,40 +139,50 @@ function getNotifications(notifications, notificationProcessID, count, id) {
     if (get(notificationProcessID) !== id) {
       return;
     }
-    if (data.result === "ok") {
-      setNotifications(notifications, data.notifications);
+    if (!data.error) {
+      setNotifications(notifications, data.items);
 
-      count.set(parseInt(data.notificationCount));
-      scheduleMarkReadVisualEffects(notifications, data.notifications, null);
+      // a refresh reads the first page only: it speaks for "more" while no further page is loaded
+      if (get(notifications).length <= data.items.length) count.set(countByCursor(data.page, get(notifications).length));
+      else count.set(Math.max(parseInt(data.page.totalItems) || 0, get(count)));
+      scheduleMarkReadVisualEffects(notifications, data.items, null);
     }
   });
 }
 
+// the count store that belongs to a list store, so `loadMore(notifications, loadMoreLoading)` keeps its signature
+const countOf = new WeakMap();
+
 export function loadMore(notifications, loadMoreLoading) {
   loadMoreLoading.set(true);
 
-  ApiUtil.get({
-    path: `/api/notifications/${
+  return ApiUtil.get({
+    path: `/notifications/${
       get(notifications)[get(notifications).length - 1].id
     }/more`
   }).then((body) => {
-    if (body.result === "ok") {
-      body.notifications.forEach((notification) => {
+    if (!body.error) {
+      (body.items ?? []).forEach((notification) => {
         notifications.update((value) =>
           value.insert(value.length, notification)
         );
       });
 
-      loadMoreLoading.set(false);
+      // "Show more" is offered while `page.nextCursor` is not null (see countByCursor)
+      const count = countOf.get(notifications);
+
+      if (count) count.set(countByCursor({ ...body.page, totalItems: body.page?.totalItems ?? get(count) }, get(notifications).length));
     }
+
+    loadMoreLoading.set(false);
   });
 }
 
 export function onDeleteNotificationClick(notifications, count, id) {
   ApiUtil.delete({
-    path: `/api/notifications/${id}`
+    path: `/notifications/${id}`
   }).then((body) => {
-    if (body.result === "ok") {
+    if (!body.error) {
 
       get(notifications).forEach((notification) => {
         if (notification.id === id) {
@@ -212,6 +235,7 @@ export function onDeleteAllClick(notificationProcessID, interval) {
 export function init(data) {
   const notifications = writable(data.notifications || []);
   const count = writable(data.notificationCount || 0);
+  countOf.set(notifications, count);
   const notificationProcessID = writable(0);
   const checkTime = writable(0);
   const interval = writable();

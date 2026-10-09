@@ -1,0 +1,412 @@
+{
+  "components": {
+    "schemas": {
+      "Author": {
+        "description": "Who wrote a post.",
+        "properties": {
+          "avatar": {
+            "description": "Head image url.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username"
+        ],
+        "type": "object"
+      },
+      "Combined": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Author"
+          },
+          {
+            "properties": {
+              "extra": {
+                "type": "number"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ErrorEnvelope": {
+        "properties": {
+          "error": {
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "fields": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "PageInfo": {
+        "properties": {
+          "number": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "totalItems": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "number",
+          "size",
+          "totalItems",
+          "totalPages"
+        ],
+        "type": "object"
+      },
+      "Post": {
+        "properties": {
+          "author": {
+            "$ref": "#/components/schemas/Author"
+          },
+          "body": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Author"
+              }
+            ]
+          },
+          "id": {
+            "type": "integer"
+          },
+          "image": {
+            "nullable": true,
+            "type": "string"
+          },
+          "meta": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "PUBLISHED"
+            ],
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          },
+          "x-extra": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "author"
+        ],
+        "type": "object"
+      },
+      "PostInput": {
+        "properties": {
+          "categoryId": {
+            "type": "integer"
+          },
+          "text": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      },
+      "PostPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            },
+            "type": "array"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo"
+          }
+        },
+        "required": [
+          "items",
+          "page"
+        ],
+        "type": "object"
+      },
+      "Status": {
+        "enum": [
+          "UP",
+          "DOWN"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "info": {
+    "title": "Pano mini",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/export/{kind}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "posts",
+                "users"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "file"
+          }
+        },
+        "summary": "Download an export."
+      }
+    },
+    "/api/v1/legacy/thing": {
+      "get": {
+        "operationId": "GetLegacyThing",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        },
+        "x-pano-undocumented": true
+      }
+    },
+    "/api/v1/posts": {
+      "get": {
+        "operationId": "GetPosts",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostPage"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "List published posts."
+      },
+      "post": {
+        "deprecated": true,
+        "operationId": "CreatePost",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            },
+            "description": "created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "invalid"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Create a post."
+      }
+    },
+    "/api/v1/posts/{url}": {
+      "delete": {
+        "operationId": "DeletePost",
+        "responses": {
+          "204": {
+            "description": "deleted"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "GetPost",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "summary": "One post by its url."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "url",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/api/v1/profile/avatar": {
+      "post": {
+        "operationId": "UploadAvatar",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "ok"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ]
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ export const saveThemeSettings = async (settings) => {
   body.append("settings", JSON.stringify(settings));
 
   return ApiUtil.put({
-    path: `/api/panel/theme/settings`,
+    path: `/panel/theme/settings`,
     body,
     blob: true
   });

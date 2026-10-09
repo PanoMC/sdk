@@ -41,15 +41,15 @@
     theme.config.js → views: { ThemeSettingsView: () => import("./src/views/ThemeSettingsView.svelte") }
 -->
 <!-- Theme settings -->
-<div class="card">
-  <div class="card-header">
+<div class="pano-theme-settings-view card">
+  <div class="pano-theme-settings-view__header card-header">
     <ul
       class="nav nav-tabs card-header-tabs"
       id="themeSettingsTabs"
       role="tablist">
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__link nav-link"
           class:active={$activeTab === "general"}
           data-bs-target="#general"
           data-bs-toggle="tab"
@@ -62,7 +62,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__logo nav-link"
           class:active={$activeTab === "logo"}
           data-bs-target="#logo"
           data-bs-toggle="tab"
@@ -75,7 +75,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__cover nav-link"
           class:active={$activeTab === "header"}
           data-bs-target="#header"
           data-bs-toggle="tab"
@@ -88,7 +88,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__navbar nav-link"
           class:active={$activeTab === "navbar"}
           data-bs-target="#navbar"
           data-bs-toggle="tab"
@@ -101,7 +101,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__sidebar nav-link"
           class:active={$activeTab === "sidebar"}
           data-bs-target="#sidebar"
           data-bs-toggle="tab"
@@ -114,7 +114,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__post-card nav-link"
           class:active={$activeTab === "post-card"}
           data-bs-target="#post-card"
           data-bs-toggle="tab"
@@ -127,7 +127,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__play-card nav-link"
           class:active={$activeTab === "play-card"}
           data-bs-target="#play-card"
           data-bs-toggle="tab"
@@ -140,7 +140,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__footer nav-link"
           class:active={$activeTab === "footer"}
           data-bs-target="#footer"
           data-bs-toggle="tab"
@@ -153,7 +153,7 @@
       </li>
       <li class="nav-item" role="presentation">
         <button
-          class="nav-link"
+          class="pano-theme-settings-view__advanced nav-link"
           class:active={$activeTab === "advanced"}
           data-bs-target="#advanced"
           data-bs-toggle="tab"
@@ -166,7 +166,7 @@
       </li>
     </ul>
   </div>
-  <div class="card-body">
+  <div class="pano-theme-settings-view__body card-body">
     <div class="tab-content">
       <!-- General -->
       <div
@@ -180,7 +180,7 @@
             >{$_("pages.theme-settings.general.theme-color")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select form-select"
               id="theme-color"
               on:change={onThemeColorChange}
               value={$themeSettings.themeColor || "dark"}>
@@ -206,7 +206,7 @@
           <div class="col-md-6">
             <input
               id="bgColor"
-              class="form-control form-control-color"
+              class="pano-theme-settings-view__input form-control form-control-color"
               type="color"
               on:input={(e) => ($themeSettings.backgroundColor = e.target.value)}
               value={$themeSettings.backgroundColor || "#f5f7fa"} />
@@ -220,7 +220,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.breadcrumbEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check form-check-input"
                 id="breadcrumb-enabled"
                 on:change={(e) =>
                   ($themeSettings.breadcrumbEnabled = e.target.checked)}
@@ -237,28 +237,28 @@
               <div class="input-group">
                 <img
                   alt={$_("pages.theme-settings.general.bg-image")}
-                  class="border rounded-start"
+                  class="pano-theme-settings-view__image border rounded-start"
                   style="object-fit: contain;"
                   width="71"
                   height="40"
-                  src={"/api/theme/file/" +
+                  src={"/api/v1/theme/file/" +
                     $themeSettings.files.backgroundImage} />
                 <input
                   id="background-image-upload"
-                  class="form-control"
+                  class="pano-theme-settings-view__input-2 form-control"
                   type="file"
                   accept="image/*"
                   bind:files={$backgroundImageFiles}
                   on:change={onBackgroundImageChange} />
                 <button
-                  class="btn btn-outline-danger shadow-none rounded-end"
+                  class="pano-theme-settings-view__action btn btn-outline-danger shadow-none rounded-end"
                   on:click={onRemoveBackgroundImageClick}
                   >{$_("buttons.remove")}</button>
               </div>
             {:else}
               <input
                 id="background-image-upload"
-                class="form-control"
+                class="pano-theme-settings-view__input-3 form-control"
                 type="file"
                 accept="image/*"
                 bind:files={$backgroundImageFiles}
@@ -272,7 +272,7 @@
             >{$_("pages.theme-settings.general.bg-image-placement")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__left-top form-select"
               id="bg-image-position"
               on:change={(e) =>
                 ($themeSettings.bgImagePosition = e.target.value)}
@@ -296,7 +296,7 @@
             >{$_("pages.theme-settings.general.bg-image-repeat")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__repeat form-select"
               id="bg-image-repeat"
               on:change={(e) => ($themeSettings.bgImageRepeat = e.target.value)}
               value={$themeSettings.bgImageRepeat || "no-repeat"}>
@@ -317,7 +317,7 @@
             >{$_("pages.theme-settings.general.bg-image-size")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__auto form-select"
               id="background-image-position"
               on:change={(e) => ($themeSettings.bgImageSize = e.target.value)}
               value={$themeSettings.bgImageSize || "auto"}>
@@ -345,7 +345,7 @@
                 checked={typeof $themeSettings.logoVisibility === "undefined"
                   ? true
                   : $themeSettings.logoVisibility}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-2 form-check-input"
                 id="logo-visibility"
                 on:change={(e) =>
                   ($themeSettings.logoVisibility = e.target.checked)}
@@ -359,7 +359,7 @@
             >{$_("pages.theme-settings.logo.position")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__top-start form-select"
               id="logoPosition"
               on:change={(e) => ($themeSettings.logoPosition = e.target.value)}
               value={$themeSettings.logoPosition || "CENTER"}>
@@ -395,7 +395,7 @@
           <div class="col-md-6">
             <input
               id="logo-height"
-              class="form-control"
+              class="pano-theme-settings-view__input-4 form-control"
               type="number"
               on:input={(e) => ($themeSettings.logoHeight = e.target.value)}
               placeholder="auto"
@@ -408,7 +408,7 @@
           <div class="col-md-6">
             <input
               id="logo-width"
-              class="form-control"
+              class="pano-theme-settings-view__input-5 form-control"
               type="number"
               on:input={(e) => ($themeSettings.logoWidth = e.target.value)}
               placeholder="256"
@@ -420,7 +420,7 @@
             >{$_("pages.theme-settings.logo.animation")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__off form-select"
               id="logoAnimation"
               on:change={(e) => ($themeSettings.logoAnimation = e.target.value)}
               value={$themeSettings.logoAnimation || "off"}>
@@ -444,7 +444,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$defaultHeaderBg}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-3 form-check-input"
                 id="logo-visibility"
                 on:change={(e) =>
                   ($themeSettings.defaultHeaderBg = e.target.checked)}
@@ -462,17 +462,17 @@
                 <div style="height: 40px; width: 150px;">
                   <img
                     alt={$_("pages.theme-settings.cover.bg-image")}
-                    class="border rounded-start"
+                    class="pano-theme-settings-view__bg-image border rounded-start"
                     style="height: 100%; width: 100%; object-fit: cover;"
                     src={$defaultHeaderBg
                       ? "/assets/img/default-header-bg.png"
-                      : "/api/theme/file/" +
+                      : "/api/v1/theme/file/" +
                         $themeSettings.files.headerBackgroundImage} />
                 </div>
 
                 <input
                   id="headerBackgroundImage"
-                  class="form-control"
+                  class="pano-theme-settings-view__input-6 form-control"
                   type="file"
                   accept="image/*"
                   bind:files={$headerBackgroundImageFiles}
@@ -480,7 +480,7 @@
                   disabled={$defaultHeaderBg} />
 
                 <button
-                  class="btn btn-outline-danger shadow-none rounded-end"
+                  class="pano-theme-settings-view__remove btn btn-outline-danger shadow-none rounded-end"
                   on:click={onRemoveHeaderBackgroundImageClick}
                   class:disabled={$defaultHeaderBg}
                   >{$_("buttons.remove")}</button>
@@ -488,7 +488,7 @@
             {:else}
               <input
                 id="headerBackgroundImage"
-                class="form-control"
+                class="pano-theme-settings-view__input-7 form-control"
                 type="file"
                 accept="image/*"
                 bind:files={$headerBackgroundImageFiles}
@@ -502,7 +502,7 @@
             >{$_("pages.theme-settings.general.bg-image-placement")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select-2 form-select"
               id="headerBgImagePosition"
               on:change={(e) =>
                 ($themeSettings.headerBgImagePosition = e.target.value)}
@@ -526,7 +526,7 @@
             >{$_("pages.theme-settings.general.bg-image-repeat")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select-3 form-select"
               id="headerBgImageRepeat"
               on:change={(e) =>
                 ($themeSettings.headerBgImageRepeat = e.target.value)}
@@ -548,7 +548,7 @@
             >{$_("pages.theme-settings.general.bg-image-size")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select-4 form-select"
               id="headerBgImageSize"
               on:change={(e) =>
                 ($themeSettings.headerBgImageSize = e.target.value)}
@@ -570,7 +570,7 @@
           <div class="col-md-6">
             <input
               id="headerBgColor"
-              class="form-control form-control-color"
+              class="pano-theme-settings-view__input-8 form-control form-control-color"
               type="color"
               on:input={(e) => ($themeSettings.headerBgColor = e.target.value)}
               value={$themeSettings.headerBgColor || $currentThemeDefault.header} />
@@ -581,7 +581,7 @@
             >{$_("pages.theme-settings.cover.height")}</label>
           <div class="col-md-6">
             <input
-              class="form-control"
+              class="pano-theme-settings-view__input-9 form-control"
               id="headerHeight"
               on:input={(e) => ($themeSettings.headerHeight = e.target.value)}
               placeholder="auto"
@@ -594,7 +594,7 @@
             >{$_("pages.theme-settings.cover.width")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__by-content form-select"
               id="headerWidthOption"
               on:change={(e) =>
                 ($themeSettings.headerWidthOption = e.target.value)}
@@ -636,7 +636,7 @@
             >{$_("pages.theme-settings.navbar.width")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select-5 form-select"
               id="navbarWidthOption"
               on:change={(e) =>
                 ($themeSettings.navbarWidthOption = e.target.value)}
@@ -658,7 +658,7 @@
           <div class="col-md-6">
             <input
               id="navbarBgColor"
-              class="form-control form-control-color"
+              class="pano-theme-settings-view__input-10 form-control form-control-color"
               type="color"
               on:input={(e) => ($themeSettings.navbarBgColor = e.target.value)}
               value={$themeSettings.navbarBgColor || $currentThemeDefault.navbar} />
@@ -690,7 +690,7 @@
                 checked={typeof $themeSettings.navLinksEnabled === "undefined"
                   ? true
                   : $themeSettings.navLinksEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-4 form-check-input"
                 id="logo-visibility"
                 on:change={(e) =>
                   ($themeSettings.navLinksEnabled = e.target.checked)}
@@ -703,10 +703,10 @@
           <label class="col-md-6 col-form-label" for="navbarLinks"
             >{$_("pages.theme-settings.navbar.links")}</label>
           <div class="col-md-6" id="navbarLinks">
-            <ul class="list-group">
+            <ul class="pano-theme-settings-view__list list-group">
               {#each $orderedNavLinks as link, index (link.id)}
                 <li
-                  class="list-group-item d-flex justify-content-between align-items-center drag-item"
+                  class="pano-theme-settings-view__item list-group-item d-flex justify-content-between align-items-center drag-item"
                   class:dragging={$draggingItemIndex === index}
                   class:drag-over={$dragOverItemIndex === index && $draggingItemIndex !== index}
                   draggable="true"
@@ -722,7 +722,7 @@
                         {link.text && link.text.includes(".")
                           ? $_(link.text)
                           : link.text}
-                        <span class="badge text-bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">
+                        <span class="pano-theme-settings-view__badge badge text-bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">
                           <i class="fa-solid fa-plug me-1"></i>{$_("labels.plugin")}
                         </span>
                       {:else}
@@ -732,7 +732,7 @@
                   </div>
                   <div class="form-check form-switch m-0">
                     <input
-                      class="form-check-input"
+                      class="pano-theme-settings-view__check-5 form-check-input"
                       type="checkbox"
                       checked={$themeSettings.navLinksEnableStatus?.[link.id] ?? true}
                       on:change={(e) => toggleLink(link.id, e.target.checked)} />
@@ -758,7 +758,7 @@
                 checked={typeof $themeSettings.sidebarEnabled === "undefined"
                   ? true
                   : $themeSettings.sidebarEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-6 form-check-input"
                 id="sidebarVisibility"
                 on:change={(e) =>
                   ($themeSettings.sidebarEnabled = e.target.checked)}
@@ -771,7 +771,7 @@
             >{$_("pages.theme-settings.sidebar.position")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__left form-select"
               id="sidebarPosition"
               on:change={(e) =>
                 ($themeSettings.sidebarPosition = e.target.value)}
@@ -793,7 +793,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.sidebarCarts?.lastRegistrants}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-7 form-check-input"
                 id="lastRegistrantsCartVisibility"
                 on:change={(e) => {
                   if (!$themeSettings.sidebarCarts)
@@ -815,7 +815,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.sidebarCarts?.onlineAdmins}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-8 form-check-input"
                 id="onlineAdminsCartVisibility"
                 on:change={(e) => {
                   if (!$themeSettings.sidebarCarts)
@@ -839,7 +839,7 @@
             >{$_("pages.theme-settings.sidebar.play-card-style")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__style-2 form-select"
               id="playCardStyle"
               on:change={(e) => {
                 $themeSettings.playCardStyle = e.target.value;
@@ -863,7 +863,7 @@
                 checked={typeof $themeSettings.defaultPlayCardBg === "undefined"
                   ? true
                   : $themeSettings.defaultPlayCardBg}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-9 form-check-input"
                 id="defaultPlayCardBg"
                 on:change={(e) => {
                   $themeSettings.defaultPlayCardBg = e.target.checked;
@@ -883,29 +883,29 @@
                 <div style="height: 40px; width: 150px;">
                   <img
                     alt={$_("pages.theme-settings.sidebar.play-card-bg-image")}
-                    class="border rounded-start"
+                    class="pano-theme-settings-view__play-card-bg-image border rounded-start"
                     style="height: 100%; width: 100%; object-fit: cover;"
                     src={$themeSettings.files?.playCardBackgroundImage
-                      ? "/api/theme/file/" +
+                      ? "/api/v1/theme/file/" +
                         $themeSettings.files.playCardBackgroundImage
                       : (typeof $themeSettings.defaultHeaderBg === "undefined"
                         ? true
                         : $themeSettings.defaultHeaderBg) ||
                         !$themeSettings.files?.headerBackgroundImage
                         ? "/assets/img/default-header-bg.png"
-                        : "/api/theme/file/" +
+                        : "/api/v1/theme/file/" +
                           $themeSettings.files.headerBackgroundImage} />
                 </div>
 
                 <input
                   id="playCardBgImage"
-                  class="form-control"
+                  class="pano-theme-settings-view__input-11 form-control"
                   on:change={onPlayCardBackgroundImageChange}
                   bind:files={$playCardBackgroundImageFiles}
                   disabled={typeof $themeSettings.defaultPlayCardBg === "undefined" ? true : $themeSettings.defaultPlayCardBg}
                   type="file" />
                 <button
-                  class="btn btn-outline-danger"
+                  class="pano-theme-settings-view__action-2 btn btn-outline-danger"
                   class:disabled={typeof $themeSettings.defaultPlayCardBg === "undefined" ? true : $themeSettings.defaultPlayCardBg}
                   on:click={onRemovePlayCardBackgroundImageClick}
                   type="button">
@@ -915,7 +915,7 @@
             {:else}
               <input
                 bind:files={$playCardBackgroundImageFiles}
-                class="form-control"
+                class="pano-theme-settings-view__input-12 form-control"
                 id="playCardBgImage"
                 on:change={onPlayCardBackgroundImageChange}
                 type="file" />
@@ -950,7 +950,7 @@
             >{$_("pages.theme-settings.sidebar.play-card-bg-effect")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__solid form-select"
               id="playCardBgEffect"
               on:change={(e) => {
                 $themeSettings.playCardBgEffect = e.target.value;
@@ -970,7 +970,7 @@
             >{$_("pages.theme-settings.sidebar.play-card-ip-text")}</label>
           <div class="col-md-6">
             <input
-              class="form-control"
+              class="pano-theme-settings-view__input-13 form-control"
               id="playCardIpText"
               on:input={(e) => {
                 $themeSettings.playCardIpText = e.target.value;
@@ -992,7 +992,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.playCardStatusBadge ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-10 form-check-input"
                 id="playCardStatusBadge"
                 on:change={(e) => {
                   $themeSettings.playCardStatusBadge = e.target.checked;
@@ -1010,7 +1010,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.playCardPlayerCount ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-11 form-check-input"
                 id="playCardPlayerCount"
                 on:change={(e) => {
                   $themeSettings.playCardPlayerCount = e.target.checked;
@@ -1028,7 +1028,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.playCardVersionInfo ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-12 form-check-input"
                 id="playCardVersionInfo"
                 on:change={(e) => {
                   $themeSettings.playCardVersionInfo = e.target.checked;
@@ -1044,7 +1044,7 @@
             >{$_("pages.theme-settings.sidebar.play-card-ip-color")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__default form-select"
               id="playCardIpColor"
               on:change={(e) => {
                 $themeSettings.playCardIpColor = e.target.value;
@@ -1070,7 +1070,7 @@
             >{$_("pages.theme-settings.sidebar.play-card-border-color")}</label>
           <div class="col-md-6">
             <select
-              class="form-select"
+              class="pano-theme-settings-view__select-6 form-select"
               id="playCardBorderColor"
               on:change={(e) => {
                 $themeSettings.playCardBorderColor = e.target.value;
@@ -1103,7 +1103,7 @@
                 checked={typeof $themeSettings.postsEnabled === "undefined"
                   ? true
                   : $themeSettings.postsEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-13 form-check-input"
                 id="postsEnabled"
                 on:change={(e) =>
                   ($themeSettings.postsEnabled = e.target.checked)}
@@ -1121,7 +1121,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postCoverImageEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-14 form-check-input"
                 id="postCoverImageEnabled"
                 on:change={(e) =>
                   ($themeSettings.postCoverImageEnabled = e.target.checked)}
@@ -1139,7 +1139,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postReadMoreButtonEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-15 form-check-input"
                 id="postReadMoreButtonEnabled"
                 on:change={(e) =>
                   ($themeSettings.postReadMoreButtonEnabled = e.target.checked)}
@@ -1157,7 +1157,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postAuthorImageEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-16 form-check-input"
                 id="postAuthorImageEnabled"
                 on:change={(e) =>
                   ($themeSettings.postAuthorImageEnabled = e.target.checked)}
@@ -1175,7 +1175,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postViewCountEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-17 form-check-input"
                 id="postViewCountEnabled"
                 on:change={(e) =>
                   ($themeSettings.postViewCountEnabled = e.target.checked)}
@@ -1193,7 +1193,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postPreviousPageEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-18 form-check-input"
                 id="postPreviousPageEnabled"
                 on:change={(e) =>
                   ($themeSettings.postPreviousPageEnabled = e.target.checked)}
@@ -1211,7 +1211,7 @@
                 "undefined"
                   ? true
                   : $themeSettings.postNextPageEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-19 form-check-input"
                 id="postNextPageEnabled"
                 on:change={(e) =>
                   ($themeSettings.postNextPageEnabled = e.target.checked)}
@@ -1233,7 +1233,7 @@
                 checked={typeof $themeSettings.footerEnabled === "undefined"
                   ? true
                   : $themeSettings.footerEnabled}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-20 form-check-input"
                 id="footerEnabled"
                 on:change={(e) =>
                   ($themeSettings.footerEnabled = e.target.checked)}
@@ -1249,7 +1249,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.footerLogoEnabled ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-21 form-check-input"
                 id="footerLogoEnabled"
                 on:change={(e) =>
                   ($themeSettings.footerLogoEnabled = e.target.checked)}
@@ -1265,7 +1265,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.footerTitleEnabled ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-22 form-check-input"
                 id="footerTitleEnabled"
                 on:change={(e) =>
                   ($themeSettings.footerTitleEnabled = e.target.checked)}
@@ -1279,7 +1279,7 @@
           </label>
           <div class="col-md-6">
             <input
-              class="form-control"
+              class="pano-theme-settings-view__input-14 form-control"
               id="footerTitle"
               on:input={(e) => ($themeSettings.footerTitle = e.target.value)}
               type="text"
@@ -1294,7 +1294,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.footerContentEnabled ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-23 form-check-input"
                 id="footerContentEnabled"
                 on:change={(e) =>
                   ($themeSettings.footerContentEnabled = e.target.checked)}
@@ -1308,7 +1308,7 @@
           </label>
           <div class="col-md-6">
             <textarea
-              class="form-control"
+              class="pano-theme-settings-view__input-15 form-control"
               id="footerContent"
               on:input={(e) => ($themeSettings.footerContent = e.target.value)}
               style="height: 200px;"
@@ -1324,7 +1324,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.footerLinksEnabled ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-24 form-check-input"
                 id="footer-links-visibility"
                 on:change={(e) =>
                   ($themeSettings.footerLinksEnabled = e.target.checked)}
@@ -1341,7 +1341,7 @@
             <div class="form-check form-switch">
               <input
                 checked={$themeSettings.footerPluginLinksEnabled ?? true}
-                class="form-check-input"
+                class="pano-theme-settings-view__check-25 form-check-input"
                 id="footer-plugin-links-visibility"
                 on:change={(e) =>
                   ($themeSettings.footerPluginLinksEnabled = e.target.checked)}
@@ -1355,11 +1355,11 @@
             {$_("pages.theme-settings.footer.links")}
           </label>
           <div class="col-md-6" id="footerLinks">
-            <ul class="list-group">
+            <ul class="pano-theme-settings-view__plugin list-group">
               {#each $orderedFooterLinks as link, index (link.id)}
                 {#if !link.isPlugin || ($themeSettings.footerPluginLinksEnabled ?? true)}
                   <li
-                    class="list-group-item d-flex justify-content-between align-items-center drag-item"
+                    class="pano-theme-settings-view__item-2 list-group-item d-flex justify-content-between align-items-center drag-item"
                     class:dragging={$draggingItemIndex === index}
                     class:drag-over={$dragOverItemIndex === index && $draggingItemIndex !== index}
                     draggable="true"
@@ -1375,7 +1375,7 @@
                           {link.text && link.text.includes(".")
                             ? $_(link.text)
                             : link.text}
-                          <span class="badge text-bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">
+                          <span class="pano-theme-settings-view__badge-2 badge text-bg-secondary opacity-50 ms-1" style="font-size: 0.6rem;">
                             <i class="fa-solid fa-plug me-1"></i>{$_("labels.plugin")}
                           </span>
                         {:else}
@@ -1385,7 +1385,7 @@
                     </div>
                     <div class="form-check form-switch m-0">
                       <input
-                        class="form-check-input"
+                        class="pano-theme-settings-view__check-26 form-check-input"
                         type="checkbox"
                         checked={$themeSettings.footerLinksEnableStatus?.[
                           link.id
@@ -1411,7 +1411,7 @@
             >{$_("pages.theme-settings.advanced.custom-css")}</label>
           <div class="col-6">
             <textarea
-              class="form-control"
+              class="pano-theme-settings-view__input-16 form-control"
               id="customCss"
               on:input={(e) => ($themeSettings.customCss = e.target.value)}
               style="height: 200px;"
@@ -1423,14 +1423,14 @@
 
     <div class="mt-4 d-flex align-items-center gap-2 border-top pt-3">
       <button
-        class="btn btn-secondary"
+        class="pano-theme-settings-view__save btn btn-secondary"
         class:disabled={$saving || !$tabChanged}
         on:click={save}>
         {$_("buttons.save")}
       </button>
 
       <button
-        class="btn btn-link"
+        class="pano-theme-settings-view__reset-tab btn btn-link"
         class:disabled={$resetting || $saving}
         hidden={!$tabResetVisible}
         on:click={resetTab}>
@@ -1439,7 +1439,7 @@
 
       <div class="ms-auto">
         <button
-          class="btn btn-link link-danger"
+          class="pano-theme-settings-view__reset-all btn btn-link link-danger"
           class:disabled={$resettingAll || $saving}
           hidden={!$allResetVisible}
           on:click={resetAll}>

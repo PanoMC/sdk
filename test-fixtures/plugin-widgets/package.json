@@ -1,0 +1,6 @@
+{
+  "name": "plugin-widgets-fixture",
+  "private": true,
+  "type": "module",
+  "description": "TC-43 fixture plugin for the widget build target of the kit. Test only, never published."
+}

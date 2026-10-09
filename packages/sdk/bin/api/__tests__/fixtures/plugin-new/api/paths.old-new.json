@@ -1,0 +1,66 @@
+[
+  {
+    "method": "GET",
+    "old": "/api/demo/payments/:providerId/return/:name",
+    "new": "/api/plugins/pano-plugin-demo/payments/:providerId/return/:name",
+    "relative": "/plugins/pano-plugin-demo/payments/:providerId/return/:name",
+    "class": "WebhookAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/WebhookAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/demo/things",
+    "new": "/api/plugins/pano-plugin-demo/things",
+    "relative": "/plugins/pano-plugin-demo/things",
+    "class": "GetThingsAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/GetThingsAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/demo/things/:id",
+    "new": "/api/plugins/pano-plugin-demo/things/:id",
+    "relative": "/plugins/pano-plugin-demo/things/:id",
+    "class": "GetThingsAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/GetThingsAPI.kt"
+  },
+  {
+    "method": "POST",
+    "old": "/api/demo/validated",
+    "new": "/api/plugins/pano-plugin-demo/validated",
+    "relative": "/plugins/pano-plugin-demo/validated",
+    "class": "ValidatedAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/ValidatedAPI.kt"
+  },
+  {
+    "method": "ANY",
+    "old": "/api/demo/webhook/:id",
+    "new": "/api/plugins/pano-plugin-demo/webhook/:id",
+    "relative": "/plugins/pano-plugin-demo/webhook/:id",
+    "class": "WebhookAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/WebhookAPI.kt"
+  },
+  {
+    "method": "ANY",
+    "old": "/api/demo/webhook/:id/:channel",
+    "new": "/api/plugins/pano-plugin-demo/webhook/:id/:channel",
+    "relative": "/plugins/pano-plugin-demo/webhook/:id/:channel",
+    "class": "WebhookAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/WebhookAPI.kt"
+  },
+  {
+    "method": "GET",
+    "old": "/api/other/list",
+    "new": "/api/plugins/pano-plugin-demo/other/list",
+    "relative": "/plugins/pano-plugin-demo/other/list",
+    "class": "GetThingsAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/GetThingsAPI.kt"
+  },
+  {
+    "method": "PUT",
+    "old": "/api/panel/demo/things/:id",
+    "new": "/api/plugins/pano-plugin-demo/panel/things/:id",
+    "relative": "/plugins/pano-plugin-demo/panel/things/:id",
+    "class": "PanelSaveThingAPI",
+    "file": "src/main/kotlin/com/example/demo/routes/PanelThingAPI.kt"
+  }
+]

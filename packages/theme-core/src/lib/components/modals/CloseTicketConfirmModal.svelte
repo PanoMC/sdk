@@ -1,45 +1,15 @@
-<!-- Close Ticket Confirm Modal -->
-
-<div
-  aria-hidden="true"
-  class="modal fade"
-  id="{dialogID}"
-  role="dialog"
-  tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" role="dialog">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <ErrorAlert error="{$error}" />
-
-        <div class="pb-3">
-          <i class="fas fa-question-circle fa-3x d-block m-auto text-gray"></i>
-        </div>
-        {$_("components.modals.close-ticket-confirm.title")}
-      </div>
-      <div class="modal-footer flex-nowrap">
-        <button
-          class="btn btn-link col-6 m-0"
-          data-bs-dismiss="modal"
-          type="button"
-          class:disabled="{loading}"
-          aria-disabled="{loading}"
-          disabled="{loading}"
-          on:click="{hide}">
-          {$_("buttons.cancel")}
-        </button>
-        <button
-          class="btn btn-danger col-6 m-0"
-          type="button"
-          class:disabled="{loading}"
-          aria-disabled="{loading}"
-          disabled="{loading}"
-          on:click="{onYesClick}">
-          {$_("buttons.yes")}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+<!--
+  Controller of the engine's <CloseTicketConfirmModal>. The markup lives in views/parts/CloseTicketConfirmModal.svelte; a
+  theme may replace it with the "CloseTicketConfirmModal" entry of theme.config.js views (see skin-contract.json for the
+  props). The module API (show, hide, setCallback, onHide) stays here.
+-->
+<svelte:component
+  this={getOverride("CloseTicketConfirmModal") ?? CloseTicketConfirmModalView}
+  {dialogID}
+  {error}
+  {loading}
+  {hide}
+  {onYesClick} />
 
 <script context="module">
   import { writable } from "svelte/store";
@@ -81,11 +51,10 @@
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
-
   import { NETWORK_ERROR } from "$pano/lib/api.util";
 
-  import ErrorAlert from "$pano/lib/components/ErrorAlert.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import CloseTicketConfirmModalView from "$pano/lib/views/parts/CloseTicketConfirmModal.svelte";
   import { updateTicket } from "$pano/lib/services/tickets";
   import { TicketStatuses } from "$pano/lib/components/TicketStatus.svelte";
 
@@ -102,7 +71,7 @@
 
     await updateTicket({ id: ticket.id, status: TicketStatuses.CLOSED })
       .then((body) => {
-        if (body.result === "ok") {
+        if (!body.error) {
           loading = false;
 
           hide();

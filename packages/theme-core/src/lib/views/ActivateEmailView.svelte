@@ -11,15 +11,15 @@
   Override from a theme:
     theme.config.js → views: { ActivateEmailView: () => import("./src/views/ActivateEmailView.svelte") }
 -->
-<div class="col-lg-4 col-md-6 mx-auto">
+<div class="pano-activate-email-view col-lg-4 col-md-6 mx-auto">
   <div class="vstack gap-3">
 
     <div class="card">
-      <div class="card-body">
+      <div class="pano-activate-email-view__body card-body">
         <div class="vstack gap-3">
           <img
             alt="Allay"
-            class="d-block mx-auto"
+            class="pano-activate-email-view__image d-block mx-auto"
             src="https://cdn3.emoji.gg/emojis/8182-allay-dancing.gif" />
           <ErrorAlert error={$error} />
           <SuccessAlert message={$successMessage} />
@@ -31,7 +31,7 @@
             {/if}
           {/each}
           <button
-            class="btn btn-secondary w-100"
+            class="pano-activate-email-view__action btn btn-secondary w-100"
             class:disabled={$loading ||
               $error === "INVALID_LINK" ||
               $successMessage !== null}

@@ -1,0 +1,67 @@
+{
+  "namespace": "market",
+  "pluginId": "pano-plugin-market",
+  "version": "1.1.0",
+  "sdk": 2,
+  "views": {
+    "market:ProductCard": {
+      "kind": "component",
+      "contract": 2,
+      "source": "src/store/ProductCard.svelte",
+      "props": {
+        "product": { "type": "Product", "required": true },
+        "settings": { "type": "any", "required": false }
+      },
+      "uses": [],
+      "slots": [],
+      "hooks": [],
+      "block": false,
+      "inject": null,
+      "page": null,
+      "home": null,
+      "widget": null
+    },
+    "market:ProductGrid": {
+      "kind": "component",
+      "contract": 1,
+      "source": "src/store/ProductGrid.svelte",
+      "props": { "limit": { "type": "number", "required": false }, "category": { "type": "string", "required": false } },
+      "uses": ["market:ProductCard"],
+      "slots": [],
+      "hooks": [],
+      "block": true,
+      "inject": null,
+      "page": null,
+      "home": null,
+      "widget": null
+    },
+    "market:NavCart": {
+      "kind": "component",
+      "contract": 1,
+      "source": "src/store/NavCart.svelte",
+      "props": {},
+      "uses": [],
+      "slots": [],
+      "hooks": [],
+      "block": true,
+      "inject": [{ "slot": "navbar-right", "id": "market:NavCart", "priority": 10 }],
+      "page": null,
+      "home": null,
+      "widget": null
+    },
+    "market:StorePage": {
+      "kind": "page",
+      "contract": 1,
+      "source": "src/store/StorePage.svelte",
+      "props": { "data": { "type": "any", "required": false } },
+      "uses": [],
+      "slots": ["market:store:footer"],
+      "hooks": ["market:store:top"],
+      "block": false,
+      "inject": null,
+      "page": { "path": "/store" },
+      "home": { "label": "Store" },
+      "widget": null
+    }
+  }
+}

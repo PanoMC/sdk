@@ -1,27 +1,15 @@
-<Sidebar side={side}>
-  <div class="vstack gap-3">
-    {#each $items as item (item.id)}
-      {#if item.id === 'online-admins'}
-        <!-- Online Admins Snippet -->
-        <OnlineAdmins onlineAdmins={$data.onlineAdmins} />
-      {:else if item.id === 'close-ticket-button'}
-        <!-- Close Ticket Button Snippet -->
-        {#if $ticketData && $ticketData.status !== TicketStatuses.CLOSED}
-          <button
-            class="btn btn-danger w-100"
-            type="button"
-            on:click={() => showCloseTicketConfirmModal($ticketData)}>
-            <i class="fas fa-times me-2"></i>
-            {$_("buttons.close-ticket")}
-          </button>
-        {/if}
-      {:else}
-        <!-- External Component -->
-        <ViewComponent component={item.component} data={$data} ticketData={$ticketData} {...item.props} />
-      {/if}
-    {/each}
-  </div>
-</Sidebar>
+<!--
+  Controller of the engine's <TicketCreateAndDetailSidebar>. The markup lives in views/parts/TicketCreateAndDetailSidebar.svelte; a
+  theme may replace it with the "TicketCreateAndDetailSidebar" entry of theme.config.js views (see skin-contract.json
+  for the props).
+-->
+<svelte:component
+  this={getOverride("TicketCreateAndDetailSidebar") ?? TicketCreateAndDetailSidebarView}
+  {side}
+  {items}
+  {data}
+  {ticketData}
+  {onCloseTicketClick} />
 
 <script context="module">
   import { writable } from "svelte/store";
@@ -53,12 +41,13 @@
     // Execute sidebar load and resolve components for SSR
     await executeSidebarLoad('ticket', event);
 
-    data.set(
-      await ApiUtil.get({
-        path: "/api/sidebars/support",
-        request: event,
-      }),
-    );
+    // The wire shape is { items: string[] } (decision 80); the view contract keeps { onlineAdmins }.
+    const response = await ApiUtil.get({
+      path: "/sidebars/support",
+      request: event,
+    });
+
+    data.set({ onlineAdmins: Array.isArray(response?.items) ? response.items : [] });
 
     if (ticket) {
       ticketData.set(ticket);
@@ -71,14 +60,13 @@
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
-  import Sidebar from "$pano/lib/components/Sidebar.svelte";
-  import ViewComponent from "$pano/lib/components/ViewComponent.svelte";
-  import OnlineAdmins from "$pano/lib/components/OnlineAdmins.svelte";
+  import { getOverride } from "$pano/registry/index.js";
+  import TicketCreateAndDetailSidebarView from "$pano/lib/views/parts/TicketCreateAndDetailSidebar.svelte";
   import { show as showCloseTicketConfirmModal } from "$pano/lib/components/modals/CloseTicketConfirmModal.svelte";
-  import { TicketStatuses } from "$pano/lib/components/TicketStatus.svelte";
 
   export let side;
 
   const items = panoApi.ui.sidebar.get("ticket");
+
+  const onCloseTicketClick = (ticket) => showCloseTicketConfirmModal(ticket);
 </script>

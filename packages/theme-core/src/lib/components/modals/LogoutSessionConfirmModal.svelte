@@ -1,32 +1,13 @@
-<div
-  aria-hidden="true"
-  class="modal fade"
-  id="{dialogID}"
-  role="dialog"
-  tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" role="dialog">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <div class="pb-3">
-          <i class="fas fa-question-circle fa-3x d-block m-auto text-gray"></i>
-        </div>
-        {$_("components.modals.logout-session-confirm.title")}
-      </div>
-      <div class="modal-footer flex-nowrap">
-        <button
-          class="btn btn-link col-6 m-0"
-          type="button"
-          onclick={hide}>
-          {$_("buttons.cancel")}
-        </button>
-        <button
-          class="btn btn-danger col-6 m-0"
-          type="button"
-          onclick={onYesClick}>{$_("buttons.yes")}</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!--
+  Controller of the engine's <LogoutSessionConfirmModal>. The markup lives in views/parts/LogoutSessionConfirmModal.svelte;
+  a theme may replace it with the "LogoutSessionConfirmModal" entry of theme.config.js views (see skin-contract.json for
+  the props). The module API (show, hide, setCallback) stays here.
+-->
+<svelte:component
+  this={getOverride("LogoutSessionConfirmModal") ?? LogoutSessionConfirmModalView}
+  {dialogID}
+  {hide}
+  {onYesClick} />
 
 <script context="module">
   const dialogID = "logoutSessionConfirmModal";
@@ -52,7 +33,8 @@
 </script>
 
 <script>
-  import { _ } from "svelte-i18n";
+  import { getOverride } from "$pano/registry/index.js";
+  import LogoutSessionConfirmModalView from "$pano/lib/views/parts/LogoutSessionConfirmModal.svelte";
 
   function onYesClick() {
     hide();

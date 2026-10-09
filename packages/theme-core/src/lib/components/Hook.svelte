@@ -4,7 +4,7 @@
     !filteredHooks[i]?.permission ||
     hasPermission(filteredHooks[i]?.permission, $page.data.user)}
   {#if module && hasPerm && typeof module !== 'function'}
-    {@const Component = module.default || module}
+    {@const Component = injected(module)}
     {@const isInvisible = props.hookOptions?.invisible || filteredHooks[i]?.invisible}
 
     {#if !isInvisible}
@@ -28,6 +28,7 @@
   import { page } from "$app/stores";
   import { getAllContexts } from "svelte";
   import { hasPermission } from "$pano/lib/auth.util.js";
+  import { getPanoContext } from "@panomc/sdk/internal";
 
   let { name, tag = "div", ...rest } = $props();
 
@@ -43,6 +44,16 @@
   );
 
   const contexts = getAllContexts();
+
+  /**
+   * What a hook renders: the component of its module, in the fallback scope of its plugin (or the `legacy` scope for a
+   * plugin that is not on the new model) when the theme has no Bootstrap (`views.wrapInjected`, doc 03 section 4.4).
+   */
+  function injected(module) {
+    const wrapInjected = getPanoContext().context?.views?.wrapInjected;
+
+    return typeof wrapInjected === "function" ? wrapInjected(module) : module.default || module;
+  }
 
   // Use passed hooks props if available
   const hookProps = $derived($page.data.hookProps?.[name] || []);

@@ -1,0 +1,159 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Pano mini", "version": "1.0.0" },
+  "paths": {
+    "/api/v1/posts": {
+      "get": {
+        "operationId": "GetPosts",
+        "summary": "List published posts.",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "integer" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PostPage" } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "CreatePost",
+        "summary": "Create a post.",
+        "deprecated": true,
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PostInput" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Post" } } }
+          },
+          "400": {
+            "description": "invalid",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorEnvelope" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/posts/{url}": {
+      "parameters": [{ "name": "url", "in": "path", "required": true, "schema": { "type": "string" } }],
+      "get": {
+        "operationId": "GetPost",
+        "summary": "One post by its url.",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Post" } } }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "DeletePost",
+        "security": [{ "cookieAuth": [] }],
+        "responses": { "204": { "description": "deleted" } }
+      }
+    },
+    "/api/v1/profile/avatar": {
+      "post": {
+        "operationId": "UploadAvatar",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } }
+        },
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } }
+          }
+        }
+      }
+    },
+    "/api/v1/export/{kind}": {
+      "get": {
+        "summary": "Download an export.",
+        "parameters": [{ "name": "kind", "in": "path", "required": true, "schema": { "type": "string", "enum": ["posts", "users"] } }],
+        "responses": { "200": { "description": "file", "content": { "application/octet-stream": { "schema": { "type": "string", "format": "binary" } } } } }
+      }
+    },
+    "/api/v1/legacy/thing": {
+      "get": {
+        "operationId": "GetLegacyThing",
+        "x-pano-undocumented": true,
+        "responses": { "200": { "description": "ok" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Author": {
+        "type": "object",
+        "description": "Who wrote a post.",
+        "required": ["id", "username"],
+        "properties": {
+          "id": { "type": "integer" },
+          "username": { "type": "string" },
+          "avatar": { "type": ["string", "null"], "description": "Head image url." }
+        }
+      },
+      "Post": {
+        "type": "object",
+        "required": ["id", "title", "status", "author"],
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "status": { "type": "string", "enum": ["DRAFT", "PUBLISHED"] },
+          "author": { "$ref": "#/components/schemas/Author" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "image": { "type": "string", "nullable": true },
+          "meta": { "type": "object", "additionalProperties": { "type": "string" } },
+          "body": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Author" }] },
+          "x-extra": { "type": "boolean" }
+        }
+      },
+      "PostInput": {
+        "type": "object",
+        "required": ["title"],
+        "properties": { "title": { "type": "string" }, "text": { "type": "string" }, "categoryId": { "type": "integer" } }
+      },
+      "PageInfo": {
+        "type": "object",
+        "required": ["number", "size", "totalItems", "totalPages"],
+        "properties": {
+          "number": { "type": "integer" },
+          "size": { "type": "integer" },
+          "totalItems": { "type": "integer" },
+          "totalPages": { "type": "integer" }
+        }
+      },
+      "PostPage": {
+        "type": "object",
+        "required": ["items", "page"],
+        "properties": {
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/Post" } },
+          "page": { "$ref": "#/components/schemas/PageInfo" }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "fields": { "type": "object", "additionalProperties": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "Status": { "type": "string", "enum": ["UP", "DOWN"] },
+      "Combined": { "allOf": [{ "$ref": "#/components/schemas/Author" }, { "type": "object", "properties": { "extra": { "type": "number" } } }] }
+    }
+  }
+}

@@ -9,16 +9,16 @@
   Override from a theme:
     theme.config.js → views: { SupportView: () => import("./src/views/SupportView.svelte") }
 -->
-<div class="vstack gap-3">
+<div class="pano-support-view vstack gap-3">
 
   {#each $items as item (item.id)}
     {#if item.id === "support-options"}
-      <ul class="list-group text-center support-list justify-content-center">
+      <ul class="pano-support-view__list list-group text-center support-list justify-content-center">
         {#each $optionItems as opt (opt.id)}
           {#if opt.id === "create-ticket"}
             <a
-              href="/ticket/create"
-              class="list-group-item list-group-item-action focus-ring">
+              href={route("/ticket/create")}
+              class="pano-support-view__item list-group-item list-group-item-action focus-ring">
               <div class="vstack gap-2 justify-content-center">
                 <i class="fas fa-ticket fa-2x"></i>
                 <h5>{$_("pages.support.options.create-ticket.title")}</h5>
@@ -30,7 +30,7 @@
           {:else if opt.id === "send-email"}
             <a
               href="mailto:{$session.siteInfo.supportEmail}"
-              class="list-group-item list-group-item-action focus-ring">
+              class="pano-support-view__title list-group-item list-group-item-action focus-ring">
               <div class="vstack gap-2 justify-content-center">
                 <i class="fas fa-envelope fa-2x"></i>
                 <h5>
@@ -45,7 +45,7 @@
               </div>
             </a>
           {:else}
-            <div class="list-group-item list-group-item-action p-0 overflow-hidden">
+            <div class="pano-support-view__item-2 list-group-item list-group-item-action p-0 overflow-hidden">
               <ViewComponent component={opt.component} data={data} {...opt.props} />
             </div>
           {/if}
@@ -68,6 +68,8 @@
 
 <script>
   import { _ } from "svelte-i18n";
+
+  import { route } from "$pano/registry/routes.js";
 
   import Hook from "$pano/lib/components/Hook.svelte";
   import ViewComponent from "$pano/lib/components/ViewComponent.svelte";

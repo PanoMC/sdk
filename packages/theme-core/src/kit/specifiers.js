@@ -45,6 +45,9 @@ export const RUNTIME_SPECIFIERS = {
   "@panomc/sdk/variables": "sdk/variables.js",
   "@panomc/sdk/svelte": "sdk/svelte.js",
   "@panomc/sdk/internal": "sdk/internal.js",
+  "@panomc/sdk/views": "sdk/views.js",
+  "@panomc/sdk/controllers": "sdk/controllers.js",
+  "@panomc/sdk/utils/route": "sdk/utils-route.js",
 };
 
 /** Entries whose shim re-exports come from the svelte/svelte-i18n packages. */

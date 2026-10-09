@@ -9,8 +9,22 @@
     "url": "https://github.com/PanoMC/sdk"
   },
   "devDependencies": {
+    "@panomc/client": "workspace:*",
+    "@panomc/client-gen": "workspace:*",
+    "@panomc/plugin-kit": "workspace:*",
+    "@panomc/widget-host": "workspace:*",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@semantic-release/exec": "^7.1.0",
+    "bootstrap": "5.3.8",
+    "happy-dom": "^20.0.0",
+    "magic-string": "^0.30.17",
+    "postcss": "^8.5.6",
+    "rollup": "^4.32.1",
+    "rollup-plugin-svelte": "^7.2.2",
+    "sass": "^1.99.0",
     "semantic-release": "^25.0.9",
-    "@semantic-release/exec": "^7.1.0"
+    "typescript": "^5.9.0"
   },
   "overrides": {
     "dompurify": "^3.2.7",
@@ -18,6 +32,6 @@
     "esbuild": ">=0.25.0"
   },
   "scripts": {
-    "test": "bun test packages"
+    "test": "bun scripts/test-each.js"
   }
 }

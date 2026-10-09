@@ -1,4 +1,5 @@
 import { base } from '$app/paths';
+import ApiUtil from '$pano/lib/api.util';
 
 const listeners = new Set();
 let ws;
@@ -31,20 +32,47 @@ let consecutiveFastFailures = 0;
  */
 let stoppedDueToAuth = false;
 
-function buildWsUrl() {
+/** True while a ticket is being fetched, so a second `connect()` does not start a second socket. */
+let connecting = false;
+
+function isLive() {
+  return !!ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING);
+}
+
+/** @param {string} ticket the single-use ticket of `POST /auth/ws-ticket` */
+function buildWsUrl(ticket) {
   if (typeof window === 'undefined') return '';
-  const withBase = `${base || ''}/api/ws`.replace(/\/+/g, '/');
+  const withBase = `${base || ''}/api/v1/ws`.replace(/\/+/g, '/');
   const path = withBase.startsWith('/') ? withBase : `/${withBase}`;
   const u = new URL(path, window.location.origin);
   u.protocol = u.protocol === 'https:' ? 'wss:' : 'ws:';
+  u.searchParams.set('ticket', ticket);
   return u.toString();
+}
+
+/**
+ * A fresh ticket (single use, 30 seconds; doc 05 section 6): the socket is opened with `?ticket=` instead of
+ * relying on an ambient cookie, so it also works for a page on another origin.
+ * @returns {Promise<{ ticket: string } | { failure: 'network' | 'rejected' }>}
+ */
+async function fetchTicket() {
+  let response;
+  try {
+    response = await ApiUtil.post({ path: '/auth/ws-ticket' });
+  } catch {
+    return { failure: 'network' };
+  }
+  if (response && typeof response.ticket === 'string' && response.ticket) {
+    return { ticket: response.ticket };
+  }
+  return { failure: response?.error?.code === 'NETWORK_ERROR' || !response?.error ? 'network' : 'rejected' };
 }
 
 function buildAuthProbeUrl() {
   if (typeof window === 'undefined') return '';
   // Logged-in-only endpoint: returns 200 when the session is valid, 401 otherwise.
   // Cheap (small payload) and already used elsewhere by the notification UI.
-  const withBase = `${base || ''}/api/notifications/quick`.replace(/\/+/g, '/');
+  const withBase = `${base || ''}/api/v1/notifications/quick`.replace(/\/+/g, '/');
   const path = withBase.startsWith('/') ? withBase : `/${withBase}`;
   return new URL(path, window.location.origin).href;
 }
@@ -113,21 +141,40 @@ async function probeAuthAndDecide() {
   consecutiveFastFailures = 0;
 }
 
-function connect() {
+async function connect() {
   if (typeof window === 'undefined') {
     return;
   }
-  if (stoppedDueToAuth) {
+  if (stoppedDueToAuth || connecting) {
     return;
   }
-  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+  if (isLive()) {
     return;
   }
   shouldReconnect = true;
+  connecting = true;
+  let granted;
+  try {
+    granted = await fetchTicket();
+  } finally {
+    connecting = false;
+  }
+  // The subscription may have been switched off, or another connect() may have won, while the ticket was fetched.
+  if (!shouldReconnect || !wantSiteNotifications || stoppedDueToAuth || isLive()) {
+    return;
+  }
+  if (!('ticket' in granted)) {
+    if (granted.failure === 'rejected') {
+      // A refused ticket is most often "logged out": the same HTTP probe as for a rejected upgrade decides.
+      await probeAuthAndDecide();
+    }
+    scheduleReconnect();
+    return;
+  }
   let attemptHasOpened = false;
   const startedAt = Date.now();
   try {
-    ws = new WebSocket(buildWsUrl());
+    ws = new WebSocket(buildWsUrl(granted.ticket));
   } catch {
     scheduleReconnect();
     return;
@@ -221,7 +268,7 @@ function updateConnection() {
 }
 
 /**
- * Keep a WebSocket for the logged-in site session (nudges re-fetch of /api/notifications/quick).
+ * Keep a WebSocket for the logged-in site session (nudges re-fetch of /api/v1/notifications/quick).
  *
  * The reconnect loop runs at [RECONNECT_MS] forever while active, until either:
  * - the consumer calls setSiteNotificationsSubscription(false) (logout / unmount), or
