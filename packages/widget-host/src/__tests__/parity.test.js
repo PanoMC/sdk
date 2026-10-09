@@ -10,8 +10,8 @@ const hostSrc = resolve(here, '..');
 const sdkDir = resolve(here, '../../../sdk');
 const sdkPackage = JSON.parse(readFileSync(join(sdkDir, 'package.json'), 'utf8'));
 
-// exports that are not facades: build output, the engine's core files, package.json
-const NOT_FACADES = (key) => key === './package.json' || key.startsWith('./build/') || key.startsWith('./core/');
+// exports that are not facades: build output, the engine's core files, the runtime table, package.json
+const NOT_FACADES = (key) => key === './package.json' || key === './runtime-specifiers' || key.startsWith('./build/') || key.startsWith('./core/');
 
 /** A value that answers every property read and call: stands in for the theme's context while a facade module evaluates. */
 const deep = () => new Proxy(function () {}, { get: (_t, key) => (key === 'then' ? undefined : deep()), apply: () => deep() });

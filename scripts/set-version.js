@@ -9,6 +9,12 @@
  * the dev channel, keeping the prerelease suffix) while the other packages
  * get the release version unchanged. Once the train reaches the line the
  * sdk follows it again.
+ *
+ * References between the packages are committed as `workspace:*` (devDependencies / dependencies) or `*`
+ * (peerDependencies) and rewritten here to what the release really publishes: `dependencies`,
+ * `optionalDependencies` and `devDependencies` to the exact version of that package in this release, a
+ * `peerDependencies` entry to `^<that version>` (a peer must stay satisfiable by a consumer's own pin).
+ * No published package.json contains `workspace:` or the 0.0.0-development placeholder.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -52,6 +58,23 @@ export function versionFor(name, release, sdkLine) {
   return `${line.join(".")}${suffix}`;
 }
 
+/**
+ * Rewrites every reference to a package of this repo to the version it gets in this release.
+ * @param {Record<string, any>} data  a parsed package.json (modified in place)
+ * @param {Record<string, string>} versions  package name -> version of this release
+ */
+export function stampInternal(data, versions) {
+  for (const section of ["dependencies", "optionalDependencies", "devDependencies", "peerDependencies"]) {
+    for (const name of Object.keys(data[section] ?? {})) {
+      if (!(name in versions)) continue;
+
+      data[section][name] = section === "peerDependencies" ? `^${versions[name]}` : versions[name];
+    }
+  }
+
+  return data;
+}
+
 function main() {
   const version = process.argv[2];
 
@@ -62,11 +85,18 @@ function main() {
 
   const sdkLine = JSON.parse(readFileSync("packages/sdk/package.json", "utf-8")).sdkLine;
 
-  for (const name of PACKAGES) {
+  const files = PACKAGES.map((name) => {
     const file = `packages/${name}/package.json`;
     const data = JSON.parse(readFileSync(file, "utf-8"));
 
     data.version = versionFor(name, version, sdkLine);
+
+    return { file, data };
+  });
+  const versions = Object.fromEntries(files.map(({ data }) => [data.name, data.version]));
+
+  for (const { file, data } of files) {
+    stampInternal(data, versions);
     writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
     console.log(`${data.name} → ${data.version}`);
   }

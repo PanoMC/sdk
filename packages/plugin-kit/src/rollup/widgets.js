@@ -3,7 +3,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import MagicString from "magic-string";
 import { parse } from "svelte/compiler";
-import { RUNTIME_FILES, widgetImportPath } from "@panomc/widget-host/runtime-map";
+import { RUNTIME_FILES, widgetImportPath } from "@panomc/sdk/runtime-specifiers";
 import { loadConfig } from "../config.js";
 import { addRootClass, kebab, SemanticClassCollisionError } from "../styles/semantic-classes.js";
 import { scanViews } from "./views.js";

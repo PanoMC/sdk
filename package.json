@@ -32,6 +32,7 @@
     "esbuild": ">=0.25.0"
   },
   "scripts": {
-    "test": "bun scripts/test-each.js"
+    "check:imports": "node scripts/check-package-imports.js",
+    "test": "node scripts/check-package-imports.js && bun scripts/test-each.js"
   }
 }

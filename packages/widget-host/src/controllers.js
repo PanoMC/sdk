@@ -8,7 +8,7 @@ import { onMount } from './svelte-runtime.js';
 import { get } from 'svelte/store';
 import { _, locale } from 'svelte-i18n';
 import { createFetchHost } from '@panomc/plugin-kit/controller';
-import * as registry from '../../sdk/core/js/ControllerRegistry.js';
+import * as registry from '@panomc/sdk/core/js/ControllerRegistry.js';
 import { getConfig, resolveUrl } from './config.js';
 import { hostRequest } from './api.js';
 import { getSession, onSession } from './session.js';

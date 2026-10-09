@@ -7,22 +7,14 @@
 //
 // plus `loader.js`, `css/pano-tokens.css`, `css/pano-fallback-icons.css`, `webfonts/*` and `runtime.json` (not specifiers).
 import { fileURLToPath } from 'node:url';
-import { RUNTIME_SPECIFIERS } from '../../theme-core/src/kit/specifiers.js';
+import { RUNTIME_FILES, widgetImportPath } from '@panomc/sdk/runtime-specifiers';
 import { SPECIFIER_MODULES } from '../src/index.js';
 
 export const PACKAGE_DIR = fileURLToPath(new URL('..', import.meta.url));
 export const SRC_DIR = fileURLToPath(new URL('../src/', import.meta.url));
 
-/** Specifier -> file of the runtime directory, for every `svelte*` name and every `@panomc/sdk` facade. */
-export const RUNTIME_FILES = Object.freeze(
-  Object.fromEntries(
-    Object.entries(RUNTIME_SPECIFIERS).map(([specifier, file]) => {
-      if (specifier === 'svelte-i18n') return [specifier, 'svelte-i18n.js'];
-      if (file.startsWith('sdk/')) return [specifier, `host/${file.slice('sdk/'.length)}`];
-      return [specifier, file];
-    }),
-  ),
-);
+// RUNTIME_FILES and widgetImportPath are owned by @panomc/sdk (shared with the plugin kit); re-exported here.
+export { RUNTIME_FILES, widgetImportPath };
 
 /** Specifier -> the source file of this package that implements it (`@panomc/sdk*` only). */
 export const HOST_SOURCES = Object.freeze(
@@ -38,15 +30,4 @@ export function runtimeInput(loaderFile) {
   }
   input.loader = loaderFile;
   return input;
-}
-
-/**
- * Relative URL of a runtime file seen from a widget module that sits in `.../_/ui/widgets/` of a plugin
- * (`/api/v1/plugins/<id>/_/ui/widgets/` -> five levels up is `/api/v1/`, doc 06 section 3.3).
- * @param {string} specifier
- */
-export function widgetImportPath(specifier) {
-  const file = RUNTIME_FILES[specifier];
-  if (!file) throw new Error(`no runtime file for ${specifier}`);
-  return `../../../../../widgets/runtime/${file}`;
 }

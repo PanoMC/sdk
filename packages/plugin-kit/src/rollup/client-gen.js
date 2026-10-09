@@ -62,11 +62,6 @@ function writeIfChanged(file, text) {
   fs.writeFileSync(file, text);
 }
 
-/** The package when installed, the sibling workspace folder otherwise (kit checkout). */
 async function loadGenerator() {
-  try {
-    return await import("@panomc/client-gen");
-  } catch {
-    return await import("../../../client-gen/src/index.js");
-  }
+  return await import("@panomc/client-gen");
 }

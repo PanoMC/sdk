@@ -52,12 +52,14 @@
         "rollup-plugin-svelte": "^7.2.2",
       },
       "devDependencies": {
+        "@panomc/sdk": "workspace:*",
         "bootstrap": "5.3.8",
         "happy-dom": "^20.0.0",
         "sass": "^1.99.0",
         "typescript": "^5.9.0",
       },
       "peerDependencies": {
+        "@panomc/sdk": "*",
         "svelte": "*",
       },
     },
@@ -75,6 +77,12 @@
       "devDependencies": {
         "svelte": "5.55.9",
       },
+      "peerDependencies": {
+        "@sveltejs/kit": "^2.0.0",
+      },
+      "optionalPeers": [
+        "@sveltejs/kit",
+      ],
     },
     "packages/theme-core": {
       "name": "@panomc/theme-core",
@@ -112,17 +120,17 @@
         "svelte-preprocess": "^6.0.3",
         "vite": "^8.0.9",
       },
-      "optionalPeers": [
-        "@panomc/sdk",
-      ],
     },
     "packages/widget-host": {
       "name": "@panomc/widget-host",
       "version": "0.0.0-development",
       "dependencies": {
+        "@panomc/client": "workspace:*",
+        "@panomc/plugin-kit": "workspace:*",
         "svelte-i18n": "^4.0.1",
       },
       "devDependencies": {
+        "@panomc/sdk": "workspace:*",
         "@rollup/plugin-node-resolve": "^16.0.0",
         "@rollup/plugin-terser": "^0.4.4",
         "happy-dom": "^20.0.0",
@@ -130,6 +138,7 @@
         "rollup-plugin-svelte": "^7.2.2",
       },
       "peerDependencies": {
+        "@panomc/sdk": "*",
         "svelte": "*",
       },
     },

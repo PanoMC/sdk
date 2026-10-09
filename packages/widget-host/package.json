@@ -46,12 +46,16 @@
     "access": "public"
   },
   "dependencies": {
+    "@panomc/client": "workspace:*",
+    "@panomc/plugin-kit": "workspace:*",
     "svelte-i18n": "^4.0.1"
   },
   "peerDependencies": {
+    "@panomc/sdk": "*",
     "svelte": "*"
   },
   "devDependencies": {
+    "@panomc/sdk": "workspace:*",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
     "happy-dom": "^20.0.0",

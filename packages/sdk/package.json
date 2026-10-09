@@ -79,6 +79,10 @@
       "svelte": "./src/controllers.js",
       "default": "./src/controllers.js"
     },
+    "./runtime-specifiers": {
+      "svelte": "./src/runtime-specifiers.js",
+      "default": "./src/runtime-specifiers.js"
+    },
     "./build/*": "./build/*",
     "./core/*": {
       "svelte": "./core/*",
@@ -101,5 +105,13 @@
   },
   "scripts": {},
   "svelte": "./src/index.js",
-  "type": "module"
+  "type": "module",
+  "peerDependencies": {
+    "@sveltejs/kit": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@sveltejs/kit": {
+      "optional": true
+    }
+  }
 }

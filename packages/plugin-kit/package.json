@@ -37,9 +37,11 @@
     "rollup-plugin-svelte": "^7.2.2"
   },
   "peerDependencies": {
+    "@panomc/sdk": "*",
     "svelte": "*"
   },
   "devDependencies": {
+    "@panomc/sdk": "workspace:*",
     "bootstrap": "5.3.8",
     "happy-dom": "^20.0.0",
     "sass": "^1.99.0",
