@@ -468,6 +468,7 @@
     "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Can't change email, wait 15 minutes.",
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Can't reset password, wait 5 minutes.",
     "CATEGORY_NOT_EXISTS": "This category is not found!",
+    "TICKET_CATEGORY_REQUIRED": "Pick a category to open a ticket.",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
     "INVALID_DATA": "Invalid data!",
     "INVALID_EMAIL": "Invalid e-mail!",

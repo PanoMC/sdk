@@ -53,7 +53,10 @@
       class="pano-create-ticket-view__select form-select form-select-lg rounded-top-0"
       id="datalistOptions"
       bind:value={$categoryId}>
-      <option value={-1}>{$_("pages.create-ticket.inputs.no-category")}</option>
+      <!-- Offered unless the website asks for a category (the categories answer says so). -->
+      {#if data.allowNoCategory !== false}
+        <option value={-1}>{$_("pages.create-ticket.inputs.no-category")}</option>
+      {/if}
       {#each data.categories as category, index (category)}
         <option value={category.id}>{category.title}</option>
       {/each}

@@ -468,6 +468,7 @@
     "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Нельзя сменить почту, подождите 15 минут.",
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Нельзя сбросить пароль, подождите 5 минут.",
     "CATEGORY_NOT_EXISTS": "Эта категория не найдена!",
+    "TICKET_CATEGORY_REQUIRED": "Выберите категорию, чтобы создать тикет.",
     "CURRENT_PASSWORD_NOT_CORRECT": "Текущий пароль неверен!",
     "INVALID_DATA": "Неверные данные!",
     "INVALID_EMAIL": "Неверный e-mail!",

@@ -38,6 +38,9 @@
   let error = writable();
   let title = writable("");
   let message = writable("");
-  let categoryId = writable(-1);
+  // Where a ticket must have a category the form starts on the first one, not on "no category".
+  let categoryId = writable(
+    data.allowNoCategory === false && data.categories?.length ? data.categories[0].id : -1,
+  );
   let loading = writable(false);
 </script>

@@ -468,6 +468,7 @@
     "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "E-posta değiştirilemez, 15 dakika bekleyin.",
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Şifre sıfırlanamaz, 5 dakika bekleyin.",
     "CATEGORY_NOT_EXISTS": "Bu kategori bulunamadı!",
+    "TICKET_CATEGORY_REQUIRED": "Destek talebi açmak için bir kategori seçin.",
     "CURRENT_PASSWORD_NOT_CORRECT": "Mevcut şifre doğru değil!",
     "INVALID_DATA": "Geçersiz veri!",
     "INVALID_EMAIL": "Geçersiz e-posta!",
