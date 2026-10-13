@@ -88,7 +88,7 @@
                 alt={post.writer.username}
                 width="24"
                 height="24"
-                use:tooltip={[
+                use:tooltip={post.writer.username !== "-" && [
                   post.writer.username,
                   { placement: "bottom" },
                 ]}
@@ -125,7 +125,7 @@
                 alt={post.writer.username}
                 width="28"
                 height="28"
-                use:tooltip={[
+                use:tooltip={post.writer.username !== "-" && [
                   post.writer.username,
                   { placement: "bottom" },
                 ]}

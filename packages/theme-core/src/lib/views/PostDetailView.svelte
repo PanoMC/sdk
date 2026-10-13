@@ -85,7 +85,7 @@
           <div
             class="col-lg-3 d-flex align-items-end justify-content-end opacity-75">
             <a
-              href={route(`/player/${data.post.writer.username}`)}
+              href={data.post.writer.username !== "-" ? route(`/player/${data.post.writer.username}`) : undefined}
               class="d-inline-block focus-ring rounded-circle ms-2"
               hidden={typeof themeSettings.postAuthorImageEnabled ===
               "undefined"
@@ -97,7 +97,7 @@
                 alt={data.post.writer.username}
                 width="24"
                 height="24"
-                use:tooltip={[
+                use:tooltip={data.post.writer.username !== "-" && [
                   data.post.writer.username,
                   { placement: "bottom" },
                 ]}
@@ -128,7 +128,7 @@
           <div class="d-flex align-items-center">
             <Date time={data.post.date} />
             <a
-              href={route(`/player/${data.post.writer.username}`)}
+              href={data.post.writer.username !== "-" ? route(`/player/${data.post.writer.username}`) : undefined}
               class="d-inline-block rounded focus-ring rounded-circle ms-2"
               hidden={typeof themeSettings.postAuthorImageEnabled ===
               "undefined"
@@ -140,7 +140,7 @@
                 alt={data.post.writer.username}
                 width="28"
                 height="28"
-                use:tooltip={[
+                use:tooltip={data.post.writer.username !== "-" && [
                   data.post.writer.username,
                   { placement: "bottom" },
                 ]}

@@ -184,7 +184,7 @@
         <div class="d-flex align-items-center gap-2">
           <Date time={post.date} class="text-muted small" />
           <a
-            href={route(`/player/${post.writer.username}`)}
+            href={post.writer.username !== "-" ? route(`/player/${post.writer.username}`) : undefined}
             class="d-inline-block rounded focus-ring rounded-circle"
             hidden={typeof themeSettings.postAuthorImageEnabled === "undefined"
               ? false
@@ -194,7 +194,7 @@
               alt={post.writer.username}
               width="32"
               height="32"
-              use:tooltip={[post.writer.username, { placement: "bottom" }]}
+              use:tooltip={post.writer.username !== "-" && [post.writer.username, { placement: "bottom" }]}
               class="pano-post__image-3 rounded-circle border" />
           </a>
         </div>
@@ -214,7 +214,7 @@
           <Date time={post.date} class="small" />
           <a
             class="d-inline-block rounded focus-ring rounded-circle"
-            href={route(`/player/${post.writer.username}`)}
+            href={post.writer.username !== "-" ? route(`/player/${post.writer.username}`) : undefined}
             hidden={typeof themeSettings.postAuthorImageEnabled === "undefined"
               ? false
               : !themeSettings.postAuthorImageEnabled}>
@@ -223,7 +223,7 @@
               alt={post.writer.username}
               width="28"
               height="28"
-              use:tooltip={[post.writer.username, { placement: "bottom" }]}
+              use:tooltip={post.writer.username !== "-" && [post.writer.username, { placement: "bottom" }]}
               class="pano-post__image-4 rounded-circle border border-2 border-white" />
           </a>
         </div>
