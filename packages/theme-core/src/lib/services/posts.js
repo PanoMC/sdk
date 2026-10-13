@@ -43,13 +43,22 @@ export const getPostDetail = async ({ url, request, csrfToken }) => {
   });
 };
 
+/**
+ * A post as its author previews it. A numeric `id` is a saved post (draft or not); anything else is
+ * the token of the panel editor's unsaved content (`POST /api/v1/panel/posts/previews`), which is
+ * how a change is looked at before it is saved.
+ */
 export const getPostPreview = async ({ id, request, csrfToken }) => {
+  const saved = /^\d+$/.test(String(id));
+
   return ApiUtil.get({
-    path: `/posts/previews/${id}`,
+    path: saved
+      ? `/posts/previews/${id}`
+      : `/posts/previews/drafts/${encodeURIComponent(id)}`,
     request,
     csrfToken
   }).then((body) => {
-    body.id = parseInt(id);
+    if (saved) body.id = parseInt(id);
 
     return body;
   });

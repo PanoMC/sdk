@@ -1,7 +1,7 @@
 <svelte:component
-  this={data.View}
-  {data}
-  {post}
+  this={pageData.View}
+  data={pageData}
+  post={post ?? pageData.post}
   {themeSettings}
   {avatarVersion} />
 
@@ -26,8 +26,15 @@
   import { getContext } from "svelte";
   import { avatarVersion } from "$pano/lib/Store";
 
-  export let data;
-  export let post;
+  import { page } from "$app/stores";
+
+  // The route generated for this page hands over `post` only (older syncs) or `data` (newer ones).
+  // Without `data` the view could not be found (`data.View` of undefined) and the preview answered
+  // 500 for everyone who was allowed to see it, so the page's own load data is the fallback.
+  export let data = undefined;
+  export let post = undefined;
+
+  $: pageData = data ?? $page.data;
 
   const themeSettings = getContext("themeSettings");
 </script>

@@ -1,6 +1,11 @@
+import { error, redirect } from "@sveltejs/kit";
+
 import { getPostPreview } from "$pano/lib/services/posts";
 
 /**
+ * The preview of a post for its author: `/preview/post/<id>` for a saved post (draft or not) and
+ * `/preview/post/<token>` for the panel editor's unsaved content.
+ *
  * @type {import("@sveltejs/kit").Load}
  */
 export async function processLoad(event) {
@@ -8,46 +13,34 @@ export async function processLoad(event) {
 
   const parentData = await parent();
 
-  const { session } = parentData;
-  const { user } = session;
+  const user = parentData.session?.user;
 
-  if (!user && !user.panelAccess) {
-    return {
-      status: 302,
-      redirect: "/"
-    };
+  // A preview is for people who may use the panel. (This used to read `!user && !user.panelAccess`,
+  // which threw for a visitor who was not signed in and let a signed-in one without access through.)
+  if (!user || !user.panelAccess) {
+    throw redirect(302, "/");
   }
 
-  let data = {
-    post: {
+  const body = await getPostPreview({ id: event.params.id, request: event });
 
-      id: -1,
-      title: "",
-      category: "-",
-      writer: {
-        username: ""
-      },
-      text: "",
-      date: 0,
-      status: 1,
-      image: "",
-      views: 0
-    },
-    previousPost: "-",
-    nextPost: "-"
-  };
+  if (!body || body.error) {
+    const code = body?.error?.code;
 
-  await getPostPreview({ id: event.params.id, request: event }).then(
-    (body) => {
-      if (body.error) {
-        data = {};
-
-        return;
-      }
-
-      data.post = body.post;
+    // A draft token that expired or belongs to someone else reads as "not found" too.
+    if (code === "POST_NOT_FOUND" || code === "NOT_FOUND") {
+      throw error(404, code);
     }
-  );
 
-  return data;
+    if (code === "NOT_LOGGED_IN" || code === "NO_PERMISSION") {
+      throw redirect(302, "/");
+    }
+
+    throw error(500, code);
+  }
+
+  return {
+    post: body.post,
+    previousPost: body.previousPost ?? "-",
+    nextPost: body.nextPost ?? "-"
+  };
 }

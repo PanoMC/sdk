@@ -222,7 +222,7 @@ export { load } from "$pano/routes/root-layout-load.js";
   ...pagePair("(theme)/post/[url]", "PostDetailPage", "PostDetailPage.svelte"),
   // The posts feed is always reachable here, whatever the admin picked as the home page (doc 01 section 9).
   ...pagePair("(theme)/posts", "Home", "HomePage.svelte"),
-  ...pagePair("(theme)/preview/post/[id]", "PreviewPostPage", "PreviewPostPage.svelte", 'post="{data.post}"'),
+  ...pagePair("(theme)/preview/post/[id]", "PreviewPostPage", "PreviewPostPage.svelte", '{data} post="{data.post}"'),
   ...layoutPair("(theme)/profile", "ProfileLayout", "ProfileLayout.svelte"),
   ...pagePair("(theme)/profile", "ProfilePage", "profile/ProfilePage.svelte"),
   ...pagePair("(theme)/profile/settings", "SettingsPage", "profile/SettingsPage.svelte"),
