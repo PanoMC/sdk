@@ -28,23 +28,6 @@
 </style>
 
 <div class="pano-ticket-detail-view vstack gap-3">
-  <PageTitle
-    title={`#${$ticket.id} ${$ticket.title}`}
-    subtitle={$_("pages.ticket-detail.detail.opened-in-category", {
-      values: {
-        category: `<a
-  href="${route("/tickets")}?category=${$ticket.category.url}"
-  title="${$_("pages.ticket-detail.filter")}"
-  >${
-    $ticket.category === "-"
-      ? $_("pages.ticket-detail.no-category")
-      : $ticket.category.title
-  }
-</a>`,
-      },
-    })}
-    subtitleHtml={true} />
-
   <div class="card mt-lg-0">
     <CardHeader>
       <small slot="left" class="text-body-secondary">
@@ -167,7 +150,6 @@
   import TicketStatus, {
     TicketStatuses,
   } from "$pano/lib/components/TicketStatus.svelte";
-  import PageTitle from "$pano/lib/components/PageTitle.svelte";
   import CardHeader from "$pano/lib/components/CardHeader.svelte";
 
   export let data;

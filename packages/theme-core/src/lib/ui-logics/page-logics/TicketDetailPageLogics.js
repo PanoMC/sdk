@@ -1,6 +1,9 @@
 import { afterUpdate, onMount } from "svelte";
 import { get, writable } from "svelte/store";
 import { error } from "@sveltejs/kit";
+import { _ } from "svelte-i18n";
+
+import { route } from "$pano/registry/routes.js";
 
 import { getTicketDetail, loadMoreTicketMessages, sendTicketMessage } from "$pano/lib/services/tickets";
 
@@ -50,15 +53,45 @@ export async function processLoad(event) {
 
   await loadSidebar(event, data.ticket);
 
-  data.pageTitle = {
-    title: "pages.ticket-detail.tab-title",
-    titleValues: {
-      ticketId: `#${data.ticket.id}`,
-      title: data.ticket.title,
-    },
-  };
+  data.pageTitle = ticketPageTitle(data.ticket);
 
   return { ...data, sidebar: TicketCreateAndDetailSidebar };
+}
+
+const escapeHtml = (text) =>
+  String(text ?? "").replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+
+/**
+ * The page title of a ticket: its number and title, and under it the category it was opened in (a
+ * link to that category's tickets). It is the only title on the page; the view draws none of its own.
+ * Translated here because the title is taken verbatim (`raw`): the ticket's own title is not a key.
+ */
+export function ticketPageTitle(ticket) {
+  const translate = get(_);
+  const hasCategory = ticket.category && ticket.category !== "-";
+  const name = hasCategory ? ticket.category.title : translate("pages.ticket-detail.no-category");
+  const link = `<a href="${route("/tickets")}?category=${encodeURIComponent(
+    hasCategory ? ticket.category.url : "-",
+  )}" title="${escapeHtml(translate("pages.ticket-detail.filter"))}">${escapeHtml(name)}</a>`;
+
+  return {
+    raw: true,
+    title: `#${ticket.id} ${ticket.title}`,
+    subtitle: translate("pages.ticket-detail.detail.opened-in-category", { values: { category: link } }),
+    subtitleHtml: true,
+  };
+}
+
+/**
+ * Puts a freshly loaded ticket into the page's stores: the same page was loaded again (a notification
+ * about this ticket was clicked while it is open), and the stores were filled only once, on mount.
+ */
+export function applyTicket(stores, ticket) {
+  stores.ticket.set(ticket);
+  stores.messages.set(ticket.messages);
+  stores.sentMessageCount.set(0);
+  stores.shouldScroll.set(true);
+  updateSidebar(ticket);
 }
 
 export async function loadMore(loadMoreLoading, messages, data) {

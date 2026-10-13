@@ -85,7 +85,8 @@
   import { sanitize } from "@jill64/universal-sanitizer";
 
   import { browser } from "$app/environment";
-  import { goto } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
+  import { page } from "$app/stores";
   import { base } from "$app/paths";
 
   import { notificationsCount, quickNotifications, avatarVersion } from "$pano/lib/Store";
@@ -207,7 +208,10 @@
   }
 
   // Notifications without a click listener navigate to their safe `details.href`.
-  const navigate = (path) => goto(base + path);
+  // One that leads to the page already open reloads it instead: going to the address one is on does
+  // nothing, and the news the notification is about (a new ticket reply) would stay unseen.
+  const navigate = (path) =>
+    $page.url.pathname === base + path ? invalidateAll() : goto(base + path);
 
   function markRead(id) {
     ApiUtil.post({

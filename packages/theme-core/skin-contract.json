@@ -398,7 +398,7 @@
   "TicketDetailView": {
    "contract": 1,
    "source": "src/lib/views/TicketDetailView.svelte",
-   "uses": ["Date", "PageTitle", "TicketStatus"],
+   "uses": ["Date", "TicketStatus"],
    "hooks": [],
    "slotProps": {},
    "props": {

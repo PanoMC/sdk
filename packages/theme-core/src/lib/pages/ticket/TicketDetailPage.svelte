@@ -34,6 +34,7 @@
   import { avatarVersion } from "$pano/lib/Store";
 
   import {
+    applyTicket,
     init,
     loadMore,
     sendMessage,
@@ -51,4 +52,14 @@
     messages,
     ticket,
   } = init(data);
+
+  // The stores are filled once, on mount. When the same page loads again (a notification about this
+  // ticket clicked while it is open) the new ticket goes into them, so the new messages show.
+  let shownTicket = data.ticket;
+
+  $: if (data.ticket !== shownTicket) {
+    shownTicket = data.ticket;
+
+    applyTicket({ ticket, messages, sentMessageCount, shouldScroll }, data.ticket);
+  }
 </script>
