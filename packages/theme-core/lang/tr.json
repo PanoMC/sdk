@@ -64,7 +64,8 @@
     }
   },
   "toasts": {
-    "session-logged-out-successful": "Oturum başarıyla kapatıldı!"
+    "session-logged-out-successful": "Oturum başarıyla kapatıldı!",
+    "ticket-created": "Destek talebi oluşturuldu."
   },
   "components": {
     "toasts": {

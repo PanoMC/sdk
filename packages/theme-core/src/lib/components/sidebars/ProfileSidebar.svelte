@@ -8,6 +8,7 @@
   {side}
   {showDeleteAll}
   {onDeleteAllClick}
+  {showCreateTicket}
   {items}
   {data}
   {user}
@@ -78,6 +79,7 @@
 
   export let side;
   export let showDeleteAll = false;
+  export let showCreateTicket = false;
 
   const session = getContext("session");
 

@@ -5,6 +5,7 @@ const store = (value) => ({ subscribe: (run) => (run(value), () => {}) });
 const base = (extra = {}) => ({
   side: "left",
   showDeleteAll: false,
+  showCreateTicket: false,
   onDeleteAllClick: noop,
   items: items([
     { id: "profile-info", component: null, props: {} },

@@ -72,7 +72,7 @@ export async function processLoad(event) {
     } : null
   };
 
-  return { ...data, sidebar: ProfileSidebar };
+  return { ...data, sidebar: ProfileSidebar, sidebarProps: { showCreateTicket: true } };
 }
 
 async function refreshData(data) {

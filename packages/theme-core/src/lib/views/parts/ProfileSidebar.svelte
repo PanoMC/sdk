@@ -1,5 +1,5 @@
 <!--
-  Default markup of the engine's <ProfileSidebar> (registry name "ProfileSidebar", contract 1): the
+  Default markup of the engine's <ProfileSidebar> (registry name "ProfileSidebar", contract 2): the
   cards beside the profile pages. The controller (components/sidebars/ProfileSidebar.svelte) owns the
   data, the item list, the navigation entries and the clock.
 
@@ -7,6 +7,7 @@
     side               "left" | "right" - which side of the content the column sits on
     showDeleteAll      boolean - show the "delete all notifications" button
     onDeleteAllClick   function() - opens the confirmation for deleting all notifications
+    showCreateTicket   boolean - show the "create support ticket" button (the tickets page)
     items              store of { id, component, props } - the sidebar items, plugin items included;
                        unknown ids are rendered with <ViewComponent> (the place plugins inject)
     data               store of { lastActivityTime, inGame, permissionGroupName, isBanned }
@@ -26,11 +27,21 @@
           {$_("buttons.delete-all")}
         </button>
       </div>
+    {:else if showCreateTicket}
+      <div class="order-last order-lg-first w-100">
+        <a
+          class="pano-profile-sidebar__create-ticket btn btn-primary w-100"
+          role="button"
+          href={route("/ticket/create")}>
+          <i class="fas fa-plus me-2"></i>
+          {$_("pages.create-ticket.title")}
+        </a>
+      </div>
     {/if}
     <div
       class="vstack gap-3"
-      class:order-first={showDeleteAll}
-      class:order-lg-last={showDeleteAll}>
+      class:order-first={showDeleteAll || showCreateTicket}
+      class:order-lg-last={showDeleteAll || showCreateTicket}>
     {#each $items as item (item.id)}
       {#if item.id === "profile-info"}
         <!-- Profile Info Snippet -->
@@ -79,6 +90,8 @@
 <script>
   import { _ } from "svelte-i18n";
 
+  import { route } from "$pano/registry/routes.js";
+
   import PlayerPermissionBadge from "$pano/lib/components/PlayerPermissionBadge.svelte";
   import PlayerStatusBadge from "$pano/lib/components/PlayerStatusBadge.svelte";
   import Sidebar from "$pano/lib/components/Sidebar.svelte";
@@ -90,6 +103,7 @@
   export let side;
   export let showDeleteAll = false;
   export let onDeleteAllClick = () => {};
+  export let showCreateTicket = false;
   export let items;
   export let data;
   export let user;

@@ -64,7 +64,8 @@
     }
   },
   "toasts": {
-    "session-logged-out-successful": "Session logged out successfully!"
+    "session-logged-out-successful": "Session logged out successfully!",
+    "ticket-created": "Support ticket created."
   },
   "components": {
     "toasts": {

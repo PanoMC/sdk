@@ -64,7 +64,8 @@
     }
   },
   "toasts": {
-    "session-logged-out-successful": "Сеанс успешно завершен!"
+    "session-logged-out-successful": "Сеанс успешно завершен!",
+    "ticket-created": "Тикет поддержки создан."
   },
   "components": {
     "toasts": {

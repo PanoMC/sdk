@@ -48,13 +48,17 @@ describe("engine sidebars: files and contract (FX-05)", () => {
     expect(read(lib, "components", "sidebars", "TicketCreateAndDetailSidebar.svelte")).toMatch(/export const update = /);
   });
 
-  test("skin-contract lists the five cards as component views of contract 1 with their props", () => {
+  // ProfileSidebar is at contract 2 since it got `showCreateTicket` (the tickets page's button).
+  const CONTRACTS = { ProfileSidebar: 2 };
+  const contractOf = (name) => CONTRACTS[name] ?? 1;
+
+  test("skin-contract lists the five cards as component views with their contract and props", () => {
     const contract = JSON.parse(read(pkg, "skin-contract.json"));
     for (const name of SIDEBARS) {
       const entry = contract.views[name];
       expect(entry).toBeDefined();
       expect(entry.kind).toBe("component");
-      expect(entry.contract).toBe(1);
+      expect(entry.contract).toBe(contractOf(name));
       expect(entry.source).toBe(`src/lib/views/parts/${name}.svelte`);
 
       // every `export let` of the part is listed, and nothing else
@@ -69,7 +73,7 @@ describe("engine sidebars: files and contract (FX-05)", () => {
 
   test("the generated engine table registers the five parts as defaults", () => {
     const table = read(lib, "views", "parts", "engine-views.generated.js");
-    for (const name of SIDEBARS) expect(table).toContain(`"${name}": { contract: 1, component: () => import("./${name}.svelte")`);
+    for (const name of SIDEBARS) expect(table).toContain(`"${name}": { contract: ${contractOf(name)}, component: () => import("./${name}.svelte")`);
   });
 
   test("no literal href=\"/...\" is left in the engine components or the parts", () => {

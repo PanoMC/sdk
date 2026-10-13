@@ -6,6 +6,7 @@ import { goto } from "$app/navigation";
 import { createTicket, getTicketCategories } from "$pano/lib/services/tickets";
 
 import { NETWORK_ERROR } from "$pano/lib/api.util";
+import { showSuccess as showSuccessToast } from "$pano/lib/components/ToastContainer.svelte";
 
 import TicketCreateAndDetailSidebar, {
   load as loadSidebar
@@ -74,6 +75,8 @@ export async function submit(error, loading, title, message, categoryId) {
       }
 
       goto("/ticket/" + body.id);
+
+      void showSuccessToast("toasts.ticket-created");
     })
     .catch(() => {
       loading.set(false);
