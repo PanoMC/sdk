@@ -202,7 +202,7 @@ describe("build plugins of the vite config", () => {
   async function runPlugin(plugin, themeDir) {
     process.chdir(themeDir);
     plugin.configResolved?.();
-    await plugin.closeBundle();
+    await plugin.buildApp.handler();
     process.chdir(cwd);
   }
 
