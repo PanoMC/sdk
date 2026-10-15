@@ -22,10 +22,6 @@ mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({ goto: async () => {} }));
 mock.module("$pano/lib/services/auth.js", () => ({ sendLogout: async () => {} }));
 mock.module("$pano/lib/components/ToastContainer.svelte", () => ({ showSuccess: async () => {} }));
-mock.module("$pano/lib/returnTo.util.js", () => import("../returnTo.util.js"));
-mock.module("@panomc/sdk/core/js/PluginAPI", () =>
-  import("../../../../sdk/core/js/PluginAPI.js"),
-);
 // Superset of what the sdk tests mock for the same file (bun mocks are process-wide).
 const pluginManagerStub = () => ({
   plugins: writable([]),
@@ -34,6 +30,13 @@ const pluginManagerStub = () => ({
 });
 mock.module("@panomc/sdk/core/js/PluginManager.js", pluginManagerStub);
 mock.module(new URL("../../../../sdk/core/js/PluginManager.js", import.meta.url).pathname, pluginManagerStub);
+// A mock factory must not import(): since Bun 1.4 the factory runs inside the module load that asked for the mock, and an
+// import() from there waits on that same load. The real modules are loaded first (after the PluginManager mocks the sdk
+// PluginAPI depends on) and handed over as they are.
+const returnToUtil = await import("../returnTo.util.js");
+mock.module("$pano/lib/returnTo.util.js", () => returnToUtil);
+const sdkPluginAPI = await import("../../../../sdk/core/js/PluginAPI.js");
+mock.module("@panomc/sdk/core/js/PluginAPI", () => sdkPluginAPI);
 mock.module("$pano/plugin-engine/engine.js", () => ({
   createHookEngine: () => ({ reset() {}, executeHookLoad() {}, register() {}, get() {}, setVisible() {} }),
   createLifecycleRegistry: () => ({ reset() {}, executeLifecycle() {}, on() {} }),
