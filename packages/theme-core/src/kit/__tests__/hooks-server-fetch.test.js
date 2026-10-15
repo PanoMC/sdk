@@ -54,3 +54,34 @@ describe("handleFetch", () => {
     expect(sent.headers.get("cookie")).toBe("a=b");
   });
 });
+
+describe("handleError", () => {
+  const event = { url: new URL("http://127.0.0.1:3000/ticket/2") };
+
+  const logged = (run) => {
+    const log = console.log;
+    const errorLog = console.error;
+    const calls = [];
+    console.log = (...args) => calls.push(args);
+    console.error = (...args) => calls.push(args);
+    try {
+      run();
+    } finally {
+      console.log = log;
+      console.error = errorLog;
+    }
+    return calls.length;
+  };
+
+  test("a 404 from a load is not logged as a server error", () => {
+    const { handleError } = createThemeHooks({ internalLibsHash: "x", runtimeShimsHash: "x", suppressNoisyErrors: false });
+
+    expect(logged(() => handleError({ error: { status: 404, message: "NOT_EXISTS" }, event, status: 404 }))).toBe(0);
+  });
+
+  test("an unexpected error is still logged", () => {
+    const { handleError } = createThemeHooks({ internalLibsHash: "x", runtimeShimsHash: "x", suppressNoisyErrors: false });
+
+    expect(logged(() => handleError({ error: new Error("boom"), event, status: 500 }))).toBe(2);
+  });
+});

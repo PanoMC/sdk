@@ -46,6 +46,18 @@ function getCookieWithHttpFallback(cookies, baseName) {
 }
 
 /** In production, skip logging common client/bot noise (wrong method, stray POST to non-action routes). */
+/**
+ * Whether [status] is a client error (400-499): an expected answer such as a 404, not a failure.
+ *
+ * @param {unknown} status
+ * @returns {boolean}
+ */
+export function isClientErrorStatus(status) {
+  const code = Number(status);
+
+  return Number.isInteger(code) && code >= 400 && code < 500;
+}
+
 function shouldSuppressServerErrorLog(error) {
   if (process.env.NODE_ENV !== "production") return false;
   if (error?.status === 405) return true;
@@ -323,8 +335,12 @@ ${importMapEntries}
   }
 
   /** @type {import('@sveltejs/kit').HandleServerError} */
-  function handleError({ error, event }) {
-    if (!suppressNoisyErrors || !shouldSuppressServerErrorLog(error)) {
+  function handleError({ error, event, status }) {
+    // A 4xx (a missing ticket, page or post: `error(404, "NOT_EXISTS")`) is an answer, not a fault
+    // of this server, so it is never logged; only what ends in a 5xx is.
+    const failed = !isClientErrorStatus(status ?? error?.status);
+
+    if (failed && (!suppressNoisyErrors || !shouldSuppressServerErrorLog(error))) {
       console.log("!!! [GLOBAL ERROR EVENT]:", event.url.href);
       console.error("!!! [GLOBAL ERROR CONTENT]:", error);
     }
