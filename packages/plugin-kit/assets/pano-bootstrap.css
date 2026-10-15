@@ -12424,8 +12424,8 @@ textarea.form-control-lg {
 }
 
 [data-bs-theme=copper] {
-  --bs-body-bg: #fff;
-  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-bg: rgb(7.2156862745%, 4.5098039216%, 2%);
+  --bs-body-bg-rgb: 18, 11, 5;
   --bs-secondary-bg: rgb(10.8235294118%, 6.7647058824%, 3%);
   --bs-secondary-bg-rgb: 28, 17, 8;
   --bs-tertiary-bg: rgb(12.9882352941%, 8.1176470588%, 3.6%);
@@ -12447,8 +12447,8 @@ textarea.form-control-lg {
 }
 
 [data-bs-theme=emerald] {
-  --bs-body-bg: #fff;
-  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-bg: rgb(0.6274509804%, 7.2549019608%, 5.0588235294%);
+  --bs-body-bg-rgb: 2, 18, 13;
   --bs-secondary-bg: rgb(0.9411764706%, 10.8823529412%, 7.5882352941%);
   --bs-secondary-bg-rgb: 2, 28, 19;
   --bs-tertiary-bg: rgb(1.1294117647%, 13.0588235294%, 9.1058823529%);
@@ -12470,8 +12470,8 @@ textarea.form-control-lg {
 }
 
 [data-bs-theme=midnight] {
-  --bs-body-bg: #fff;
-  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-bg: rgb(5.4509803922%, 3.6078431373%, 9.6470588235%);
+  --bs-body-bg-rgb: 14, 9, 25;
   --bs-secondary-bg: rgb(8.1764705882%, 5.4117647059%, 14.4705882353%);
   --bs-secondary-bg-rgb: 21, 14, 37;
   --bs-tertiary-bg: rgb(9.8117647059%, 6.4941176471%, 17.3647058824%);
@@ -12493,8 +12493,8 @@ textarea.form-control-lg {
 }
 
 [data-bs-theme=crimson] {
-  --bs-body-bg: #fff;
-  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-bg: rgb(9.3725490196%, 2.6666666667%, 2.6666666667%);
+  --bs-body-bg-rgb: 24, 7, 7;
   --bs-secondary-bg: rgb(14.0588235294%, 4%, 4%);
   --bs-secondary-bg-rgb: 36, 10, 10;
   --bs-tertiary-bg: rgb(16.8705882353%, 4.8%, 4.8%);

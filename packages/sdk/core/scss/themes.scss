@@ -39,17 +39,19 @@
   [data-bs-theme='#{$name}'] {
     @extend [data-bs-theme='dark'];
 
-    $body-bg: shade-color($primary, 90%) !default;
-    --bs-body-bg: #{$body-bg};
-    --bs-body-bg-rgb: #{to-rgb($body-bg)};
+    // Own names and no `!default`: Bootstrap already defines a global `$body-bg` (white), and a
+    // `!default` assignment of that name keeps it, which gave every palette a white page.
+    $theme-body-bg: shade-color($primary, 90%);
+    --bs-body-bg: #{$theme-body-bg};
+    --bs-body-bg-rgb: #{to-rgb($theme-body-bg)};
 
-    $secondary-bg: shade-color($primary, 85%) !default;
-    --bs-secondary-bg: #{$secondary-bg};
-    --bs-secondary-bg-rgb: #{to-rgb($secondary-bg)};
+    $theme-secondary-bg: shade-color($primary, 85%);
+    --bs-secondary-bg: #{$theme-secondary-bg};
+    --bs-secondary-bg-rgb: #{to-rgb($theme-secondary-bg)};
 
-    $tertiary-bg: shade-color($primary, 82%) !default;
-    --bs-tertiary-bg: #{$tertiary-bg};
-    --bs-tertiary-bg-rgb: #{to-rgb($tertiary-bg)};
+    $theme-tertiary-bg: shade-color($primary, 82%);
+    --bs-tertiary-bg: #{$theme-tertiary-bg};
+    --bs-tertiary-bg-rgb: #{to-rgb($theme-tertiary-bg)};
 
     --bs-primary: #{$primary};
     --bs-primary-rgb: #{to-rgb($primary)};
@@ -68,8 +70,8 @@
     --bs-link-color-rgb: #{to-rgb($primary)};
 
     // Hover dark tones
-    $primary-hover: shade-color($primary, 15%) !default;
-    $secondary-hover: shade-color($secondary, 15%) !default;
+    $primary-hover: shade-color($primary, 15%);
+    $secondary-hover: shade-color($secondary, 15%);
     --bs-link-hover-color: #{$primary-hover};
     --bs-link-hover-color-rgb: #{to-rgb($primary-hover)};
 
