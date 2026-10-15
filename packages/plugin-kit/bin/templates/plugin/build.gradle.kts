@@ -35,7 +35,7 @@ val isLinux = os.contains("nix") || os.contains("nux") || os.contains("linux")
 val isAarch64 = arch.contains("aarch64") || arch.contains("arm64")
 val isX64 = arch.contains("x86_64") || arch.contains("amd64")
 
-val bunVersion = "1.2.0"
+val bunVersion = "1.4.3"
 val bunPlatform = when {
     isWindows && isX64 -> "bun-windows-x64"
 //    isWindows && isAarch64 -> "bun-windows-aarch64"
