@@ -219,7 +219,9 @@
           <div class="col-md-6 d-flex align-items-center">
             <div class="form-check form-switch">
               <input
-                checked={$themeSettings.breadcrumbEnabled}
+                checked={typeof $themeSettings.breadcrumbEnabled === "undefined"
+                  ? true
+                  : $themeSettings.breadcrumbEnabled}
                 class="pano-theme-settings-view__check form-check-input"
                 id="breadcrumb-enabled"
                 on:change={(e) =>

@@ -219,6 +219,7 @@
 
   const baseTabKeys = {
     general: [
+      "breadcrumbEnabled",
       "themeColor",
       "backgroundColor",
       "bgImagePosition",

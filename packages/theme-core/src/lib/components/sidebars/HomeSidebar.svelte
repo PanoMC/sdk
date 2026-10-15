@@ -99,27 +99,18 @@
 
   const items = panoApi.ui.sidebar.get("home");
 
-  /* Background Image Logic (Synced with Header.svelte) */
-  const defaultHeaderBg =
-    typeof themeSettings.defaultHeaderBg === "undefined"
-      ? true
-      : themeSettings.defaultHeaderBg;
-
-  $: headerBgImage = defaultHeaderBg
-    ? "/assets/img/default-header-bg.png"
-    : themeSettings.files?.headerBackgroundImage
-      ? "/api/v1/theme/file/" + themeSettings.files?.headerBackgroundImage
-      : "";
-
+  /* Play card background image */
   $: defaultPlayCardBg =
     typeof themeSettings.defaultPlayCardBg === "undefined"
       ? true
       : themeSettings.defaultPlayCardBg;
 
+  // The play card's default background is the bundled image, not whatever the header shows: turning the
+  // header's default image off must not empty the play card.
   $: playCardBgImage = themeSettings.files?.playCardBackgroundImage
     ? "/api/v1/theme/file/" + themeSettings.files?.playCardBackgroundImage
     : defaultPlayCardBg
-      ? headerBgImage
+      ? "/assets/img/default-header-bg.png"
       : "";
 
   $: playCardOpacity = themeSettings.playCardBgOpacity ?? 0.5;
