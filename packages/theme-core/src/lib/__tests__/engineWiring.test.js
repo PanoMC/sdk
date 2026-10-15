@@ -44,7 +44,7 @@ mock.module("$app/navigation", () => ({
   invalidate: async () => {},
   invalidateAll: async () => {},
 }));
-mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null) }));
+mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null), captureRequestState: () => {} }));
 mock.module("$pano/lib/services/auth.js", () => ({ sendLogout: async () => {} }));
 mock.module("$pano/lib/components/ToastContainer.svelte", () => ({
   show: async () => {},
@@ -238,7 +238,7 @@ function target_(spec, from, mode = "server") {
     if (spec === "svelte") return join(svelteDir, "src", "index-client.js");
     if (spec === "$app/env") return clientStub("environment", "export const browser = true; export const dev = false;");
     if (spec === "@panomc/sdk/core/js/appStores.js") {
-      return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__engineWiringClientPage); return () => {}; } };");
+      return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__engineWiringClientPage); return () => {}; } }; export const navigating = { subscribe(run) { run(null); return () => {}; } }; export const captureRequestState = () => {};");
     }
   }
   if (spec === "svelte" || spec.startsWith("svelte/")) return spec;

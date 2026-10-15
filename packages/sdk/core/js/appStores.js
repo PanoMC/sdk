@@ -7,6 +7,11 @@
  *
  * On the server `$app/state` can only be read while rendering: a subscription (what `$page` makes during render) takes
  * a snapshot then and never updates. In the browser the store follows the state.
+ *
+ * A plugin component is compiled with its own copy of Svelte's server runtime, and its `$page` can be read where the
+ * host's component context is not current (`$app/state` then throws). The host's app layout calls
+ * `captureRequestState()` while it renders, so such a read gets the page of the request being rendered (server
+ * rendering is synchronous: no other request runs in between).
  */
 import { navigating as navigatingState, page as pageState } from "$app/state";
 import { browser } from "$app/env";
@@ -41,19 +46,38 @@ function navigatingSnapshot() {
   };
 }
 
+/** The page of the request the server renders now (see `captureRequestState`). */
+let requestPage = null;
+
+/**
+ * Takes the page of the request being rendered; called by the host's app layout during its render on the server.
+ * A no-op in the browser.
+ */
+export function captureRequestState() {
+  if (!browser) requestPage = pageSnapshot();
+}
+
 /**
  * @template T
  * @param {() => T} snapshot
+ * @param {() => T | null} fallback  the server value when `$app/state` cannot be read here
  * @returns {import("svelte/store").Readable<T>}
  */
-function stateStore(snapshot) {
+function stateStore(snapshot, fallback) {
   /** @type {import("svelte/store").Readable<T> | undefined} */
   let clientStore;
 
   return {
     subscribe(run, invalidate) {
       if (!browser) {
-        run(snapshot());
+        let value;
+        try {
+          value = snapshot();
+        } catch (error) {
+          value = fallback();
+          if (value === null) throw error;
+        }
+        run(value);
         return () => {};
       }
 
@@ -64,5 +88,6 @@ function stateStore(snapshot) {
   };
 }
 
-export const page = stateStore(pageSnapshot);
-export const navigating = stateStore(navigatingSnapshot);
+export const page = stateStore(pageSnapshot, () => requestPage);
+// never navigating while the server renders
+export const navigating = stateStore(navigatingSnapshot, () => null);

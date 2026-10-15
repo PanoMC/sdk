@@ -46,7 +46,7 @@ mock.module("$app/navigation", () => ({
   invalidate: async () => {},
   invalidateAll: async () => {},
 }));
-mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null) }));
+mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null), captureRequestState: () => {} }));
 
 const registry = await import("../../registry/index.js");
 const { createViewProxy } = await import("../../../../sdk/src/views.js");
@@ -560,7 +560,7 @@ function target_(spec, from, mode) {
     if (spec === "$app/env") return clientStub("environment", "export const browser = true; export const dev = false;");
     if (spec === "$app/paths") return clientStub("paths", 'export const base = "";');
     if (spec === "@panomc/sdk/core/js/appStores.js") {
-      return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__tc53ClientPage); return () => {}; } };");
+      return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__tc53ClientPage); return () => {}; } }; export const navigating = { subscribe(run) { run(null); return () => {}; } }; export const captureRequestState = () => {};");
     }
   }
 

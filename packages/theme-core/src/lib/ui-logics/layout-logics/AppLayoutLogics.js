@@ -17,7 +17,7 @@ import copy from "copy-to-clipboard";
 
 import { browser } from "$app/env";
 import { goto, invalidate, invalidateAll } from "$app/navigation";
-import { navigating, page } from "@panomc/sdk/core/js/appStores.js";
+import { captureRequestState, navigating, page } from "@panomc/sdk/core/js/appStores.js";
 import { base } from "@panomc/sdk/core/js/basePath.js";
 import { error, redirect } from "@sveltejs/kit";
 
@@ -369,6 +369,9 @@ export function init(data) {
   if (!browser) {
     languageStuff.activateLanguage(data.language);
   }
+
+  // SSR: plugin components read `$page` with their own Svelte runtime; they get this request's page (appStores.js).
+  captureRequestState();
 
   const session = writable(data.session);
   const sidebar = writable(null);
