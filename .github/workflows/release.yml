@@ -30,7 +30,7 @@ jobs:
       # Pinned: on Bun 1.4.x two test files hang while importing the engine under mocks (the built themes run fine there).
       - uses: oven-sh/setup-bun@v2.0.2
         with:
-          bun-version: '1.3.13'
+          bun-version: '1.4.3'
 
       - uses: actions/setup-node@v4
         with:
