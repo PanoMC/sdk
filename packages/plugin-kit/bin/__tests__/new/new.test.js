@@ -142,7 +142,7 @@ describe('the scaffold', () => {
 
     expect(result.stderr).toBe('');
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain('scaffolded my-shop/ (21 files, local workspace links)');
+    expect(result.stdout).toContain('scaffolded my-shop/ (23 files, local workspace links)');
     expect(result.stdout).toContain('1. cd my-shop && bun install && bun run dev');
     expect(result.stdout).toContain('2. restart Pano once, then open /my-shop');
     expect(result.stdout).toContain('Steps to first result: 3 (scaffold, dev, restart Pano), 0 files written');
@@ -169,6 +169,8 @@ describe('the scaffold', () => {
       'src/main/resources/config.conf',
       'src/main/resources/frontend-targets.json',
       'src/main/resources/locales/en-US.json',
+      'src/main/resources/locales/ru.json',
+      'src/main/resources/locales/tr.json',
       'src/main/resources/logo.png',
       'src/theme/views/HelloPage.svelte',
     ]);
@@ -244,10 +246,12 @@ describe('the scaffold', () => {
     expect(fallback.join('\n')).not.toContain('/*');
   });
 
-  test('resources: empty targets file, one locale, config', () => {
+  test('resources: empty targets file, English / Turkish / Russian locales, config', () => {
     expect(JSON.parse(read('src/main/resources/frontend-targets.json'))).toEqual({});
-    expect(fs.readdirSync(path.join(root, 'src/main/resources/locales'))).toEqual(['en-US.json']);
+    expect(fs.readdirSync(path.join(root, 'src/main/resources/locales')).sort()).toEqual(['en-US.json', 'ru.json', 'tr.json']);
     expect(JSON.parse(read('src/main/resources/locales/en-US.json'))).toEqual({ 'hello-title': 'Hello from My Shop' });
+    expect(JSON.parse(read('src/main/resources/locales/tr.json'))).toEqual({ 'hello-title': 'My Shop eklentisinden merhaba' });
+    expect(JSON.parse(read('src/main/resources/locales/ru.json'))).toEqual({ 'hello-title': 'Привет от My Shop' });
     expect(read('src/main/resources/config.conf')).toBe('logo-file=logo.png\n');
   });
 

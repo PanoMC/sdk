@@ -512,7 +512,7 @@
     "INVALID_TOKEN": "The link has expired or is invalid."
   },
   "successes": {
-    "REGISTER_SUCCESSFUL": "Successfully registered! An e-email sent to verify your e-mail.",
+    "REGISTER_SUCCESSFUL": "Successfully registered! An e-mail was sent to verify your e-mail address.",
     "VALIDATION_SUCCESSFUL": "Successfully activated e-mail! Now you can login.",
     "RENEW_PASSWORD_SUCCESSFUL": "Password changed successfully!",
     "RESET_PASSWORD_SUCCESSFUL": "Sent an e-mail to reset your password.",
