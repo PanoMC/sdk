@@ -43,7 +43,7 @@
   import { error, redirect } from "@sveltejs/kit";
 
   import { findMatch, registeredPages } from "$pano/lib/PluginManager.js";
-  import { base } from "$app/paths";
+  import { base } from "@panomc/sdk/core/js/basePath.js";
   import { hasPermission } from "$pano/lib/auth.util.js";
   import { loginRedirectFor } from "$pano/lib/returnTo.util.js";
   import { resolveCanonical } from "$pano/registry/routes.js";
@@ -172,7 +172,7 @@
 
 <script>
   import { mount, unmount, getAllContexts } from 'svelte';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
 
 
   let { data } = $props();

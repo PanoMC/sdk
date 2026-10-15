@@ -1,5 +1,5 @@
 /**
- * Theme-first module resolution for plain-node contexts (svelte.config.js /
+ * Theme-first module resolution for plain-node contexts (the
  * vite.config.js load time).
  *
  * The core package is symlinked (file:/link:) or installed under the theme's

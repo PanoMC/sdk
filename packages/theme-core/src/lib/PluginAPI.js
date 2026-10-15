@@ -5,7 +5,7 @@ import { sortSiteNavLinks } from "./orderNavLinks.util.js";
 import { addPluginListener, resetPluginListeners } from "@panomc/sdk/core/js/NotificationManager.js";
 import { avatarVersion } from "./Store.js";
 import { controllers } from "@panomc/sdk/core/js/ControllerRegistry.js";
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 import { redirect } from "@sveltejs/kit";
 // Engine-internal imports are relative: they resolve to the same files as the `$pano/...` alias, and a
 // module that holds state (the registry) must be one instance whichever spelling reaches it.
@@ -162,11 +162,28 @@ function toPublicUrl(url) {
   return typeof url === "string" && url.startsWith("/") && !url.startsWith("//") ? route(url) : url;
 }
 
+/**
+ * SvelteKit 3 renamed `goto` options; a plugin built for SvelteKit 2 still passes the old names, which SvelteKit 3
+ * would ignore. The old names are mapped onto the new ones (a new name the caller set wins).
+ */
+function kit3GotoOptions(options) {
+  if (!options || typeof options !== "object") return options;
+
+  const { replaceState, invalidateAll, keepFocus, noScroll, ...rest } = options;
+  const mapped = { ...rest };
+
+  if (replaceState !== undefined && mapped.replace === undefined) mapped.replace = replaceState;
+  if (invalidateAll !== undefined && mapped.refreshAll === undefined) mapped.refreshAll = invalidateAll;
+  if ((keepFocus || noScroll) && mapped.reset === undefined) mapped.reset = false;
+
+  return mapped;
+}
+
 /** `goto` for plugins: a renamed route lands on its public path. */
 export async function routedGoto(url, options) {
   const { goto } = await import("$app/navigation");
 
-  return goto(toPublicUrl(url), options);
+  return goto(toPublicUrl(url), kit3GotoOptions(options));
 }
 
 /** `redirect` for plugins (throws like SvelteKit's): a renamed route lands on its public path. */

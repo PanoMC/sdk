@@ -33,7 +33,7 @@ function currentUrl() {
 /**
  * Raises a cancelable `pano:navigate` { url }; when nobody cancels it, the configured `navigate` hook or `location.assign` runs.
  * @param {string | URL} url a site path, an absolute URL or a key of the URL map
- * @param {{ replaceState?: boolean }} [options]
+ * @param {{ replace?: boolean, replaceState?: boolean }} [options]  `replaceState` is the SvelteKit 2 name
  */
 export async function goto(url, options) {
   const target = resolveUrl(String(url));
@@ -42,11 +42,11 @@ export async function goto(url, options) {
 
   const navigate = getConfig().navigate;
   if (typeof navigate === 'function') {
-    navigate(target, { replace: !!options?.replaceState });
+    navigate(target, { replace: !!(options?.replace ?? options?.replaceState) });
     return;
   }
   if (typeof location === 'undefined') return;
-  if (options?.replaceState) location.replace(target);
+  if (options?.replace ?? options?.replaceState) location.replace(target);
   else location.assign(target);
 }
 

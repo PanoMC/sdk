@@ -1,10 +1,10 @@
 import fs from "fs";
 
 import { error as httpError } from "@sveltejs/kit";
-import { browser, dev } from "$app/environment";
+import { browser, dev } from "$app/env";
 import { get, writable } from "svelte/store";
 import ApiUtil from "$lib/api.util.js";
-import { base } from "$app/paths";
+import { base } from "./basePath.js";
 
 import { init as initPluginAPI, panoApiClient, panoApiServer } from "$lib/PluginAPI.js";
 import { PanoPlugin } from "@panomc/sdk";

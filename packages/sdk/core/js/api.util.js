@@ -1,7 +1,7 @@
 import { API_URL, CSRF_HEADER } from "$lib/variables.js";
 import { get } from "svelte/store";
-import { page } from "$app/stores";
-import { browser } from "$app/environment";
+import { page } from "./appStores.js";
+import { browser } from "$app/env";
 import { initialized } from "$lib/Store.js";
 import { show } from "$lib/components/ToastContainer.svelte";
 

@@ -312,8 +312,8 @@
   import { getContext, onMount } from "svelte";
   import { _ } from "svelte-i18n";
 
-  import { page } from "$app/stores";
-  import { browser } from "$app/environment";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
+  import { browser } from "$app/env";
   import { PANEL_URL } from "$pano/lib/variables.js";
   import { route } from "$pano/registry/routes.js";
 

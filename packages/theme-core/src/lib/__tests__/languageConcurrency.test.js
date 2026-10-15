@@ -2,7 +2,7 @@ import { describe, expect, mock, test } from "bun:test";
 import { get } from "svelte/store";
 
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 const LOCALES = [

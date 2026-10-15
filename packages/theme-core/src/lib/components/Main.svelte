@@ -18,7 +18,7 @@
 <script>
   import "@theme-style";
   import { getContext } from "svelte";
-  import { dev } from "$app/environment";
+  import { dev } from "$app/env";
   import { _ } from "svelte-i18n";
   import { getOverride } from "$pano/registry/index.js";
   import MainView from "$pano/lib/views/parts/Main.svelte";

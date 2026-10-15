@@ -10,7 +10,7 @@ import { renderPart } from "../../../lib/__tests__/engineParts.helper.js";
 // dependencies, the engine's sample files, and the route files `theme-core sync` generates.
 
 // bun mocks are process-wide: every stub is a superset of what the other suites use
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
   redirect: (status, location) => Object.assign(new Error("redirect"), { status, location, redirect: true }),
@@ -438,7 +438,7 @@ describe("sync: the catalogue routes", () => {
       ["(theme)/__pano/views.json/+server.js", "views-json", "GET"],
     ]) {
       const text = read(dir, file);
-      expect(text).toContain('import { dev } from "$app/environment";');
+      expect(text).toContain('import { dev } from "$app/env";');
       expect(text).toContain(`dev ? await import("$pano/routes/catalogue/${module}.js") : null`);
       expect(text).toContain("if (!m) throw error(404");
       expect(text).toContain(`m.${run}(event)`);
@@ -517,7 +517,7 @@ describe.skipIf(!svelteDir)("catalogue components", () => {
 // ---------------------------------------------------------------------------
 
 describe.skipIf(!svelteDir)("engine samples render", () => {
-  // Views whose imports the SSR helper can stub (the others pull in SvelteKit's `$app/stores`).
+  // Views whose imports the SSR helper can stub (the others pull in SvelteKit's `$app/state`).
   for (const name of ["ProfileView", "LoginView", "RulesView", "PlayerDetailView"]) {
     test(`${name}: every state renders markup`, async () => {
       const { default: samples } = await ENGINE_SAMPLES[name]();

@@ -12,7 +12,7 @@ import { buildSidebarCases, openSession, renderAllSidebars, renderSidebarCase } 
 // go through route().
 
 // The registry reads SvelteKit's `dev` flag.
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 
 const registry = await import("../../registry/index.js");
 const routes = await import("../../registry/routes.js");

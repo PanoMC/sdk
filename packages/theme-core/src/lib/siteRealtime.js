@@ -1,4 +1,4 @@
-import { base } from '$app/paths';
+import { base } from '@panomc/sdk/core/js/basePath.js';
 import ApiUtil from '$pano/lib/api.util';
 
 const listeners = new Set();

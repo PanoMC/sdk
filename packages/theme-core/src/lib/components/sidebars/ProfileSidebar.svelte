@@ -69,8 +69,8 @@
 <script>
   import { getContext, onDestroy, onMount } from "svelte";
   import { _ } from "svelte-i18n";
-  import { page } from "$app/stores";
-  import { base } from "$app/paths";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
+  import { base } from "@panomc/sdk/core/js/basePath.js";
 
   import { getOverride } from "$pano/registry/index.js";
   import ProfileSidebarView from "$pano/lib/views/parts/ProfileSidebar.svelte";

@@ -28,13 +28,13 @@
   },
   "dependencies": {
     "@panomc/client-gen": "workspace:*",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-terser": "^0.4.4",
-    "magic-string": "^0.30.17",
-    "postcss": "^8.5.6",
-    "rollup": "^4.32.1",
-    "rollup-plugin-delete": "^2.1.0",
-    "rollup-plugin-svelte": "^7.2.2"
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^1.0.0",
+    "magic-string": "^1.4.3",
+    "postcss": "^8.5.30",
+    "rollup": "^4.64.7",
+    "rollup-plugin-delete": "^3.0.2",
+    "rollup-plugin-svelte": "^7.2.3"
   },
   "peerDependencies": {
     "@panomc/sdk": "*",
@@ -43,8 +43,8 @@
   "devDependencies": {
     "@panomc/sdk": "workspace:*",
     "bootstrap": "5.3.8",
-    "happy-dom": "^20.0.0",
-    "sass": "^1.99.0",
-    "typescript": "^5.9.0"
+    "happy-dom": "^21.0.1",
+    "sass": "^1.105.1",
+    "typescript": "^6.0.3"
   }
 }

@@ -25,7 +25,7 @@
 
 <script>
   import { panoApiClient } from "$pano/lib/PluginAPI.js";
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
   import { getAllContexts } from "svelte";
   import { hasPermission } from "$pano/lib/auth.util.js";
   import { getPanoContext } from "@panomc/sdk/internal";

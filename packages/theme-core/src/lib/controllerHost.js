@@ -14,7 +14,7 @@
 import { get } from "svelte/store";
 import { _, locale } from "svelte-i18n";
 
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
 import ApiUtil from "$pano/lib/api.util.js";
 import { sanitizeReturnTo } from "./returnTo.util.js";
@@ -241,7 +241,7 @@ export function createThemeHost({ event } = {}) {
     navigate(url, options) {
       if (!browser) return;
 
-      routedGoto(url, options?.replace ? { replaceState: true } : undefined);
+      routedGoto(url, options?.replace ? { replace: true } : undefined);
     },
     feature: (name) => panoApi.features.has(name),
     loginUrl: (returnTo) => panoApi.auth.loginUrl(returnTo),

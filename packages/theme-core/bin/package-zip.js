@@ -5,8 +5,8 @@
  * The whole-zip sha256 IS the premium license identity on panomc.com, and
  * bot-driven rebuilds must not churn license claims — so the zip must be
  * byte-reproducible: fixed mtimes, stable entry order, no extra fields.
- * (The build itself is reproducible because the core svelte-config factory
- * pins kit.version.name; see docs/P0-SPIKE.md.)
+ * (The build itself is reproducible because the core kit options (kit/svelte-config.js)
+ * pin version.name; see docs/P0-SPIKE.md.)
  *
  * `check.js --strict` runs first and a failure stops the packaging, so every published theme passes the
  * same contract check.

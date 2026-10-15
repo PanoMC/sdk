@@ -20,7 +20,7 @@
 </script>
 
 <script>
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
   export let data = undefined;
 
   // Layout view resolution: every layout uses a UNIQUE data key (profileLayoutView)

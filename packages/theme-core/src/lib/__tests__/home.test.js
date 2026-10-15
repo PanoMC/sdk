@@ -11,7 +11,7 @@ import { buildCases, renderPart } from "./engineParts.helper.js";
 // `/posts` route, and `route()` in the default views.
 
 // bun mocks are process-wide: every stub is a superset of what the other suites use
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
   redirect: (status, location) => Object.assign(new Error("redirect"), { status, location, redirect: true }),

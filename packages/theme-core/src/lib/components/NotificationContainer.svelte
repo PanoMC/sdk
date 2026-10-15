@@ -84,10 +84,10 @@
   import { formatDistanceToNow } from "date-fns";
   import { sanitize } from "@jill64/universal-sanitizer";
 
-  import { browser } from "$app/environment";
+  import { browser } from "$app/env";
   import { goto, invalidateAll } from "$app/navigation";
-  import { page } from "$app/stores";
-  import { base } from "$app/paths";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
+  import { base } from "@panomc/sdk/core/js/basePath.js";
 
   import { notificationsCount, quickNotifications, avatarVersion } from "$pano/lib/Store";
   import { onNotificationRefresh, setSiteNotificationsSubscription } from "$pano/lib/siteRealtime.js";

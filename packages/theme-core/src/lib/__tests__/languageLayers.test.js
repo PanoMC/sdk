@@ -9,7 +9,7 @@ import { dirname, join } from "node:path";
 // 4.2, 4.6). Also that the bins find hoisted packages in a Bun workspace.
 
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 
 /** What the stubbed translations API answers; each test sets it. */
 let apiAnswer = { result: "ok", data: {}, meta: {} };

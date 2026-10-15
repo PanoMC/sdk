@@ -12,12 +12,12 @@ function mockHost() {
     },
     CSRF_HEADER: 'X-CSRF-Token',
   }));
-  mock.module('$app/environment', () => ({
+  mock.module('$app/env', () => ({
     get browser() {
       return state.browser;
     },
   }));
-  mock.module('$app/stores', () => ({ page: readable({ data: {} }) }));
+  mock.module('../appStores.js', () => ({ page: readable({ data: {} }) }));
   mock.module('$lib/Store.js', () => ({ initialized: writable(true) }));
   mock.module('$lib/components/ToastContainer.svelte', () => ({ show: async () => {} }));
 }

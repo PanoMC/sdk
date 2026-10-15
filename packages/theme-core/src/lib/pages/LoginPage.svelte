@@ -58,7 +58,7 @@
   import * as locales from "date-fns/locale";
 
   import { afterNavigate, goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
 
   import { NETWORK_ERROR } from "$pano/lib/api.util";
   import { currentLanguage } from "$pano/lib/language.util";

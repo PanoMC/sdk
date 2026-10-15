@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
-import { page } from "$app/stores";
-import { browser } from "$app/environment";
+import { page } from "@panomc/sdk/core/js/appStores.js";
+import { browser } from "$app/env";
 
 export const Permissions = Object.freeze({
   ACCESS_PANEL: "ACCESS_PANEL",

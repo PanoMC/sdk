@@ -28,7 +28,7 @@
  * an alias. Engine views keep bare names.
  */
 
-import { dev } from "$app/environment";
+import { dev } from "$app/env";
 import { blockKey } from "./view.js";
 
 // `route()` (doc 01 section 9) is part of this module's public surface, so themes and plugins

@@ -7,7 +7,7 @@ import { writable } from "svelte/store";
 import { buildCases, findSvelte, mainContext, renderAll, renderPart } from "./engineParts.helper.js";
 
 // The registry reads SvelteKit's `dev` flag.
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 
 const registry = await import("../../registry/index.js");
 

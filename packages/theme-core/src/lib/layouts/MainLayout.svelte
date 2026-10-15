@@ -50,7 +50,7 @@
 
 <script>
   import { getContext } from "svelte";
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
 
   // RootLayout renders <MainLayout><slot /></MainLayout> with no data prop;
   // fall back to the root-merged $page.data (see the alias note in load above).

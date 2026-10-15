@@ -1,7 +1,7 @@
 <script>
   import { onMount, setContext } from "svelte";
-  import { page } from "$app/stores";
-  import { browser } from "$app/environment";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
+  import { browser } from "$app/env";
   import { markAvatarVersionHydrated } from "$pano/lib/avatarVersion.js";
   import { markAppBooted } from "$pano/kit/hooks-client.js";
   import AppLayout from "$pano/lib/layouts/AppLayout.svelte";

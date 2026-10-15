@@ -40,13 +40,13 @@ mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
 }));
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({
   goto: async () => {},
   invalidate: async () => {},
   invalidateAll: async () => {},
 }));
-mock.module("$app/stores", () => ({ page: pageStore, navigating: writable(null) }));
+mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null) }));
 
 const registry = await import("../../registry/index.js");
 const { createViewProxy } = await import("../../../../sdk/src/views.js");
@@ -557,9 +557,9 @@ function emitClientFallbackStyles() {
 function target_(spec, from, mode) {
   if (mode === "client") {
     if (spec === "svelte") return join(svelteDir, "src", "index-client.js");
-    if (spec === "$app/environment") return clientStub("environment", "export const browser = true; export const dev = false;");
+    if (spec === "$app/env") return clientStub("environment", "export const browser = true; export const dev = false;");
     if (spec === "$app/paths") return clientStub("paths", 'export const base = "";');
-    if (spec === "$app/stores") {
+    if (spec === "@panomc/sdk/core/js/appStores.js") {
       return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__tc53ClientPage); return () => {}; } };");
     }
   }

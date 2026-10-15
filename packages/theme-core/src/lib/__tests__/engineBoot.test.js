@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, mock, test } from "bun:test";
 // views (so a theme's override of Main, Sidebar ... resolves through loadView), and a plugin page declared
 // with `controller` and no `load` gets the controller's data.
 
-mock.module("$app/environment", () => ({ dev: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, browser: false }));
 mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
   redirect: (status, location) => Object.assign(new Error("redirect"), { status, location, redirect: true }),

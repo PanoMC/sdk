@@ -22,7 +22,7 @@
  * list) so the bundler can statically analyze them. The dev-mode assertion at
  * the bottom guarantees this map can never drift from kit/specifiers.js.
  */
-import { browser, dev } from "$app/environment";
+import { browser, dev } from "$app/env";
 import { RUNTIME_SPECIFIERS } from "./specifiers.js";
 
 const runtimeModules = {

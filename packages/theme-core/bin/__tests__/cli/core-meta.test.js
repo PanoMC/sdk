@@ -272,7 +272,7 @@ describe("build plugins of the vite config", () => {
   });
 });
 
-describe("svelte config", () => {
+describe("kit options", () => {
   test("adds the $contracts alias and keeps the author's aliases", () => {
     // the factory imports its toolchain from the theme: two stubs stand in for it
     const theme = makeTheme({
@@ -283,15 +283,14 @@ describe("svelte config", () => {
         "node_modules/@sveltejs/adapter-node/index.js": "export default () => ({ name: 'stub' });\n",
       },
     });
-    const url = "file://" + join(theme, "svelte.config.js");
     const spawn = spawnSync(
       "bun",
       [
         "-e",
-        `const { createSvelteConfig } = await import(${JSON.stringify(join(binDir, "..", "src", "kit", "svelte-config.js"))});
-         const a = await createSvelteConfig(${JSON.stringify(url)});
-         const b = await createSvelteConfig(${JSON.stringify(url)}, { alias: { $x: "src/x" } });
-         console.log(JSON.stringify([a.kit.alias, b.kit.alias]));`,
+        `const { createKitOptions } = await import(${JSON.stringify(join(binDir, "..", "src", "kit", "svelte-config.js"))});
+         const a = await createKitOptions(${JSON.stringify(theme)});
+         const b = await createKitOptions(${JSON.stringify(theme)}, { alias: { $x: "src/x" } });
+         console.log(JSON.stringify([a.alias, b.alias]));`,
       ],
       { cwd: theme, encoding: "utf8" },
     );

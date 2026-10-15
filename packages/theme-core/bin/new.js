@@ -292,11 +292,6 @@ export default {
     2,
   ) + "\n",
 
-  "svelte.config.js": `import { createSvelteConfig } from "@panomc/theme-core/kit/svelte-config";
-
-export default await createSvelteConfig(import.meta.url);
-`,
-
   "vite.config.js": `import { createViteConfig } from "@panomc/theme-core/kit/vite-config";
 
 export default createViteConfig();

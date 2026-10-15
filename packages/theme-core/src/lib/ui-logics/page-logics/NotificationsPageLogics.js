@@ -4,7 +4,7 @@ import { get, writable } from "svelte/store";
 import { formatDistanceToNow } from "date-fns";
 import { sanitize } from "@jill64/universal-sanitizer";
 
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
 import ApiUtil from "$pano/lib/api.util.js";
 import { onNotificationRefresh } from "$pano/lib/siteRealtime.js";

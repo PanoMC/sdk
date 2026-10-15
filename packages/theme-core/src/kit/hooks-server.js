@@ -24,7 +24,7 @@ import {
   updateApiUrl,
   updatePanoWebsiteUrl,
 } from "../lib/variables.js";
-import * as environment from "$app/environment";
+import * as environment from "$app/env";
 import { getCredentialsServerSide } from "../lib/services/auth.js";
 import { createLicenseRuntime } from "./license-runtime.js";
 import { resolveCanonical, route } from "../registry/routes.js";

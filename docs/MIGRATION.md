@@ -80,6 +80,25 @@ time, see `CONTROLLERS.md`.
 
 ## Version history
 
+### SvelteKit 3 (major: the pinned svelte jumped to 5.57.2)
+
+The engine builds on SvelteKit 3, Svelte 5.57.2, Vite 8 and adapter-node 6. A theme on the previous engine:
+
+1. Bump the toolchain in `package.json`: `svelte` to the engine's exact pin, `@sveltejs/kit` ^3, `@sveltejs/adapter-node`
+   ^6, `@sveltejs/vite-plugin-svelte` ^7.3, `vite` ^8.3 (the engine's `peerDependencies` list them).
+2. Delete `svelte.config.js`: SvelteKit 3 reads its options from the `sveltekit()` vite plugin, which `createViteConfig`
+   sets up. Overrides that lived in `createSvelteConfig(url, { ... })` go to `createViteConfig({ kit: { ... } })`; a
+   `paths.base` is the `base` option.
+3. `sync` regenerates the route shims (`$app/environment` is `$app/env` now), then `check` and build.
+4. Theme code: `$app/stores` is gone (use `$app/state`, or `@panomc/sdk/core/js/appStores.js` for the store shape in a
+   legacy component), `base` from `$app/paths` is `@panomc/sdk/core/js/basePath.js`, and `goto` takes `replace`,
+   `refreshAll` and `reset: false` instead of `replaceState`, `invalidateAll` and `keepFocus` / `noScroll`. `$lib` keeps
+   working (the engine defines it).
+
+Plugins must be rebuilt with the SDK of this release: their compiled code reaches the host's Svelte runtime, and the
+runtime of 5.57.2 is not the one a 5.55 build was compiled against. A plugin's own `goto(url, { replaceState })` keeps
+working: the engine maps the SvelteKit 2 option names.
+
 ### 1.0.0 (unreleased - the extraction)
 
 The engine moved out of vanilla-theme into this package. All five official themes (vanilla, banana, blaze, blocky, frost)

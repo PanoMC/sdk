@@ -110,7 +110,7 @@
   import { _ } from "svelte-i18n";
 
   import { goto } from "$app/navigation";
-  import { base } from "$app/paths";
+  import { base } from "@panomc/sdk/core/js/basePath.js";
   import { notificationTextKey } from "@panomc/sdk/core/js/NotificationManager.js";
 
   import tooltip from "$pano/lib/tooltip.util.js";

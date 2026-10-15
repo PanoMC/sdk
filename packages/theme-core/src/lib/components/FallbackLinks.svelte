@@ -20,7 +20,7 @@
   //
   // A theme that provides Bootstrap gets no tokens link and only the `own:` links (and `icons` when it has no
   // Font Awesome); a theme without Bootstrap gets `pano-tokens.css` first.
-  import { base } from "$app/paths";
+  import { base } from "@panomc/sdk/core/js/basePath.js";
   import { fallbackHref } from "$pano/lib/fallbackStyles.js";
 
   /** @type {{ styles: { keys: Set<string> }, plugins: Record<string, any>, provides: { bootstrap: boolean } }} */

@@ -43,9 +43,9 @@ export const executeSidebarLoad = async () => {};`;
 const STUB_JS = {
   "svelte-i18n": `import { readable } from "svelte/store";
 export const _ = readable((key, options) => (options && options.values && Object.keys(options.values).length ? key + JSON.stringify(options.values) : key));`,
-  "$app/environment": `export const dev = false; export const browser = false;`,
-  "$app/stores": `import { readable } from "svelte/store"; export const page = readable({ url: { pathname: "/profile" } });`,
-  "$app/paths": `export const base = "";`,
+  "$app/env": `export const dev = false; export const browser = false;`,
+  "@panomc/sdk/core/js/appStores.js": `import { readable } from "svelte/store"; export const page = readable({ url: { pathname: "/profile" } });`,
+  "@panomc/sdk/core/js/basePath.js": `export const base = "";`,
   "copy-to-clipboard": `export default function copy() {}`,
   "$pano/lib/tooltip.util": `export default function tooltip() {}`,
   "$pano/lib/Store": `import { readable } from "svelte/store";

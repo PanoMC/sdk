@@ -38,13 +38,13 @@ mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
 }));
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({
   goto: async () => {},
   invalidate: async () => {},
   invalidateAll: async () => {},
 }));
-mock.module("$app/stores", () => ({ page: pageStore, navigating: writable(null) }));
+mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null) }));
 mock.module("$pano/lib/services/auth.js", () => ({ sendLogout: async () => {} }));
 mock.module("$pano/lib/components/ToastContainer.svelte", () => ({
   show: async () => {},
@@ -236,8 +236,8 @@ function target_(spec, from, mode = "server") {
   if (mode === "client") {
     // the client build runs under bun: the browser entry of Svelte and a stub for the aliases
     if (spec === "svelte") return join(svelteDir, "src", "index-client.js");
-    if (spec === "$app/environment") return clientStub("environment", "export const browser = true; export const dev = false;");
-    if (spec === "$app/stores") {
+    if (spec === "$app/env") return clientStub("environment", "export const browser = true; export const dev = false;");
+    if (spec === "@panomc/sdk/core/js/appStores.js") {
       return clientStub("stores", "export const page = { subscribe(run) { run(globalThis.__engineWiringClientPage); return () => {}; } };");
     }
   }
@@ -823,8 +823,8 @@ describe("AppLayoutLogics wiring", () => {
       ["$pano/lib/PluginAPI", PLUGIN_API_SPEC],
       ["@panomc/sdk/internal", Bun.resolveSync("@panomc/sdk/internal", pkgSrc)],
       ["svelte/store", "svelte/store"],
-      ["$app/stores", "$app/stores"],
-      ["$app/paths", "$app/paths"],
+      ["@panomc/sdk/core/js/appStores.js", "@panomc/sdk/core/js/appStores.js"],
+      ["@panomc/sdk/core/js/basePath.js", "@panomc/sdk/core/js/basePath.js"],
       ["@sveltejs/kit", "@sveltejs/kit"],
       ["$app/navigation", "$app/navigation"],
     ]);
@@ -856,7 +856,7 @@ describe("AppLayoutLogics wiring", () => {
           "const bindControllerSession = (session) => { __s.bound.push(session); return () => {}; };",
         ].join("\n");
       }
-      if (from === "$app/environment") return `const browser = ${browser}; const dev = false;`;
+      if (from === "$app/env") return `const browser = ${browser}; const dev = false;`;
       return lines.join("\n");
     };
 

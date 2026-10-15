@@ -27,8 +27,7 @@ my-theme/
 ├─ plugin-contracts/      plugin view contracts, written by `theme-core contracts pull` (commit it)
 ├─ theme.config.js        views, controllers, claims, routes, home, provides, settingsSchema
 ├─ package.json           svelte pinned EXACTLY to core's version
-├─ svelte.config.js       export default await createSvelteConfig(import.meta.url)
-├─ vite.config.js         export default createViteConfig()
+├─ vite.config.js         export default createViteConfig()  (also SvelteKit's options; SvelteKit 3 has no svelte.config.js)
 ├─ lang-overrides/        only the i18n keys you change (deep-merged, additive)
 ├─ src/
 │  ├─ hooks.server.js     2-line factory call (generated)

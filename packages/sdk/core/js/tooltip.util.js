@@ -1,6 +1,6 @@
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
-import { page } from '$app/stores';
+import { page } from './appStores.js';
 
 function setTooltip(element, [value, options]) {
   const instance = typeof element._tippy === 'undefined' ? tippy(element) : element._tippy;

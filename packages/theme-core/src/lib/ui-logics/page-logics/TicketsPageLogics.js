@@ -82,7 +82,7 @@ async function refreshData(data) {
     category: data.categoryUrl
   });
 
-  await goto(queryParams, { invalidateAll: true });
+  await goto(queryParams, { refreshAll: true });
 }
 
 export async function onPageClick(data, page) {

@@ -17,7 +17,7 @@ mock.module('$lib/PluginAPI.js', () => ({
   panoApiClient: {},
   panoApiServer: {},
 }));
-mock.module('$app/environment', () => ({ browser: false, dev: false }));
+mock.module('$app/env', () => ({ browser: false, dev: false }));
 mock.module('$app/paths', () => ({ base: '' }));
 mock.module('@sveltejs/kit', () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ''}`), { status }),

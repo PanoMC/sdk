@@ -1,6 +1,6 @@
 import { describe, expect, mock, test } from "bun:test";
 
-mock.module("$app/environment", () => ({ dev: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, browser: false }));
 
 const { resolveView, setThemeConfig } = await import("../../registry/index.js");
 

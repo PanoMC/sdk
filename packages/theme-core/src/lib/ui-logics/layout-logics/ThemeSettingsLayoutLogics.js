@@ -3,7 +3,7 @@ import { redirect } from "@sveltejs/kit";
 import { writable } from "svelte/store";
 
 import { hasPermission, Permissions } from "$pano/lib/auth.util";
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
 function postHeight() {
   const h = Math.max(

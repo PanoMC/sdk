@@ -1,4 +1,4 @@
-import { base } from '$app/paths';
+import { base } from './basePath.js';
 import { registeredPages } from './PluginManager.js';
 import { canonicalizeRouteKey } from './RouteMatcher.js';
 

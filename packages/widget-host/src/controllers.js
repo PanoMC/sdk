@@ -155,7 +155,7 @@ export function createWidgetHost(overrides = {}) {
       void showToast(key, o?.values ?? {}, undefined, o?.variant ? { variant: o.variant } : undefined);
     },
     navigate: (url, o) => {
-      void goto(url, { replaceState: !!o?.replace });
+      void goto(url, { replace: !!o?.replace });
     },
     storage,
     feature: () => false,

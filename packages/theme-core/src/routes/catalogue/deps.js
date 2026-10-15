@@ -107,7 +107,7 @@ export async function readEngineSource(path) {
  * @param {{ fetch?: typeof fetch, parent?: () => Promise<any> }} [event]  the SvelteKit load event (its `fetch` is the one to use)
  */
 export async function createDeps(event) {
-  const { browser } = await import("$app/environment");
+  const { browser } = await import("$app/env");
 
   /** @type {ReturnType<typeof browserPluginSource>} */
   let source;
@@ -116,7 +116,7 @@ export async function createDeps(event) {
     // layouts unless it waits, and read too early the list is empty: every plugin view was "No view named ...".
     await event?.parent?.().catch(() => {});
 
-    const { base } = await import("$app/paths");
+    const { base } = await import("@panomc/sdk/core/js/basePath.js");
     const { get } = await import("svelte/store");
 
     source = browserPluginSource({

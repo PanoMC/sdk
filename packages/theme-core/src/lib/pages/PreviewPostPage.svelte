@@ -26,7 +26,7 @@
   import { getContext } from "svelte";
   import { avatarVersion } from "$pano/lib/Store";
 
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
 
   // The route generated for this page hands over `post` only (older syncs) or `data` (newer ones).
   // Without `data` the view could not be found (`data.View` of undefined) and the preview answered

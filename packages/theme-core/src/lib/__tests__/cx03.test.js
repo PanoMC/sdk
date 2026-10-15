@@ -15,13 +15,13 @@ import skinContract from "../../../skin-contract.json" with { type: "json" };
 const lib = resolve(import.meta.dir, "..");
 const src = resolve(lib, "..");
 
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 
 const state = (globalThis.__cx03 = { answers: {}, calls: [] });
 
 const STUBS = {
   svelte: `export const onMount = () => {}; export const onDestroy = () => {};`,
-  "$app/environment": `export const browser = false; export const dev = false;`,
+  "$app/env": `export const browser = false; export const dev = false;`,
   "$pano/lib/api.util.js": `const s = globalThis.__cx03;
 export const NETWORK_ERROR = "NETWORK_ERROR";
 export default { get: async ({ path }) => { s.calls.push(path); return s.answers[path] ?? { error: true }; }, delete: async () => ({}) };`,

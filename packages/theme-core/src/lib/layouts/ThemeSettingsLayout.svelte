@@ -24,7 +24,7 @@
 </script>
 
 <script>
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
   import { init } from "$pano/lib/ui-logics/layout-logics/ThemeSettingsLayoutLogics";
 
   export let data = undefined;

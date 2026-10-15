@@ -28,8 +28,8 @@
   // - view not preloaded (client navigation to a page that places it): it is resolved after mount;
   // - unknown id / plugin not installed: nothing, or the `fallback` snippet.
   import { untrack } from "svelte";
-  import { page } from "$app/stores";
-  import { browser, dev } from "$app/environment";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
+  import { browser, dev } from "$app/env";
   import { getPanoContext } from "@panomc/sdk/internal";
   import {
     getDefault,

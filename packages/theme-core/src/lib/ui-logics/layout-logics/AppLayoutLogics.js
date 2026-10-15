@@ -15,10 +15,10 @@ import { setRouteConfig } from "$pano/registry/routes.js";
 import { _ } from "svelte-i18n";
 import copy from "copy-to-clipboard";
 
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 import { goto, invalidate, invalidateAll } from "$app/navigation";
-import { navigating, page } from "$app/stores";
-import { base } from "$app/paths";
+import { navigating, page } from "@panomc/sdk/core/js/appStores.js";
+import { base } from "@panomc/sdk/core/js/basePath.js";
 import { error, redirect } from "@sveltejs/kit";
 
 import { avatarVersion, initialized } from "$pano/lib/Store";
@@ -179,7 +179,7 @@ function initNotificationListeners() {
       details: { id }
     } = notification;
 
-    await goto("/ticket/" + id, { invalidateAll: true });
+    await goto("/ticket/" + id, { refreshAll: true });
   });
 
   addListener("AN_ADMIN_CLOSED_TICKET", async (notification) => {
@@ -187,7 +187,7 @@ function initNotificationListeners() {
       details: { id }
     } = notification;
 
-    await goto("/ticket/" + id, { invalidateAll: true });
+    await goto("/ticket/" + id, { refreshAll: true });
   });
 }
 

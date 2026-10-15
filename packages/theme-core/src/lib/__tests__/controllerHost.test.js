@@ -22,7 +22,7 @@ const panoApiStub = {
   auth: { loginUrl: (returnTo) => `/login?redirect=${returnTo ?? ""}` },
 };
 
-const setEnvironment = (browser) => mock.module("$app/environment", () => ({ browser, dev: false }));
+const setEnvironment = (browser) => mock.module("$app/env", () => ({ browser, dev: false }));
 
 // bun mocks are process-wide, a module that is already linked cannot gain exports, and suites loaded later
 // replace what this one installed: every stub is a superset of the others', and all of them are installed
@@ -325,7 +325,7 @@ describe("browser host", () => {
     h.navigate("/store/vip", { replace: true });
     expect(calls.gotos).toEqual([
       { url: "/store", options: undefined },
-      { url: "/store/vip", options: { replaceState: true } },
+      { url: "/store/vip", options: { replace: true } },
     ]);
   });
 });

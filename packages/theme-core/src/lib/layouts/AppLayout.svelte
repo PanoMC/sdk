@@ -39,7 +39,7 @@
 </script>
 
 <script>
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
   import { _ } from "svelte-i18n";
   import { init } from "$pano/lib/ui-logics/layout-logics/AppLayoutLogics";
   import { onMount } from "svelte";

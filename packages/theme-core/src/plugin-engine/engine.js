@@ -8,7 +8,7 @@
  * contract (`init`, `panoApiClient`, `panoApiServer`). All the ordering/caching/SSR-safety
  * fixes live here once, so both profiles get them.
  *
- * Nothing in this module reads SvelteKit app aliases ($app/environment, the PluginManager) or a
+ * Nothing in this module reads SvelteKit app aliases ($app/env, the PluginManager) or a
  * theme's utils directly — the profile injects `plugins` and `browser` so this file stays a pure,
  * portable engine that both the theme and panel bundles can consume.
  */
@@ -337,7 +337,7 @@ export function createHookEngine(policy) {
  *   `get()`-resolved from the PluginManager `plugins` store). A thunk, not the store itself, so
  *   this factory never reads the store at construction — the PluginManager<->PluginAPI import
  *   cycle would otherwise put that binding in the temporal dead zone at module-eval time.
- * @param {boolean} deps.browser  `$app/environment`'s browser flag — decides whether to clone
+ * @param {boolean} deps.browser  `$app/env`'s browser flag — decides whether to clone
  *   items per-request on the server.
  * @param {(name: string, data: any, event: any) => Promise<void>} [deps.executeLifecycle]
  *   the lifecycle registry's executor, used by executeViewLoad/executeSidebarLoad.

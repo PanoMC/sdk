@@ -18,7 +18,7 @@ import {
 import { engineViews } from "../views/parts/engine-views.generated.js";
 
 // The registry reads SvelteKit's `dev` flag; the old pre-split modals import the SDK's api util.
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("@panomc/sdk/core/js/api.util", () => ({ default: {}, NETWORK_ERROR: "NETWORK_ERROR", buildQueryParams: () => "" }));
 
 const registry = await import("../../registry/index.js");

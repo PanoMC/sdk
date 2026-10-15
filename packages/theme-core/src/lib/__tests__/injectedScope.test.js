@@ -25,9 +25,9 @@ mock.module("@sveltejs/kit", () => ({
   error: (status, message) => Object.assign(new Error(`HTTP ${status} ${message ?? ""}`), { status }),
 }));
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({ goto: async () => {}, invalidate: async () => {}, invalidateAll: async () => {} }));
-mock.module("$app/stores", () => ({ page: pageStore, navigating: writable(null) }));
+mock.module("@panomc/sdk/core/js/appStores.js", () => ({ page: pageStore, navigating: writable(null) }));
 
 const registry = await import("../../registry/index.js");
 const { setPanoContext, getPanoContext } = await import("../../../../sdk/src/internal/index.js");

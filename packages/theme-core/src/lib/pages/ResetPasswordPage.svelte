@@ -29,7 +29,7 @@
 <script>
   import { getContext, onMount } from "svelte";
   import { writable } from "svelte/store";
-  import { page } from "$app/stores";
+  import { page } from "@panomc/sdk/core/js/appStores.js";
 
   import { onSubmit } from "$pano/lib/ui-logics/page-logics/ResetPasswordPageLogics";
   import { panoApiClient } from "$pano/lib/PluginAPI";

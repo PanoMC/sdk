@@ -8,7 +8,7 @@ import { findSvelte } from "./svelteSsr.helper.js";
 // routes.add / hooks.js, the 308 for a renamed-away path, the 404 for a disabled one, and
 // themePageLoad.
 
-mock.module("$app/environment", () => ({ dev: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, browser: false }));
 mock.module("$pano/lib/api.util", () => ({ default: {} }));
 
 // Modules the plugin-ui Layout imports.

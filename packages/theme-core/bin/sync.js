@@ -90,11 +90,11 @@ const layoutPair = (route, component, layoutPath) => [
 
 /**
  * The view catalogue routes (doc 02 section 7): theme dev mode only. A generated file never imports catalogue
- * code statically: `dev` from `$app/environment` is a build-time constant, so a production build drops the
+ * code statically: `dev` from `$app/env` is a build-time constant, so a production build drops the
  * dynamic import and its chunk, and the routes answer 404. (`ssr` is on in a production build so that the 404
  * is a real status and not an empty shell; in dev the catalogue renders in the browser only.)
  */
-const catalogueLoad = (module, run) => `${HEADER_JS}import { dev } from "$app/environment";
+const catalogueLoad = (module, run) => `${HEADER_JS}import { dev } from "$app/env";
 import { error } from "@sveltejs/kit";
 
 export const ssr = !dev;
@@ -117,7 +117,7 @@ const cataloguePage = `${HEADER_SVELTE}<script>
 const catalogueServer = () => {
   const hasConfig = existsSync(join(process.cwd(), "theme.config.js"));
 
-  return `${HEADER_JS}import { dev } from "$app/environment";
+  return `${HEADER_JS}import { dev } from "$app/env";
 import { error } from "@sveltejs/kit";
 ${hasConfig ? `import themeConfig from "../../../../../theme.config.js";\nimport { setThemeConfig } from "$pano/registry/index.js";\n\nsetThemeConfig(themeConfig);\n` : ""}
 export const GET = async (event) => {

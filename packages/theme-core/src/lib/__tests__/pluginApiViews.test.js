@@ -19,7 +19,7 @@ mock.module("@sveltejs/kit", () => ({
   error: (status) => Object.assign(new Error(`HTTP ${status}`), { status }),
 }));
 mock.module("$app/paths", () => ({ base: "" }));
-mock.module("$app/environment", () => ({ browser: false, dev: false }));
+mock.module("$app/env", () => ({ browser: false, dev: false }));
 mock.module("$app/navigation", () => ({
   goto: async (url, options) => {
     navigations.push({ url, options });
@@ -513,7 +513,7 @@ describe("routes: what plugins are handed goes through route()", () => {
     await api.routedGoto("//elsewhere.test/store");
 
     expect(navigations).toEqual([
-      { url: "/shop", options: { replaceState: true } },
+      { url: "/shop", options: { replace: true } },
       { url: "https://elsewhere.test/store", options: undefined },
       { url: "//elsewhere.test/store", options: undefined },
     ]);

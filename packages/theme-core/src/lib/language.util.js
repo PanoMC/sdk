@@ -1,9 +1,9 @@
 import { getLocaleFromNavigator, init as initI18n, locale, register, waitLocale } from "svelte-i18n";
 import { get, writable } from "svelte/store";
 
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 
-import { base } from "$app/paths";
+import { base } from "@panomc/sdk/core/js/basePath.js";
 import ApiUtil from "$pano/lib/api.util.js";
 import { mergeTranslationLayers } from "./translationLayers.js";
 

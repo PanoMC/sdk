@@ -8,7 +8,7 @@ import { join } from "node:path";
 // `<script context="module">` is extracted, its imports are replaced by stubs and
 // its view thunks by markers, and `load` is run against the real registry.
 
-mock.module("$app/environment", () => ({ dev: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, browser: false }));
 const registry = await import("../../registry/index.js");
 mock.module("$pano/registry/index.js", () => registry);
 // root-layout-load.js registers the generated engine table at import; the tests register their own.

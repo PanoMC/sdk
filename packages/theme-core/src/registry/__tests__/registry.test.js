@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
 
-mock.module("$app/environment", () => ({ dev: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, browser: false }));
 
 const registry = await import("../index.js");
 const {

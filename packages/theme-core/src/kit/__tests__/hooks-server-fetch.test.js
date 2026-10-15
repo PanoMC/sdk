@@ -1,6 +1,6 @@
 import { describe, expect, mock, test } from "bun:test";
 
-mock.module("$app/environment", () => ({ dev: false, building: false, browser: false }));
+mock.module("$app/env", () => ({ dev: false, building: false, browser: false }));
 mock.module("../../lib/services/auth.js", () => ({ getCredentialsServerSide: async () => ({}) }));
 
 const variables = await import("../../lib/variables.js");

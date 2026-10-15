@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 
 mock.module('$lib/api.util.js', () => ({ default: {} }));
 mock.module('$lib/PluginAPI.js', () => ({ init: () => {}, panoApiClient: {}, panoApiServer: {} }));
-mock.module('$app/environment', () => ({ browser: false, dev: false }));
+mock.module('$app/env', () => ({ browser: false, dev: false }));
 mock.module('$app/paths', () => ({ base: '' }));
 mock.module('@sveltejs/kit', () => ({ error: (status) => new Error(`HTTP ${status}`) }));
 

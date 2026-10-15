@@ -48,7 +48,7 @@
 <script>
   import { mount, unmount, hydrate, getAllContexts } from 'svelte';
   import { getPanoContext } from '@panomc/sdk/internal';
-  import { browser } from '$app/environment';
+  import { browser } from '$app/env';
   import { SCOPE_CONTEXT } from '$pano/lib/fallbackStyles.js';
 
   export let data;
