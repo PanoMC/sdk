@@ -28,6 +28,11 @@ on:
     secrets:
       TOKEN_GITHUB:
         required: true
+      # Pano store tokens for @PanoMC/semantic-release-pano (a theme's .releaserc decides which branch publishes where).
+      PANO_TOKEN:
+        required: false
+      PANO_PROD_TOKEN:
+        required: false
 
 permissions:
   contents: read
@@ -48,10 +53,13 @@ jobs:
       - name: Dry run to get next release version
         id: get-next-version
         run: |
-          export NEXT_TAG_VERSION=$(npx semantic-release --dry-run --force | grep 'next release version is ' | awk -F"next release version is " '{print $2}')
+          # npx -p puts the store plugin next to semantic-release (no install into the theme: its file: deps need the submodule).
+          export NEXT_TAG_VERSION=$(npx -y -p semantic-release -p git+https://github.com/PanoMC/semantic-release-pano.git semantic-release --dry-run --force | grep 'next release version is ' | awk -F"next release version is " '{print $2}')
           echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+          PANO_TOKEN: ${{ secrets.PANO_TOKEN }}
+          PANO_PROD_TOKEN: ${{ secrets.PANO_PROD_TOKEN }}
     outputs:
       new_tag_version: ${{ steps.get-next-version.outputs.new_tag_version }}
 
@@ -119,4 +127,7 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-        run: npx semantic-release@24.2.6 --force
+          PANO_TOKEN: ${{ secrets.PANO_TOKEN }}
+          PANO_PROD_TOKEN: ${{ secrets.PANO_PROD_TOKEN }}
+        run: |
+          npx -y -p semantic-release@24.2.6 -p git+https://github.com/PanoMC/semantic-release-pano.git semantic-release --force
