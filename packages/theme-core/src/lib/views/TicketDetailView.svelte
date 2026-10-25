@@ -60,21 +60,15 @@
           {#if message.panel}
             <div class="row g-2 flex-nowrap">
               <div class="col-auto">
-                <!-- A message the site sent by itself (a category's auto-reply) shows the site's icon and
-                     links to no profile. -->
-                <svelte:element
-                  this={message.system ? "span" : "a"}
-                  href={message.system ? undefined : route(`/player/${message.username}`)}>
+                <a href={route(`/player/${message.username}`)}>
                   <img
-                    src={message.system
-                      ? "/api/v1/favicon"
-                      : `/api/v1/profile/picture/${message.username}?${$avatarVersion}`}
+                    src="/api/v1/profile/picture/{message.username}?{$avatarVersion}"
                     alt={message.username}
                     class="pano-ticket-detail-view__image rounded-circle animate__animated animate__zoomIn"
                     use:tooltip={[message.username, { placement: "bottom" }]}
                     width="48"
                     height="48" />
-                </svelte:element>
+                </a>
               </div>
               <div class="col vstack align-items-start">
                 <div class="card rounded-5 text-bg-primary border-0 shadow-sm">
@@ -83,9 +77,6 @@
                   </div>
                 </div>
                 <small class="text-body-secondary mt-1">
-                  {#if message.system}
-                    {$_("pages.ticket-detail.auto-reply")} ·
-                  {/if}
                   <Date time={message.date} relativeFormat={true} />
                 </small>
               </div>

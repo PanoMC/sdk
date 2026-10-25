@@ -257,8 +257,7 @@
         "message": {
           "placeholder": "Mesajınız..."
         }
-      },
-      "auto-reply": "Otomatik yanıt"
+      }
     },
     "settings": {
       "title": "Ayarlar",
