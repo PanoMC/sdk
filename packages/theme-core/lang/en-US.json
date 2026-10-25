@@ -257,7 +257,8 @@
         "message": {
           "placeholder": "Your message..."
         }
-      }
+      },
+      "auto-reply": "Automatic reply"
     },
     "settings": {
       "title": "Settings",
