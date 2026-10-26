@@ -108,6 +108,34 @@ $btn-active-box-shadow: 0 !default;
   }
 }
 
+// Cards
+
+// Header and footer sit transparent on the card, with no rule towards the body. `.card >` keeps
+// them ahead of Bootstrap's own rules, which are imported after this file.
+.card > .card-header {
+  border-bottom: 0;
+  background-color: transparent;
+}
+
+.card > .card-footer {
+  border-top: 0;
+  background-color: transparent;
+}
+
+// Cards
+
+// Header and footer sit transparent on the card, with no rule towards the body. `.card >` keeps
+// them ahead of Bootstrap's own rules, which are imported after this file.
+.card > .card-header {
+  border-bottom: 0;
+  background-color: transparent;
+}
+
+.card > .card-footer {
+  border-top: 0;
+  background-color: transparent;
+}
+
 // Modals
 
 $modal-backdrop-opacity: 0.35 !default;
