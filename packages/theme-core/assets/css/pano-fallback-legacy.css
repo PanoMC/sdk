@@ -226,6 +226,14 @@
       --bs-carousel-caption-color: #000;
       --bs-carousel-control-icon-filter: invert(1) grayscale(100);
     }
+    .card > .card-header {
+      border-bottom: 0;
+      background-color: transparent;
+    }
+    .card > .card-footer {
+      border-top: 0;
+      background-color: transparent;
+    }
     *,
     *::before,
     *::after {
