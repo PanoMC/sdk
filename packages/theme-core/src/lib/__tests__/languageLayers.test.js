@@ -167,7 +167,9 @@ function makeTheme(files = {}, { workspace = false } = {}) {
 }
 
 function run(script, cwd) {
-  const proc = Bun.spawnSync([process.execPath, script], { cwd, stdout: "pipe", stderr: "pipe" });
+  // --no-install: with no node_modules in sight Bun would auto-install, resolving "@panomc/sdk" from its global
+  // cache, and the "sdk missing" fixtures would find one wherever the machine happened to cache it.
+  const proc = Bun.spawnSync([process.execPath, "--no-install", script], { cwd, stdout: "pipe", stderr: "pipe" });
 
   return { code: proc.exitCode, out: proc.stdout.toString() + proc.stderr.toString() };
 }
