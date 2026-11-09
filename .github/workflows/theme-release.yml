@@ -8,7 +8,7 @@
 #       branches: [ "dev", "master" ]
 #   jobs:
 #     release:
-#       uses: PanoMC/sdk/.github/workflows/theme-release.yml@master
+#       uses: PanoMC/sdk/.github/workflows/theme-release.yml@<commit sha>   # a SHA, not a branch
 #       with:
 #         theme-id: my-theme
 #       secrets:
@@ -54,7 +54,8 @@ jobs:
         id: get-next-version
         run: |
           # npx -p puts the store plugin next to semantic-release (no install into the theme: its file: deps need the submodule).
-          export NEXT_TAG_VERSION=$(npx -y -p semantic-release -p git+https://github.com/PanoMC/semantic-release-pano.git semantic-release --dry-run --force | grep 'next release version is ' | awk -F"next release version is " '{print $2}')
+          # Both are pinned (semantic-release by version, the store plugin by commit): they run with the GitHub and store tokens.
+          export NEXT_TAG_VERSION=$(npx -y -p semantic-release@24.2.6 -p git+https://github.com/PanoMC/semantic-release-pano.git#378827799ce454db6098f071302887dabf28577a semantic-release --dry-run --force | grep 'next release version is ' | awk -F"next release version is " '{print $2}')
           echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
@@ -130,4 +131,4 @@ jobs:
           PANO_TOKEN: ${{ secrets.PANO_TOKEN }}
           PANO_PROD_TOKEN: ${{ secrets.PANO_PROD_TOKEN }}
         run: |
-          npx -y -p semantic-release@24.2.6 -p git+https://github.com/PanoMC/semantic-release-pano.git semantic-release --force
+          npx -y -p semantic-release@24.2.6 -p git+https://github.com/PanoMC/semantic-release-pano.git#378827799ce454db6098f071302887dabf28577a semantic-release --force
