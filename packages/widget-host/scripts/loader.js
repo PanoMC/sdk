@@ -104,6 +104,8 @@ function tidy(el) {
 }
 
 function scan(root) {
+  // no index yet (the first or a new one is in flight, or it failed): nothing to define
+  if (!index?.widgets) return;
   const gen = generation;
   const nodes = root.nodeType === 1 && root.localName.startsWith(PREFIX) ? [root] : [];
   if (root.querySelectorAll) nodes.push(...root.querySelectorAll('*'));
@@ -142,7 +144,9 @@ async function start() {
       for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) scan(n);
     }).observe(document.documentElement, { childList: true, subtree: true });
   }
-  seen.clear();
+  // a tag that is already a custom element stays defined (customElements cannot redefine it); the others get
+  // another try with the new index
+  for (const tag of [...seen]) if (!customElements.get(tag)) seen.delete(tag);
   scan(document);
 }
 
@@ -152,9 +156,10 @@ w.PanoWidgets = {
     const apiChanged = options.apiBase !== undefined && options.apiBase !== state.apiBase;
     for (const key of Object.keys(state)) if (options[key] !== undefined) state[key] = options[key];
     if (hostReady) hostReady.then(push);
+    // a new apiBase reads its own index; the loaded host stays (push above handed it the new apiBase), so no
+    // second runtime is imported
     if (apiChanged && index) {
       index = null;
-      hostReady = null;
       start();
     }
     return { ...state };

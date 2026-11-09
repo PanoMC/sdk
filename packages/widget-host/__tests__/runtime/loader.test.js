@@ -168,6 +168,30 @@ describe('loader.js over the served layout', () => {
     expect(size).toBeLessThanOrEqual(BUDGET.marketWidget);
   });
 
+  test('a new apiBase keeps the loaded host, and DOM changes while its index loads (or fails) do not throw', async () => {
+    const host = await window.PanoWidgets.host();
+    const errors = [];
+    const onError = (e) => errors.push(e);
+    window.addEventListener('error', onError);
+    const before = fetchCalls.length;
+    try {
+      // the index of the new apiBase fails: index stays empty
+      window.PanoWidgets.configure({ apiBase: 'https://other.test' });
+      const el = document.createElement('div');
+      el.innerHTML = '<span></span><pano-test-goal label="w"></pano-test-goal>';
+      document.body.append(el);
+      await until(() => fetchCalls.length > before);
+      await settle(50);
+      document.body.append(document.createElement('p'));
+      await settle(20);
+    } finally {
+      window.removeEventListener('error', onError);
+    }
+    expect(errors).toEqual([]);
+    expect(await window.PanoWidgets.host()).toBe(host);
+    expect(host.getConfig().apiBase).toBe('https://other.test');
+  });
+
   test('loader module exposes the same PanoWidgets object it installed', () => {
     expect(typeof window.PanoWidgets.configure).toBe('function');
     expect(loaderModule).toBeDefined();
