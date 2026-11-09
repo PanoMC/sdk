@@ -3,8 +3,8 @@ package com.panomc.plugins.license
 import com.panomc.platform.api.PanoPlugin
 import com.panomc.platform.license.LicenseDeniedReason
 import com.panomc.platform.license.LicenseRequiredException
-import com.panomc.platform.license.SignedLicense
 import java.security.KeyFactory
+import java.security.Signature
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
@@ -29,19 +29,26 @@ import java.util.concurrent.atomic.AtomicReference
  * their own plugin if they want to customise behaviour (e.g. additional anti-tamper
  * measures). The boilerplate ships it as the canonical implementation.
  *
+ * The token is verified here with the JDK only (java.security), and every claim that is checked is read
+ * from that verified token, never from the claims the host parsed: a patched host cannot pair a real
+ * token with other claims.
+ *
  * For free plugins (PANO_PUBLIC_KEY_BASE64 is empty), [requireValidLicense] is a no-op so
  * a plugin can be migrated to/from premium without code changes — only by updating
  * build flags or `PANO_LICENSE_*` / `licenseServer` inputs for the Gradle build.
  */
 class PluginLicenseClient(private val plugin: PanoPlugin) {
-    /** Last successfully verified license. Cached so [assertStillLicensed] is cheap. */
-    private val cachedLicense = AtomicReference<SignedLicense?>(null)
+    /** Claims of the last successfully verified license. Cached so [assertStillLicensed] is cheap. */
+    private val cachedClaims = AtomicReference<VerifiedClaims?>(null)
 
     private val embeddedPublicKey: RSAPublicKey? by lazy { decodePublicKey() }
 
-    /** True when this plugin is configured as premium (i.e. embedded a public key). */
+    /**
+     * True when this plugin is configured as premium (a public key was embedded at build time). A key that
+     * cannot be parsed still counts as premium: [requireValidLicense] then fails with KEY_NOT_AVAILABLE.
+     */
     val isPremium: Boolean
-        get() = embeddedPublicKey != null
+        get() = PluginBuildConstants.PANO_PUBLIC_KEY_BASE64.isNotBlank()
 
     /**
      * Fetches a fresh license from panomc.com via the host, verifies it locally with the
@@ -69,46 +76,45 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
         // Re-verify with our OWN copy of the public key. This is the plugin's actual
         // security boundary: even if the host is patched/forked to inject a forged JWT,
         // an attacker can't sign one without panomc.com's private key.
-        if (!license.verifySignature(pubKey, plugin.getLicenseJwtIssuer())) {
-            throw LicenseRequiredException(
+        val claims = verifyToken(license.rawJwt, pubKey, plugin.getLicenseJwtIssuer())
+            ?: throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.SIGNATURE_INVALID,
                 "license JWT signature is invalid (host may be tampered)"
             )
-        }
 
-        if (!license.claims.resourceId.equals(plugin.pluginId, ignoreCase = true)) {
+        if (claims.audience.none { it.equals(plugin.pluginId, ignoreCase = true) }) {
             throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.AUDIENCE_MISMATCH,
-                "expected ${plugin.pluginId}, got ${license.claims.resourceId}"
+                "expected ${plugin.pluginId}, got ${claims.audience.joinToString()}"
             )
         }
-        if (license.claims.version != PluginBuildConstants.VERSION) {
+        if (claims.version != PluginBuildConstants.VERSION) {
             throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.VERSION_MISMATCH,
-                "expected ${PluginBuildConstants.VERSION}, got ${license.claims.version}"
+                "expected ${PluginBuildConstants.VERSION}, got ${claims.version}"
             )
         }
 
         val ownHash = plugin.getOwnJarSha256()
-        if (ownHash != null && !license.claims.jarSha256.equals(ownHash, ignoreCase = true)) {
+        if (ownHash != null && !claims.jarSha256.equals(ownHash, ignoreCase = true)) {
             throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.JAR_HASH_MISMATCH,
-                "expected ${license.claims.jarSha256.take(12)}..., running ${ownHash.take(12)}..."
+                "expected ${claims.jarSha256.take(12)}..., running ${ownHash.take(12)}..."
             )
         }
-        if (license.claims.isExpired()) {
+        if (claims.isExpired()) {
             throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.EXPIRED,
-                "license expired (${license.claims.expiresAtMs})"
+                "license expired (${claims.expiresAtMs})"
             )
         }
 
-        cachedLicense.set(license)
+        cachedClaims.set(claims)
     }
 
     /**
@@ -119,8 +125,8 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
      */
     suspend fun assertStillLicensed() {
         if (!isPremium) return
-        val cached = cachedLicense.get()
-        if (cached == null || cached.claims.isExpired()) {
+        val cached = cachedClaims.get()
+        if (cached == null || cached.isExpired()) {
             requireValidLicense()
         }
     }
@@ -139,6 +145,179 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
             KeyFactory.getInstance("RSA").generatePublic(spec) as RSAPublicKey
         } catch (_: Exception) {
             null
+        }
+    }
+
+    /** The claims this plugin checks, read from a token whose signature it verified itself. */
+    class VerifiedClaims(
+        val audience: List<String>,
+        val version: String,
+        val jarSha256: String,
+        val expiresAtMs: Long,
+    ) {
+        fun isExpired(nowMs: Long = System.currentTimeMillis()): Boolean = nowMs >= expiresAtMs
+    }
+
+    companion object {
+        /**
+         * Verifies an RS256 JWT with [publicKey] and [expectedIssuer] and returns its claims, or null when the
+         * token is malformed, not RS256, wrongly signed, from another issuer, or misses a claim.
+         */
+        fun verifyToken(rawJwt: String, publicKey: RSAPublicKey, expectedIssuer: String): VerifiedClaims? = try {
+            val parts = rawJwt.split('.')
+            require(parts.size == 3)
+            val decoder = Base64.getUrlDecoder()
+            val header = MiniJson.parseObject(String(decoder.decode(parts[0]), Charsets.UTF_8))
+            require(header["alg"] == "RS256")
+
+            val verifier = Signature.getInstance("SHA256withRSA")
+            verifier.initVerify(publicKey)
+            verifier.update("${parts[0]}.${parts[1]}".toByteArray(Charsets.US_ASCII))
+            require(verifier.verify(decoder.decode(parts[2])))
+
+            val payload = MiniJson.parseObject(String(decoder.decode(parts[1]), Charsets.UTF_8))
+            val audience = when (val aud = payload["aud"]) {
+                is String -> listOf(aud)
+                is List<*> -> aud.filterIsInstance<String>()
+                else -> emptyList()
+            }
+            val version = payload["ver"] as? String
+            val hash = payload["hash"] as? String
+            val exp = (payload["exp"] as? Number)?.toLong()
+            require(payload["iss"] == expectedIssuer && audience.isNotEmpty())
+            require(version != null && hash != null && exp != null)
+
+            VerifiedClaims(audience, version, hash, exp * 1000)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    /** Just enough JSON for a JWT header and payload, so the check needs nothing the host loads. */
+    private class MiniJson private constructor(private val text: String) {
+        private var at = 0
+
+        companion object {
+            fun parseObject(text: String): Map<String, Any?> {
+                val parser = MiniJson(text)
+                val value = parser.value()
+                parser.space()
+                require(parser.at == text.length && value is Map<*, *>) { "not a JSON object" }
+                @Suppress("UNCHECKED_CAST")
+                return value as Map<String, Any?>
+            }
+        }
+
+        private fun space() {
+            while (at < text.length && text[at].isWhitespace()) at++
+        }
+
+        private fun value(): Any? {
+            space()
+            require(at < text.length) { "unexpected end" }
+            val c = text[at]
+            return when {
+                c == '{' -> obj()
+                c == '[' -> array()
+                c == '"' -> string()
+                c == 't' -> literal("true", true)
+                c == 'f' -> literal("false", false)
+                c == 'n' -> literal("null", null)
+                c == '-' || c.isDigit() -> number()
+                else -> throw IllegalArgumentException("unexpected character")
+            }
+        }
+
+        private fun obj(): Map<String, Any?> {
+            val out = LinkedHashMap<String, Any?>()
+            at++
+            space()
+            if (text.getOrNull(at) == '}') {
+                at++
+                return out
+            }
+            while (true) {
+                space()
+                val key = string()
+                space()
+                require(text.getOrNull(at) == ':') { "expected a colon" }
+                at++
+                out[key] = value()
+                space()
+                when (text.getOrNull(at)) {
+                    ',' -> at++
+                    '}' -> {
+                        at++
+                        return out
+                    }
+                    else -> throw IllegalArgumentException("expected a comma or the end of the object")
+                }
+            }
+        }
+
+        private fun array(): List<Any?> {
+            val out = ArrayList<Any?>()
+            at++
+            space()
+            if (text.getOrNull(at) == ']') {
+                at++
+                return out
+            }
+            while (true) {
+                out.add(value())
+                space()
+                when (text.getOrNull(at)) {
+                    ',' -> at++
+                    ']' -> {
+                        at++
+                        return out
+                    }
+                    else -> throw IllegalArgumentException("expected a comma or the end of the array")
+                }
+            }
+        }
+
+        private fun string(): String {
+            require(text.getOrNull(at) == '"') { "expected a string" }
+            at++
+            val out = StringBuilder()
+            while (true) {
+                require(at < text.length) { "unterminated string" }
+                val c = text[at++]
+                if (c == '"') return out.toString()
+                if (c != '\\') {
+                    out.append(c)
+                    continue
+                }
+                require(at < text.length) { "bad escape" }
+                when (val e = text[at++]) {
+                    '"', '\\', '/' -> out.append(e)
+                    'b' -> out.append('\b')
+                    'f' -> out.append('\u000C')
+                    'n' -> out.append('\n')
+                    'r' -> out.append('\r')
+                    't' -> out.append('\t')
+                    'u' -> {
+                        require(at + 4 <= text.length) { "bad escape" }
+                        out.append(text.substring(at, at + 4).toInt(16).toChar())
+                        at += 4
+                    }
+                    else -> throw IllegalArgumentException("bad escape")
+                }
+            }
+        }
+
+        private fun number(): Number {
+            val start = at
+            while (at < text.length && (text[at].isDigit() || text[at] in "+-.eE")) at++
+            val raw = text.substring(start, at)
+            return raw.toLongOrNull() ?: raw.toDouble()
+        }
+
+        private fun literal(word: String, result: Any?): Any? {
+            require(text.startsWith(word, at)) { "unexpected literal" }
+            at += word.length
+            return result
         }
     }
 }
