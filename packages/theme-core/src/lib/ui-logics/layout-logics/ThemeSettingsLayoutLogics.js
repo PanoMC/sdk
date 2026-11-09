@@ -5,20 +5,24 @@ import { writable } from "svelte/store";
 import { hasPermission, Permissions } from "$pano/lib/auth.util";
 import { browser } from "$app/env";
 
+// The settings page runs in an iframe of the panel, which Pano serves from the same origin. Messages go only to
+// that origin and are taken only from the parent window on it.
+const panelOrigin = () => window.location.origin;
+
 function postHeight() {
   const h = Math.max(
     document.documentElement.scrollHeight,
     document.body.scrollHeight
   );
-  window.parent.postMessage({ type: "theme-iframe-height", height: h }, "*");
+  window.parent.postMessage({ type: "theme-iframe-height", height: h }, panelOrigin());
 }
 
 function postLoaded() {
-  window.parent.postMessage({ type: "theme-settings-loaded" }, "*");
+  window.parent.postMessage({ type: "theme-settings-loaded" }, panelOrigin());
 }
 
 function postReady() {
-  window.parent.postMessage({ type: "theme-settings-ready" }, "*");
+  window.parent.postMessage({ type: "theme-settings-ready" }, panelOrigin());
 }
 
 // The theme settings UI runs inside an iframe in the panel, so its toasts are posted to
@@ -27,7 +31,7 @@ function postReady() {
 // failure and has to fall back to a neutral toast. A panel build that predates the field
 // simply ignores it.
 export function showToast(text, params = {}, toastComponent, variant = null) {
-  window.parent.postMessage({ type: "show-toast", text, params, toastComponent, variant }, "*");
+  window.parent.postMessage({ type: "show-toast", text, params, toastComponent, variant }, panelOrigin());
 }
 
 export function showSuccessToast(text, params = {}) {
@@ -39,12 +43,28 @@ export function showErrorToast(text, params = {}) {
 }
 
 const confirmCallbacks = new Map();
-let confirmIdCounter = 0;
+
+/** A confirm id nobody can guess, so a message cannot fire a pending confirmation. */
+function confirmId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Only stylesheets of this origin are injected. */
+function sameOriginHref(href) {
+  try {
+    return typeof href === "string" && new URL(href, window.location.href).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
 
 export function showConfirm(title, onConfirm) {
-  const id = ++confirmIdCounter;
+  const id = confirmId();
   confirmCallbacks.set(id, onConfirm);
-  window.parent.postMessage({ type: "show-confirm", title, id }, "*");
+  window.parent.postMessage({ type: "show-confirm", title, id }, panelOrigin());
 }
 
 export async function processLoadServer(event) {
@@ -104,6 +124,8 @@ export function init() {
   const hidden = writable(true);
 
   const handleMessage = function (e) {
+    if (e.source !== window.parent || e.origin !== window.location.origin) return;
+
     if (e.data)
       console.log("Theme received message", e.data.type);
 
@@ -127,7 +149,8 @@ export function init() {
 
     // CSS inject-all message (both inline and links)
     if (e.data && e.data.type === "inject-css-all") {
-      const { css, links } = e.data;
+      const { css } = e.data;
+      const links = Array.isArray(e.data.links) ? e.data.links.filter(sameOriginHref) : [];
       console.log("Received combined CSS. Links:", links?.length, "Inline CSS length:", css?.length);
 
       removeExistingStyles();
