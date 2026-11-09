@@ -185,3 +185,27 @@ describe.skipIf(!pluginMinDir)("contracts pull of the built test-fixtures/plugin
     expect(exists(theme, "plugin-contracts/min/src")).toBe(false);
   });
 });
+
+describe("contracts pull: a package cannot reach outside plugin-contracts/", () => {
+  for (const ns of ["..", "../../outside", "a/b"]) {
+    test(`namespace '${ns}' is skipped, nothing is written or deleted outside`, () => {
+      const { theme, pkg } = themeWithMarket();
+      write(theme, "keep-me.txt", "owner file");
+      const views = JSON.parse(read(pkg, "contract/views.json"));
+      views.namespace = ns;
+      write(pkg, "contract/views.json", JSON.stringify(views));
+      installPackage(theme, pkg, "pano-plugin-market");
+
+      cli(theme, ["contracts", "pull"]);
+      expect(read(theme, "keep-me.txt")).toBe("owner file");
+      expect(exists(theme, "views.json")).toBe(false);
+      expect(exists(theme, "controllers.json")).toBe(false);
+    });
+  }
+
+  test("writeSnapshot refuses a namespace that is not a plain name", async () => {
+    const { writeSnapshot } = await import("../../contracts.js");
+    const { theme, pkg } = themeWithMarket();
+    expect(() => writeSnapshot(theme, { dir: pkg, pluginId: "x", namespace: ".." })).toThrow("not a plain name");
+  });
+});

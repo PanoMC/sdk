@@ -79,6 +79,43 @@ function sameBytes(file, buffer) {
 /** Posix path relative to a root, for messages and stored paths. */
 const posix = (p) => p.split(path.sep).join("/");
 
+// A plugin package names its namespace, id and view files itself; they become paths in the theme, so they must stay
+// plain names (no `..`, no separators) and the files must stay inside the package's `contract/`.
+const SAFE_NAMESPACE = /^[a-z0-9][a-z0-9_-]*$/i;
+const SAFE_PLUGIN_ID = /^[A-Za-z0-9._-]+$/;
+const SAFE_VIEW_NAME = /^[A-Za-z0-9][A-Za-z0-9_.-]*$/;
+
+/** @param {unknown} namespace */
+export const isSafeNamespace = (namespace) => typeof namespace === "string" && SAFE_NAMESPACE.test(namespace);
+
+/** @param {unknown} pluginId */
+export const isSafePluginId = (pluginId) =>
+  typeof pluginId === "string" && SAFE_PLUGIN_ID.test(pluginId) && pluginId !== "." && pluginId !== "..";
+
+/**
+ * `rel` joined to `base`, or null when the result leaves `base` or passes through a symbolic link.
+ * @param {string} base
+ * @param {string} rel
+ * @returns {string | null}
+ */
+export function insideDir(base, rel) {
+  if (typeof rel !== "string" || rel === "" || path.isAbsolute(rel)) return null;
+  const root = path.resolve(base);
+  const file = path.resolve(root, rel);
+  if (!file.startsWith(root + path.sep)) return null;
+
+  let at = root;
+  for (const part of path.relative(root, file).split(path.sep)) {
+    at = path.join(at, part);
+    try {
+      if (fs.lstatSync(at).isSymbolicLink()) return null;
+    } catch {
+      break; // the rest does not exist yet
+    }
+  }
+  return file;
+}
+
 /** `pano-plugin-market` -> `market` (doc 01 section 1: only a leading `pano-plugin-` is stripped). */
 export function defaultNamespace(pluginId) {
   return String(pluginId).replace(/^pano-plugin-/, "");
@@ -108,11 +145,16 @@ export function readPackage(dir) {
   if (!viewsJson || typeof viewsJson !== "object") return null;
   const index = readJson(path.join(dir, "pano-plugin.json"));
   const pluginId = viewsJson.pluginId ?? index?.pluginId ?? path.basename(dir);
+  const namespace = viewsJson.namespace ?? index?.namespace ?? defaultNamespace(pluginId);
+  if (!isSafePluginId(pluginId) || !isSafeNamespace(namespace)) {
+    process.stderr.write(`theme-core: skipped ${dir}: its plugin id or namespace is not a plain name\n`);
+    return null;
+  }
 
   return {
     dir,
     pluginId,
-    namespace: viewsJson.namespace ?? index?.namespace ?? defaultNamespace(pluginId),
+    namespace,
     viewsJson,
     controllersJson: readJson(path.join(dir, "contract", "controllers.json")),
     index,
@@ -200,9 +242,12 @@ export function readSnapshots(themeDir) {
     const dir = path.join(root, entry);
     const viewsJson = readJson(path.join(dir, "views.json"));
     if (!viewsJson) continue;
+    const namespace = viewsJson.namespace ?? entry;
+    const pluginId = viewsJson.pluginId ?? `pano-plugin-${entry}`;
+    if (!isSafeNamespace(namespace) || !isSafePluginId(pluginId)) continue;
     snapshots.push({
-      namespace: viewsJson.namespace ?? entry,
-      pluginId: viewsJson.pluginId ?? `pano-plugin-${entry}`,
+      namespace,
+      pluginId,
       dir,
       viewsJson,
       controllersJson: readJson(path.join(dir, "controllers.json")),
@@ -260,7 +305,8 @@ export function diffViews(before, after) {
  * @returns {{ namespace: string, pluginId: string, first: boolean, written: string[], removed: string[], viewsChanged: boolean, diff: ReturnType<typeof diffViews> }}
  */
 export function writeSnapshot(themeDir, pkg) {
-  const target = path.join(themeDir, SNAPSHOT_DIR, pkg.namespace);
+  const target = isSafeNamespace(pkg.namespace) ? insideDir(path.join(themeDir, SNAPSHOT_DIR), pkg.namespace) : null;
+  if (!target) throw new CliError(`${pkg.pluginId}: namespace '${pkg.namespace}' is not a plain name`);
   const first = !isFile(path.join(target, "views.json"));
   const before = first ? null : readJson(path.join(target, "views.json"));
   const contractDir = path.join(pkg.dir, "contract");
@@ -1064,8 +1110,8 @@ function helperClosure(contractSrcDir, sourcePath, direct) {
   while (queue.length && seen.size < limit) {
     const rel = queue.shift();
     if (seen.has(rel)) continue;
-    const file = path.join(contractSrcDir, rel);
-    if (!isFile(file)) continue;
+    const file = insideDir(contractSrcDir, rel);
+    if (!file || !isFile(file)) continue;
     seen.add(rel);
 
     const text = fs.readFileSync(file, "utf8");
@@ -1191,7 +1237,11 @@ function ejectFromPackage({ themeDir, pkg, name, pages, log }) {
   for (const viewId of ids) {
     const view = allViews[viewId];
     const viewName = viewId.slice(ns.length + 1);
-    const sourceFile = path.join(contractDir, view.source);
+    if (!SAFE_VIEW_NAME.test(viewName)) throw new CliError(`${viewId}: the view name is not a plain name`);
+    const sourceFile = insideDir(contractDir, view.source);
+    if (!sourceFile || !sourceFile.startsWith(path.resolve(contractSrc) + path.sep)) {
+      throw new CliError(`${viewId}: source ${view.source} is not inside the package's contract/src`);
+    }
     if (!isFile(sourceFile)) {
       throw new CliError(`${viewId}: readable source ${posix(path.join("contract", view.source))} is missing in the package (rebuild the plugin)`);
     }
@@ -1207,7 +1257,7 @@ function ejectFromPackage({ themeDir, pkg, name, pages, log }) {
     const viewResult = writeOwned(target, transformed.code, themeDir);
 
     const helperResults = helpers.map((helper) =>
-      writeOwned(path.join(themeDir, "src", "views", ns, helper), fs.readFileSync(path.join(contractSrc, helper)), themeDir),
+      writeOwned(path.join(themeDir, "src", "views", ns, helper), fs.readFileSync(insideDir(contractSrc, helper)), themeDir),
     );
 
     // controllers: those the package index lists for the view, plus the literal calls in its source

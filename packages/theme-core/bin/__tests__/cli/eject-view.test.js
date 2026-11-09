@@ -354,3 +354,19 @@ describe.skipIf(!pluginMinDir)("eject-view against the built test-fixtures/plugi
     expect(JSON.parse(read(theme, "plugin-contracts/min/views.json")).views["min:HelloPage"].page).toEqual({ path: "/hello" });
   });
 });
+
+describe("eject-view: a package cannot copy files from outside its contract/src", () => {
+  test("a view source that leaves contract/src is refused", () => {
+    const { theme, pkg } = themeWithMarket();
+    write(pkg, "secret.txt", "private key");
+    const views = JSON.parse(read(pkg, "contract/views.json"));
+    views.views["market:ProductCard"].source = "src/../../secret.txt";
+    write(pkg, "contract/views.json", JSON.stringify(views));
+    installPackage(theme, pkg, "pano-plugin-market");
+
+    const run = cli(theme, ["eject-view", "market:ProductCard"]);
+    expect(run.code).not.toBe(0);
+    expect(run.out).toContain("is not inside the package's contract/src");
+    expect(exists(theme, "src/views/market/ProductCard.svelte")).toBe(false);
+  });
+});
