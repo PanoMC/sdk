@@ -23,12 +23,24 @@ function isRawBody(body) {
   )
 }
 
-/** @param {string} path @param {Record<string, any>|undefined} values */
+/**
+ * The operation's path with its `{name}` parameters filled in, or the first parameter whose value is missing, empty,
+ * `.` / `..`: those would leave the literal `{name}` in the URL or move the request to another endpoint.
+ * @param {string} path @param {Record<string, any>|undefined} values
+ * @returns {{ path: string } | { missing: string }}
+ */
 function fillPath(path, values) {
-  return path.replace(/\{([^}]+)\}/g, (whole, name) => {
+  let missing = null
+  const filled = path.replace(/\{([^}]+)\}/g, (whole, name) => {
     const value = values?.[name]
-    return value === undefined || value === null ? whole : encodeURIComponent(String(value))
+    const text = value === undefined || value === null ? '' : String(value)
+    if (text === '' || text === '.' || text === '..') {
+      missing ??= name
+      return whole
+    }
+    return encodeURIComponent(text)
   })
+  return missing === null ? { path: filled } : { missing }
 }
 
 /** @param {Record<string, any>|undefined} query */
@@ -196,7 +208,13 @@ export function createClient(options) {
   async function request(operation, params = {}) {
     try {
       const method = String(operation.method).toUpperCase()
-      const path = fillPath(operation.path, params.path)
+      const filled = fillPath(operation.path, params.path)
+      if ('missing' in filled) {
+        return failure(0, 'INVALID_PATH_PARAM', {
+          message: `Path parameter "${filled.missing}" is missing, empty, "." or ".."`
+        })
+      }
+      const path = filled.path
       const search = queryString(params.query)
       const mutation = !SAFE_METHODS.has(method)
       const useCsrf = csrfMode === 'auto' && mutation && path !== CSRF_PATH

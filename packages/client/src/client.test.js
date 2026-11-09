@@ -42,6 +42,22 @@ describe('request building', () => {
     expect(f.calls[0].headers['Accept-Language']).toBe('tr')
   })
 
+  test("a path value that is missing, empty, '.' or '..' fails before any request", async () => {
+    const f = fakeFetch()
+    const c = createClient({ baseUrl: base, fetch: f, csrf: 'off' })
+    const op = { method: 'GET', path: '/api/v1/posts/{slug}/comments' }
+    for (const slug of [undefined, null, '', '.', '..']) {
+      const r = await c.request(op, { path: { slug } })
+      expect(r.ok).toBe(false)
+      expect(r.error.code).toBe('INVALID_PATH_PARAM')
+    }
+    expect(f.calls.length).toBe(0)
+
+    const ok = fakeFetch({ 'GET /api/v1/posts/..a/comments': json(200, {}) })
+    await createClient({ baseUrl: base, fetch: ok, csrf: 'off' }).request(op, { path: { slug: '..a' } })
+    expect(ok.calls[0].url).toBe(`${base}/api/v1/posts/..a/comments`)
+  })
+
   test('proxy prefix as baseUrl', async () => {
     const f = fakeFetch()
     await createClient({ baseUrl: '/pano', fetch: f, csrf: 'off' }).request({ method: 'GET', path: '/api/v1/posts' })
