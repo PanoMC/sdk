@@ -198,8 +198,12 @@ export function createLicenseRuntime(licenseConstants) {
     //
     // The check is wrapped in a try-catch so a malformed/missing manifest is reported as
     // FILE_TAMPERED instead of bubbling a generic FS error (those are noisy and unhelpful).
+    //
+    // The expected fingerprint comes from the signed token (`fp`, computed by panomc.com when the
+    // theme was uploaded) when the token carries one. manifest.json sits next to the files and is
+    // not signed, so without `fp` the check only catches accidental corruption, not deliberate edits.
     try {
-      verifyFileFingerprint();
+      verifyFileFingerprint(payload.fp);
     } catch (e) {
       if (e instanceof LicenseError) throw e;
       throw new LicenseError(LICENSE_REASONS.FILE_TAMPERED, e?.message || String(e));
@@ -314,7 +318,8 @@ export function createLicenseRuntime(licenseConstants) {
     return null;
   }
 
-  function verifyFileFingerprint() {
+  /** @param {unknown} signedFingerprint the `fp` claim of the verified token, when it has one */
+  function verifyFileFingerprint(signedFingerprint) {
     const themeRoot = locateThemeRoot();
     if (!themeRoot) {
       throw new LicenseError(
@@ -323,7 +328,10 @@ export function createLicenseRuntime(licenseConstants) {
       );
     }
     const manifest = JSON.parse(readFileSync(path.join(themeRoot, "manifest.json"), "utf-8"));
-    const expected = manifest.fileFingerprint;
+    if (signedFingerprint !== undefined && !/^[0-9a-f]{64}$/i.test(String(signedFingerprint))) {
+      throw new LicenseError(LICENSE_REASONS.FILE_TAMPERED, "the license's fp claim is malformed");
+    }
+    const expected = signedFingerprint !== undefined ? String(signedFingerprint).toLowerCase() : manifest.fileFingerprint;
     if (typeof expected !== "string" || expected.length !== 64) {
       throw new LicenseError(
         LICENSE_REASONS.FILE_TAMPERED,
