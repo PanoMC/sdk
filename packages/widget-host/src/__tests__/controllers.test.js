@@ -143,6 +143,21 @@ describe('plugin(ns).load', () => {
     expect(requests).toBe(3);
   });
 
+  test('a load pinned to another version gets null, not the cached data of the registered version', async () => {
+    clearLoadMemo();
+    const definition = {
+      name: 'pinned',
+      version: 1,
+      load: async () => ({ goal: 1 }),
+      create: () => ({ get: () => ({}), subscribe: (run) => (run({}), () => {}), actions: {}, destroy() {} }),
+    };
+    registry.register('pano-plugin-pin', 'pin', [definition]);
+
+    expect(await plugin('pin').load('pinned')).toEqual({ goal: 1 });
+    expect(await plugin('pin').load('pinned', { version: 2 })).toBeNull();
+    expect(await plugin('pin').load('pinned', { version: 1 })).toEqual({ goal: 1 });
+  });
+
   test('an unknown controller resolves null and is not remembered', async () => {
     expect(await plugin('missing').load('nothing')).toBeNull();
   });

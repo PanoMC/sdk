@@ -303,11 +303,12 @@ export function plugin(namespace) {
       if (!c) throw new Error(`${fullName(name)} is not available`);
       return c;
     },
-    /** Memoised per page: shared while in flight and for 5 s (`LOAD_MEMO_MS`). */
+    /** Memoised per page by name, params and version pin: shared while in flight and for 5 s (`LOAD_MEMO_MS`). */
     load(name, opts) {
       ensureControllerHost();
       const full = fullName(name);
-      return memo.run(full, opts?.params, () => registry.load(full, opts));
+      // the version pin is part of the key: a pinned load that does not match the registered controller gets null
+      return memo.run(full, { params: opts?.params ?? {}, version: opts?.version ?? null }, () => registry.load(full, opts));
     },
   };
 }
