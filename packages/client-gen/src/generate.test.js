@@ -103,6 +103,39 @@ describe('generate: input errors', () => {
     expect(gen.files['operations.js']).toContain('deleteOperation:')
     expect(gen.warnings.some((w) => w.includes('unknown schema "Nope"'))).toBe(true)
   })
+
+  test('values from the document cannot close a JSDoc comment and add code', () => {
+    const evil = '*/ globalThis.PWNED=1; /*'
+    const gen = generateClient({
+      openapi: '3.1.0',
+      paths: {
+        [`/x/{id}/${evil}`]: {
+          get: {
+            operationId: 'getX',
+            parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string', enum: [evil] } }],
+            responses: {
+              200: {
+                content: {
+                  'application/json': {
+                    schema: { type: 'object', properties: { [evil]: { const: evil } }, required: [evil] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    for (const [name, text] of Object.entries(gen.files)) {
+      if (!name.endsWith('.js')) continue
+      expect(text).not.toContain('*/ globalThis')
+      // every comment line between /** and */ starts with " *"
+      for (const block of text.matchAll(/\/\*\*\n([\s\S]*?)\n\s*\*\//g)) {
+        for (const line of block[1].split('\n')) expect(line.trimStart().startsWith('*')).toBe(true)
+      }
+    }
+    expect(gen.files['operations.js']).toContain("'/x/{id}/*\\/ globalThis.PWNED=1; /*'")
+  })
 })
 
 describe('generate: the output type checks', () => {

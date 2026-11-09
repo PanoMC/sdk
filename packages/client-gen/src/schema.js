@@ -8,9 +8,21 @@ export const isIdent = (s) => IDENT.test(s)
 /** Property key as it appears in an object type literal. @param {string} s */
 export const propKey = (s) => (isIdent(s) ? s : quote(s))
 
-/** @param {string} s */
+/**
+ * A single-quoted JS string literal. It also lands inside JSDoc comments, so a comment terminator is written
+ * as `*\/` (the same string value) and every kind of line break is escaped.
+ * @param {string} s
+ */
 export function quote(s) {
-  return `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, '\\n')}'`
+  const body = s
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r?\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replaceAll(String.fromCharCode(0x2028), '\\u2028')
+    .replaceAll(String.fromCharCode(0x2029), '\\u2029')
+    .replace(/\*\//g, '*\\/')
+  return `'${body}'`
 }
 
 /**

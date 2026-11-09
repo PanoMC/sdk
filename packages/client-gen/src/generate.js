@@ -113,7 +113,7 @@ export function generateClient(input) {
     const t = /** @type {{ response: string, request: string | null }} */ (opTypes.get(op))
     const { type: paramsType, required } = paramsOf(op, t.request, importCtx)
     const lines = ['/**']
-    const doc1 = oneLine(op.summary) || oneLine(op.description) || `${op.method} ${op.path}`
+    const doc1 = oneLine(op.summary) || oneLine(op.description) || oneLine(`${op.method} ${op.path}`)
     lines.push(` * ${doc1}`)
     if (op.summary && op.description && oneLine(op.description) !== oneLine(op.summary)) lines.push(` * ${oneLine(op.description)}`)
     if (op.deprecated) lines.push(' * @deprecated')
