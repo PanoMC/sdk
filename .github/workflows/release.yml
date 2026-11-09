@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+# One release per branch at a time: a second push waits, so its version is computed after the first one is tagged.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest

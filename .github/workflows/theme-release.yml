@@ -6,6 +6,9 @@
 #   on:
 #     push:
 #       branches: [ "dev", "master" ]
+#   concurrency:              # one release per branch at a time (the version is computed before the build)
+#     group: release-${{ github.ref }}
+#     cancel-in-progress: false
 #   jobs:
 #     release:
 #       uses: PanoMC/sdk/.github/workflows/theme-release.yml@<commit sha>   # a SHA, not a branch
