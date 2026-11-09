@@ -1,5 +1,5 @@
 <svelte:head>
-  {@html `<style>;</style>`.replace(";", styles)}
+  {@html styleTag(styles)}
 </svelte:head>
 
 <!-- Header -->
@@ -30,6 +30,7 @@
 <script>
   import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
+  import { styleTag } from "$pano/lib/html.util.js";
 
   const session = getContext("session");
   const themeSettings = getContext("themeSettings");

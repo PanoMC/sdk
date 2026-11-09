@@ -111,3 +111,15 @@ export function sanitizeRichHtml(html) {
     active = false;
   }
 }
+
+/**
+ * A `<style>` element for {@html} holding [css] as is: a `</style` inside it cannot end the element early, and `$`
+ * patterns stay literal (no String.replace with a string argument).
+ *
+ * @param {unknown} css
+ * @returns {string}
+ */
+export function styleTag(css) {
+  const text = typeof css === "string" ? css : "";
+  return "<style>" + text.replace(/<\/(style)/gi, "<\\/$1") + "</style>";
+}

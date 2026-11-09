@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { filterStyle, sanitizeRichHtml } from "../html.util.js";
+import { filterStyle, sanitizeRichHtml, styleTag } from "../html.util.js";
 
 describe("sanitizeRichHtml", () => {
   test("keeps what the panel editor writes", () => {
@@ -50,3 +50,18 @@ describe("sanitizeRichHtml", () => {
   });
 });
 
+
+describe("styleTag", () => {
+  test("keeps $ patterns literal", () => {
+    expect(styleTag("a::after { content: \"$' $& $` $$\" }")).toBe("<style>a::after { content: \"$' $& $` $$\" }</style>");
+  });
+
+  test("a </style inside cannot close the element", () => {
+    const out = styleTag("body{} </STYLE><script>alert(1)</script>");
+    expect(out.toLowerCase().indexOf("</style")).toBe(out.length - "</style>".length);
+  });
+
+  test("not a string yields an empty element", () => {
+    expect(styleTag(undefined)).toBe("<style></style>");
+  });
+});

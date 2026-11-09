@@ -14,7 +14,7 @@
 
   <meta content={themeSettings.themeColor || "dark"} name="x-theme" />
 
-  {@html `<style>;</style>`.replace(";", styles)}
+  {@html styleTag(styles)}
 </svelte:head>
 
 <Hook name="theme:top" />
@@ -47,6 +47,7 @@
 <!-- Modals End -->
 
 <script>
+  import { styleTag } from "$pano/lib/html.util.js";
   import Main from "$pano/lib/components/Main.svelte";
   import NotificationContainer from "$pano/lib/components/NotificationContainer.svelte";
   import Hook from "$pano/lib/components/Hook.svelte";
