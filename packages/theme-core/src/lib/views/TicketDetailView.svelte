@@ -73,7 +73,7 @@
               <div class="col vstack align-items-start">
                 <div class="card rounded-5 text-bg-primary border-0 shadow-sm">
                   <div class="pano-ticket-detail-view__body-2 card-body answer px-3 py-2">
-                    {@html message.message}
+                    {@html sanitizeRichHtml(message.message)}
                   </div>
                 </div>
                 <small class="text-body-secondary mt-1">
@@ -146,6 +146,7 @@
 
   import Date from "$pano/lib/components/Date.svelte";
   import tooltip from "$pano/lib/tooltip.util";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import TicketStatus, {
     TicketStatuses,

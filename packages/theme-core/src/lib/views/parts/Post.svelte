@@ -162,7 +162,7 @@
       class:text-muted={detail || !post.thumbnailUrl}
       class:clamp-text={!detail}>
       {#if detail}
-        {@html post.text}
+        {@html sanitizeRichHtml(post.text)}
       {:else}
         {truncate(post.text.replace(/<[^>]*>?/gm, ""), 80)}...
       {/if}
@@ -240,6 +240,7 @@
   import { postsPath } from "$pano/lib/home.js";
   import { truncate } from "$pano/lib/string.util";
   import tooltip from "$pano/lib/tooltip.util";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import Date from "$pano/lib/components/Date.svelte";
 

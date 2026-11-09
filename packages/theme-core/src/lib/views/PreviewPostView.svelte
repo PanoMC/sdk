@@ -103,7 +103,7 @@
   <div class="card">
     <div class="pano-preview-post-view__body card-body">
       <div class="card-text text-break word-break">
-        {@html post.text}
+        {@html sanitizeRichHtml(post.text)}
       </div>
     </div>
     {#if !(post.thumbnailUrl && (typeof themeSettings.postCoverImageEnabled === "undefined" ? true : themeSettings.postCoverImageEnabled))}
@@ -141,6 +141,7 @@
 <script>
   import { _ } from "svelte-i18n";
   import tooltip from "$pano/lib/tooltip.util";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import Date from "$pano/lib/components/Date.svelte";
 

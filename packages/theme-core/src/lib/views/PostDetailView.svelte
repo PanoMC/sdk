@@ -112,7 +112,7 @@
   <div class="card">
     <div class="pano-post-detail-view__body card-body">
       <div class="card-text text-break word-break">
-        {@html data.post.text}
+        {@html sanitizeRichHtml(data.post.text)}
       </div>
     </div>
     {#if !(data.post.thumbnailUrl && (typeof themeSettings.postCoverImageEnabled === "undefined" ? true : themeSettings.postCoverImageEnabled))}
@@ -192,6 +192,7 @@
   import { route } from "$pano/registry/routes.js";
   import { postsPath } from "$pano/lib/home.js";
   import tooltip from "$pano/lib/tooltip.util";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import Date from "$pano/lib/components/Date.svelte";
   import Hook from "$pano/lib/components/Hook.svelte";
