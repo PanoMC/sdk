@@ -1,10 +1,15 @@
 package com.panomc.plugins.license
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTVerificationException
+import com.auth0.jwt.exceptions.TokenExpiredException
 import com.panomc.platform.api.PanoPlugin
 import com.panomc.platform.license.LicenseDeniedReason
 import com.panomc.platform.license.LicenseRequiredException
+import java.io.File
 import java.security.KeyFactory
-import java.security.Signature
+import java.security.MessageDigest
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
@@ -29,9 +34,11 @@ import java.util.concurrent.atomic.AtomicReference
  * their own plugin if they want to customise behaviour (e.g. additional anti-tamper
  * measures). The boilerplate ships it as the canonical implementation.
  *
- * The token is verified here with the JDK only (java.security), and every claim that is checked is read
- * from that verified token, never from the claims the host parsed: a patched host cannot pair a real
- * token with other claims.
+ * The host is open source and not trusted here. The token is verified inside the plugin with the
+ * plugin's own java-jwt (bundled into the plugin jar and relocated by build.gradle.kts, so no host
+ * class can stand in for it), and every value that is checked (aud, sub, ver, hash, exp) is read from
+ * that verified token, never from the claims the host parsed. The jar hash is computed here from the
+ * plugin's own CodeSource, not asked from the host.
  *
  * For free plugins (PANO_PUBLIC_KEY_BASE64 is empty), [requireValidLicense] is a no-op so
  * a plugin can be migrated to/from premium without code changes — only by updating
@@ -73,15 +80,22 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
             version = PluginBuildConstants.VERSION
         )
 
-        // Re-verify with our OWN copy of the public key. This is the plugin's actual
-        // security boundary: even if the host is patched/forked to inject a forged JWT,
-        // an attacker can't sign one without panomc.com's private key.
-        val claims = verifyToken(license.rawJwt, pubKey, plugin.getLicenseJwtIssuer())
-            ?: throw LicenseRequiredException(
+        // Re-verify with our OWN copy of the public key and our OWN java-jwt. This is the plugin's
+        // actual security boundary: even if the host is patched/forked to inject a forged JWT or other
+        // claims, an attacker can't sign one without panomc.com's private key.
+        val claims = when (val result = verifyToken(license.rawJwt, pubKey, plugin.getLicenseJwtIssuer())) {
+            is Verification.Valid -> result.claims
+            Verification.Expired -> throw LicenseRequiredException(
+                plugin.pluginId,
+                LicenseDeniedReason.EXPIRED,
+                "license expired"
+            )
+            Verification.Invalid -> throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.SIGNATURE_INVALID,
                 "license JWT signature is invalid (host may be tampered)"
             )
+        }
 
         if (claims.audience.none { it.equals(plugin.pluginId, ignoreCase = true) }) {
             throw LicenseRequiredException(
@@ -98,8 +112,13 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
             )
         }
 
-        val ownHash = plugin.getOwnJarSha256()
-        if (ownHash != null && !claims.jarSha256.equals(ownHash, ignoreCase = true)) {
+        val ownHash = ownJarSha256()
+            ?: throw LicenseRequiredException(
+                plugin.pluginId,
+                LicenseDeniedReason.JAR_HASH_MISMATCH,
+                "the plugin is not running from its jar"
+            )
+        if (!claims.jarSha256.equals(ownHash, ignoreCase = true)) {
             throw LicenseRequiredException(
                 plugin.pluginId,
                 LicenseDeniedReason.JAR_HASH_MISMATCH,
@@ -150,6 +169,7 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
 
     /** The claims this plugin checks, read from a token whose signature it verified itself. */
     class VerifiedClaims(
+        val subject: String,
         val audience: List<String>,
         val version: String,
         val jarSha256: String,
@@ -158,166 +178,61 @@ class PluginLicenseClient(private val plugin: PanoPlugin) {
         fun isExpired(nowMs: Long = System.currentTimeMillis()): Boolean = nowMs >= expiresAtMs
     }
 
-    companion object {
-        /**
-         * Verifies an RS256 JWT with [publicKey] and [expectedIssuer] and returns its claims, or null when the
-         * token is malformed, not RS256, wrongly signed, from another issuer, or misses a claim.
-         */
-        fun verifyToken(rawJwt: String, publicKey: RSAPublicKey, expectedIssuer: String): VerifiedClaims? = try {
-            val parts = rawJwt.split('.')
-            require(parts.size == 3)
-            val decoder = Base64.getUrlDecoder()
-            val header = MiniJson.parseObject(String(decoder.decode(parts[0]), Charsets.UTF_8))
-            require(header["alg"] == "RS256")
-
-            val verifier = Signature.getInstance("SHA256withRSA")
-            verifier.initVerify(publicKey)
-            verifier.update("${parts[0]}.${parts[1]}".toByteArray(Charsets.US_ASCII))
-            require(verifier.verify(decoder.decode(parts[2])))
-
-            val payload = MiniJson.parseObject(String(decoder.decode(parts[1]), Charsets.UTF_8))
-            val audience = when (val aud = payload["aud"]) {
-                is String -> listOf(aud)
-                is List<*> -> aud.filterIsInstance<String>()
-                else -> emptyList()
-            }
-            val version = payload["ver"] as? String
-            val hash = payload["hash"] as? String
-            val exp = (payload["exp"] as? Number)?.toLong()
-            require(payload["iss"] == expectedIssuer && audience.isNotEmpty())
-            require(version != null && hash != null && exp != null)
-
-            VerifiedClaims(audience, version, hash, exp * 1000)
-        } catch (_: Exception) {
-            null
-        }
+    sealed class Verification {
+        class Valid(val claims: VerifiedClaims) : Verification()
+        object Expired : Verification()
+        object Invalid : Verification()
     }
 
-    /** Just enough JSON for a JWT header and payload, so the check needs nothing the host loads. */
-    private class MiniJson private constructor(private val text: String) {
-        private var at = 0
-
-        companion object {
-            fun parseObject(text: String): Map<String, Any?> {
-                val parser = MiniJson(text)
-                val value = parser.value()
-                parser.space()
-                require(parser.at == text.length && value is Map<*, *>) { "not a JSON object" }
-                @Suppress("UNCHECKED_CAST")
-                return value as Map<String, Any?>
+    companion object {
+        /**
+         * Verifies an RS256 JWT with [publicKey] and [expectedIssuer] and returns its claims. [Verification.Invalid]
+         * when the token is malformed, wrongly signed, from another issuer, or misses sub, aud, ver, hash or exp.
+         */
+        fun verifyToken(rawJwt: String, publicKey: RSAPublicKey, expectedIssuer: String): Verification {
+            val decoded = try {
+                JWT.require(Algorithm.RSA256(publicKey, null))
+                    .withIssuer(expectedIssuer)
+                    .build()
+                    .verify(rawJwt)
+            } catch (_: TokenExpiredException) {
+                return Verification.Expired
+            } catch (_: JWTVerificationException) {
+                return Verification.Invalid
+            } catch (_: Exception) {
+                return Verification.Invalid
             }
+
+            val subject = decoded.subject?.takeIf { it.isNotBlank() }
+            val audience = decoded.audience.orEmpty().filter { it.isNotBlank() }
+            val version = decoded.getClaim("ver").asString()
+            val hash = decoded.getClaim("hash").asString()?.takeIf { it.isNotBlank() }
+            val expiresAt = decoded.expiresAt
+            if (subject == null || audience.isEmpty() || version == null || hash == null || expiresAt == null) {
+                return Verification.Invalid
+            }
+
+            return Verification.Valid(VerifiedClaims(subject, audience, version, hash, expiresAt.time))
         }
 
-        private fun space() {
-            while (at < text.length && text[at].isWhitespace()) at++
-        }
-
-        private fun value(): Any? {
-            space()
-            require(at < text.length) { "unexpected end" }
-            val c = text[at]
-            return when {
-                c == '{' -> obj()
-                c == '[' -> array()
-                c == '"' -> string()
-                c == 't' -> literal("true", true)
-                c == 'f' -> literal("false", false)
-                c == 'n' -> literal("null", null)
-                c == '-' || c.isDigit() -> number()
-                else -> throw IllegalArgumentException("unexpected character")
-            }
-        }
-
-        private fun obj(): Map<String, Any?> {
-            val out = LinkedHashMap<String, Any?>()
-            at++
-            space()
-            if (text.getOrNull(at) == '}') {
-                at++
-                return out
-            }
-            while (true) {
-                space()
-                val key = string()
-                space()
-                require(text.getOrNull(at) == ':') { "expected a colon" }
-                at++
-                out[key] = value()
-                space()
-                when (text.getOrNull(at)) {
-                    ',' -> at++
-                    '}' -> {
-                        at++
-                        return out
+        /** SHA-256 (hex) of the jar this class was loaded from, or null when it is not loaded from a jar file. */
+        fun ownJarSha256(): String? = try {
+            val location = PluginLicenseClient::class.java.protectionDomain?.codeSource?.location
+            val file = location?.toURI()?.let(::File)
+            if (file == null || !file.isFile) null else {
+                val digest = MessageDigest.getInstance("SHA-256")
+                file.inputStream().use { input ->
+                    val buffer = ByteArray(64 * 1024)
+                    while (true) {
+                        val read = input.read(buffer)
+                        if (read < 0) break
+                        digest.update(buffer, 0, read)
                     }
-                    else -> throw IllegalArgumentException("expected a comma or the end of the object")
                 }
+                digest.digest().joinToString("") { "%02x".format(it) }
             }
-        }
-
-        private fun array(): List<Any?> {
-            val out = ArrayList<Any?>()
-            at++
-            space()
-            if (text.getOrNull(at) == ']') {
-                at++
-                return out
-            }
-            while (true) {
-                out.add(value())
-                space()
-                when (text.getOrNull(at)) {
-                    ',' -> at++
-                    ']' -> {
-                        at++
-                        return out
-                    }
-                    else -> throw IllegalArgumentException("expected a comma or the end of the array")
-                }
-            }
-        }
-
-        private fun string(): String {
-            require(text.getOrNull(at) == '"') { "expected a string" }
-            at++
-            val out = StringBuilder()
-            while (true) {
-                require(at < text.length) { "unterminated string" }
-                val c = text[at++]
-                if (c == '"') return out.toString()
-                if (c != '\\') {
-                    out.append(c)
-                    continue
-                }
-                require(at < text.length) { "bad escape" }
-                when (val e = text[at++]) {
-                    '"', '\\', '/' -> out.append(e)
-                    'b' -> out.append('\b')
-                    'f' -> out.append('\u000C')
-                    'n' -> out.append('\n')
-                    'r' -> out.append('\r')
-                    't' -> out.append('\t')
-                    'u' -> {
-                        require(at + 4 <= text.length) { "bad escape" }
-                        out.append(text.substring(at, at + 4).toInt(16).toChar())
-                        at += 4
-                    }
-                    else -> throw IllegalArgumentException("bad escape")
-                }
-            }
-        }
-
-        private fun number(): Number {
-            val start = at
-            while (at < text.length && (text[at].isDigit() || text[at] in "+-.eE")) at++
-            val raw = text.substring(start, at)
-            return raw.toLongOrNull() ?: raw.toDouble()
-        }
-
-        private fun literal(word: String, result: Any?): Any? {
-            require(text.startsWith(word, at)) { "unexpected literal" }
-            at += word.length
-            return result
+        } catch (_: Exception) {
+            null
         }
     }
 }

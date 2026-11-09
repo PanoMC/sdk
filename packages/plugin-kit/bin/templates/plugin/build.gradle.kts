@@ -17,6 +17,7 @@ val pf4jVersion = property("pf4jVersion") as String
 val vertxVersion = property("vertxVersion") as String
 val gsonVersion = property("gsonVersion") as String
 val springContextVersion = property("springContextVersion") as String
+val javaJwtVersion = property("javaJwtVersion") as String
 val bootstrap = (project.findProperty("bootstrap") as String?)?.toBoolean() ?: false
 val noui = project.hasProperty("noui")
 // Where copyJar puts the jar: the pluginsDir of the pano-web-platform tree when this plugin is built inside
@@ -109,6 +110,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.springframework/spring-context
     compileOnly("org.springframework:spring-context:${springContextVersion}")
+
+    // The license check verifies its token with its OWN java-jwt: bundled and relocated by shadowJar below, so
+    // a patched host cannot stand in for it (the host's own java-jwt is never used by the check).
+    implementation("com.auth0:java-jwt:${javaJwtVersion}")
 }
 
 val panoLicensePublicKey = findProperty("panoLicensePublicKey") as String?
@@ -300,6 +305,11 @@ internal object PluginBuildConstants {
         }
 
         archiveFileName.set("$pluginId-$version.jar")
+
+        // java-jwt (and the Jackson it needs) under this plugin's own package, see the dependency above
+        val shaded = "${project.group}.shaded"
+        relocate("com.auth0.jwt", "$shaded.jwt")
+        relocate("com.fasterxml.jackson", "$shaded.jackson")
 
         dependencies {
             exclude(dependency("io.vertx:vertx-core"))
