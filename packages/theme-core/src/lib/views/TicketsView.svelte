@@ -23,7 +23,7 @@
                     categoryName: `<strong>"${
                       data.category.title === "-"
                         ? $_("pages.category-tickets.no-category")
-                        : data.category.title
+                        : escapeHtml(data.category.title)
                     }"</strong>`,
                   },
                 })
@@ -72,6 +72,7 @@
 
 <script>
   import { _ } from "svelte-i18n";
+  import { escapeHtml } from "@panomc/sdk/core/js/html.util.js";
 
   import { route } from "$pano/registry/routes.js";
 
