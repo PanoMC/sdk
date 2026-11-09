@@ -106,11 +106,11 @@
             <img src="/assets/img/logo.svg" width="20" height="20" alt="Pano" />
           </a>
           <small>
-            {@html $_("footer.been-created-with", {
+            {@html sanitizeRichHtml($_("footer.been-created-with", {
               values: {
                 pano: `<a href="${PANO_WEBSITE_URL}" class="rounded focus-ring" target="_blank" rel="noreferrer">Pano</a>`,
               },
-            })}
+            }))}
           </small>
         </div>
       </div>
@@ -122,6 +122,7 @@
 <script>
   import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
   import copy from "copy-to-clipboard";
   import tooltip from "$pano/lib/tooltip.util";
   import { PANO_WEBSITE_URL } from "$pano/lib/variables";

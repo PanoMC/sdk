@@ -57,6 +57,8 @@ export const logout = async () => {};`,
   "$pano/lib/api.util.js": `export const responses = {};
 export default { get: async ({ path }) => responses[path] ?? {} };`,
   "$pano/lib/auth.util.js": `export const hasPermission = () => true;`,
+  // the i18n stub prints its values as JSON, which a real sanitizer would rewrite; html.util has its own test
+  "$pano/lib/html.util.js": `export const sanitizeRichHtml = (html) => (typeof html === "string" ? html : "");`,
 };
 
 /** Components that need the network, the browser or packages the temp folder cannot resolve. */

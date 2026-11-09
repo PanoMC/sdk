@@ -15,6 +15,7 @@
 <script>
   import { getContext } from "svelte";
   import { _ } from "svelte-i18n";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
   import { route } from "$pano/registry/routes.js";
 
   import { stripIdentifierWhitespace } from "$pano/lib/loginInput.util.js";
@@ -97,11 +98,11 @@
       id="registerAcceptTerms"
       type="checkbox" />
     <label class="form-check-label" for="registerAcceptTerms">
-      {@html $_("components.modals.register.inputs.agreement-text", {
+      {@html sanitizeRichHtml($_("components.modals.register.inputs.agreement-text", {
         values: {
           link: `<a class="rounded focus-ring" href="${route("/rules")}">${$_("components.modals.register.inputs.server-rules")}</a>`,
         },
-      })}
+      }))}
     </label>
   </div>
 {/if}

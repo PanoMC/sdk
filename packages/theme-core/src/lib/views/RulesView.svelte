@@ -14,13 +14,14 @@
 
   <div class="card">
     <div class="pano-rules-view__body card-body">
-      {@html data.registerAgreement}
+      {@html sanitizeRichHtml(data.registerAgreement)}
     </div>
   </div>
 </div>
 
 <script>
   import { _ } from "svelte-i18n";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   export let data;
 </script>

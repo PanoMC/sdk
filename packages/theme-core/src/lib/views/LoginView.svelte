@@ -61,6 +61,7 @@
 
 <script>
   import { _ } from "svelte-i18n";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import { route } from "$pano/registry/routes.js";
 
@@ -215,7 +216,7 @@
       <form class="pano-login-view" on:submit|preventDefault={onVerifyLink}>
         <div class="vstack gap-3">
           <p class="text-center text-muted mb-0">
-            {@html $_("components.modals.login.link-code.description")}
+            {@html sanitizeRichHtml($_("components.modals.login.link-code.description"))}
           </p>
 
           <ErrorAlert error={$error} />

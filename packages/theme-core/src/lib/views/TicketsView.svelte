@@ -17,7 +17,7 @@
       <div class="card mt-3 mt-lg-0">
         <CardHeader>
           <div slot="left">
-            {@html data.categoryUrl
+            {@html sanitizeRichHtml(data.categoryUrl
               ? $_("pages.category-tickets.title", {
                   values: {
                     categoryName: `<strong>"${
@@ -27,7 +27,7 @@
                     }"</strong>`,
                   },
                 })
-              : $_("pages.tickets.title")}
+              : $_("pages.tickets.title"))}
           </div>
           <div slot="right" class="btn-group">
             <a
@@ -73,6 +73,7 @@
 <script>
   import { _ } from "svelte-i18n";
   import { escapeHtml } from "@panomc/sdk/core/js/html.util.js";
+  import { sanitizeRichHtml } from "$pano/lib/html.util.js";
 
   import { route } from "$pano/registry/routes.js";
 
