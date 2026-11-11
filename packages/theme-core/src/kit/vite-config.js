@@ -22,6 +22,27 @@ import { loadThemeConfig, pullContracts, writeCoreMeta } from "../../bin/contrac
 
 const require = createRequire(import.meta.url);
 
+/**
+ * vite-plugin-svelte `dynamicCompileOptions` for the dev server: the server (SSR) compile of the theme runs without
+ * Svelte dev mode, like every production build and like the plugins' server bundles.
+ *
+ * A plugin's server bundle carries its own copy of `svelte/internal/server` (production has no node_modules to share
+ * the theme's). Host components the engine hands to plugins (`NoContent`, `Pagination`, theme overrides of plugin
+ * views, ...) are rendered inside the plugin's renderer, so Svelte's server-side dev checks (`push_element`) read the
+ * theme copy's `ssr_context`, which is null there: `/store` with no products failed with
+ * `Cannot read properties of null (reading 'function')` under `vite dev` only. The browser compile keeps dev mode.
+ *
+ * @param {Function} [themeFn]  the theme's own `dynamicCompileOptions`; its result wins over this one
+ */
+export function serverDevModeOff(themeFn) {
+  return async (args) => {
+    const own = args?.compileOptions?.generate === "server" && args.compileOptions.dev ? { dev: false } : undefined;
+    const theme = themeFn ? await themeFn(args) : undefined;
+
+    return own || theme ? { ...own, ...theme } : undefined;
+  };
+}
+
 function copyFolderPlugin(folder) {
   let outDir = "";
 
@@ -272,6 +293,8 @@ export function createViteConfig(opts = {}) {
     const kitOptions = await createKitOptions(process.cwd(), {
       ...kitOverrides,
       ...(base ? { paths: { ...(kitOverrides.paths ?? {}), base } } : {}),
+      // vite dev only: the SSR compile without Svelte dev mode (see serverDevModeOff)
+      ...(command === "serve" ? { dynamicCompileOptions: serverDevModeOff(kitOverrides.dynamicCompileOptions) } : {}),
     });
 
     // Every dev start refreshes plugin-contracts/ from the installed plugins and prints the views whose
