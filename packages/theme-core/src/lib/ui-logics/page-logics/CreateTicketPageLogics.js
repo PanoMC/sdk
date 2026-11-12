@@ -4,6 +4,7 @@ import { error as throwError } from "@sveltejs/kit";
 import { goto } from "$app/navigation";
 
 import { createTicket, getTicketCategories } from "$pano/lib/services/tickets";
+import { fieldErrorsFromServer, prepareFieldValues } from "$pano/lib/ticketFields.js";
 
 import { NETWORK_ERROR } from "$pano/lib/api.util";
 import { showSuccess as showSuccessToast } from "$pano/lib/components/ToastContainer.svelte";
@@ -56,19 +57,55 @@ export async function processLoad(event) {
   };
 }
 
-export async function submit(error, loading, title, message, categoryId) {
+/**
+ * Sends the create-ticket request. `fieldState` (optional) carries the custom fields of the chosen
+ * category: `{ categories, values, errors }` (values / errors are writable stores keyed by field key).
+ * Only the visible, non-empty values are sent; a client-side check failure or a server
+ * `INVALID_FIELDS` answer fills `errors` and stops.
+ */
+export async function submit(error, loading, title, message, categoryId, fieldState) {
   error.set(null);
+
+  let fields;
+
+  if (fieldState) {
+    const id = get(categoryId);
+    const category = (fieldState.categories ?? []).find((item) => String(item.id) === String(id));
+    const definitions = category?.fields ?? [];
+
+    if (definitions.length > 0) {
+      const prepared = prepareFieldValues(definitions, get(fieldState.values));
+
+      fieldState.errors.set(prepared.errors);
+
+      if (!prepared.valid) {
+        error.set("INVALID_FIELDS");
+
+        return;
+      }
+
+      if (Object.keys(prepared.fields).length > 0) fields = prepared.fields;
+    } else {
+      fieldState.errors.set({});
+    }
+  }
+
   loading.set(true);
 
   await createTicket({
     title: get(title),
     message: get(message),
-    categoryId: get(categoryId)
+    categoryId: get(categoryId),
+    fields
   })
     .then((body) => {
       loading.set(false);
 
       if (body.error) {
+        if (body.error.code === "INVALID_FIELDS" && fieldState) {
+          fieldState.errors.set(fieldErrorsFromServer(body.error.fields));
+        }
+
         error.set(body.error.code);
 
         return;

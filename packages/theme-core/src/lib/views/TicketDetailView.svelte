@@ -3,7 +3,7 @@
   Controller: $pano/lib/pages/ticket/TicketDetailPage.svelte
   Props:
     data                object — page data from load (ticket, messages, sidebar config)
-    ticket              store — the ticket being viewed (id, title, category, status, date, messageCount)
+    ticket              store — the ticket being viewed (id, title, category, status, date, messageCount, fields)
     messages            store — currently loaded ticket messages, oldest first
     message             store — current text of the reply textarea
     messageSendLoading  store — true while a reply is being sent
@@ -28,6 +28,9 @@
 </style>
 
 <div class="pano-ticket-detail-view vstack gap-3">
+  <!-- The ticket's custom field values (nothing when it has none) -->
+  <TicketFields fields={$ticket.fields} />
+
   <div class="card mt-lg-0">
     <CardHeader>
       <small slot="left" class="text-body-secondary">
@@ -152,6 +155,7 @@
     TicketStatuses,
   } from "$pano/lib/components/TicketStatus.svelte";
   import CardHeader from "$pano/lib/components/CardHeader.svelte";
+  import TicketFields from "$pano/lib/components/TicketFields.svelte";
 
   export let data;
   export let ticket;

@@ -195,6 +195,17 @@
       "inputs": {
         "title": "Title",
         "no-category": "No Category"
+      },
+      "fields": {
+        "choose": "Choose...",
+        "errors": {
+          "REQUIRED": "This field is required.",
+          "INVALID": "This value is not valid.",
+          "TOO_SHORT": "Enter at least {min} characters.",
+          "TOO_LONG": "Enter at most {max} characters.",
+          "OUT_OF_RANGE": "This number is out of the allowed range.",
+          "UNKNOWN_OPTION": "Choose one of the listed options."
+        }
       }
     },
     "player-profile": {
@@ -257,6 +268,10 @@
         "message": {
           "placeholder": "Your message..."
         }
+      },
+      "fields": {
+        "yes": "Yes",
+        "no": "No"
       }
     },
     "settings": {
@@ -469,6 +484,7 @@
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Can't reset password, wait 5 minutes.",
     "CATEGORY_NOT_EXISTS": "This category is not found!",
     "TICKET_CATEGORY_REQUIRED": "Pick a category to open a ticket.",
+    "INVALID_FIELDS": "Check the marked fields.",
     "CURRENT_PASSWORD_NOT_CORRECT": "Current password is not correct!",
     "INVALID_DATA": "Invalid data!",
     "INVALID_EMAIL": "Invalid e-mail!",

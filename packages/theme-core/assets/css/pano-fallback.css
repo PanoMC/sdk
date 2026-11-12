@@ -484,6 +484,10 @@
       --bs-gutter-y: 1rem;
     }
     @media (min-width: 576px) {
+      .col-sm-4 {
+        flex: 0 0 auto;
+        width: 33.33333333%;
+      }
       .col-sm-8 {
         flex: 0 0 auto;
         width: 66.66666667%;
@@ -572,6 +576,9 @@
     .table-responsive {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+    }
+    .form-label {
+      margin-bottom: 0.5rem;
     }
     .col-form-label {
       padding-top: calc(0.375rem + var(--bs-border-width));
@@ -2951,6 +2958,9 @@
     }
     .mb-0 {
       margin-bottom: 0;
+    }
+    .mb-1 {
+      margin-bottom: 0.25rem;
     }
     .mb-2 {
       margin-bottom: 0.5rem;

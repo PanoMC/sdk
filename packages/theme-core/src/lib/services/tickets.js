@@ -63,6 +63,7 @@ export const createTicket = async ({
   title,
   message,
   categoryId,
+  fields,
   request,
                                      csrfToken
 }) => {
@@ -72,6 +73,8 @@ export const createTicket = async ({
       title,
       message,
       categoryId,
+      // custom fields of the category (key -> value); left out when there are none
+      ...(fields && Object.keys(fields).length > 0 ? { fields } : {}),
     },
     request,
     csrfToken

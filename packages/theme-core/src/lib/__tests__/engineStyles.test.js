@@ -38,8 +38,8 @@ const views = files.map((file) => ({ name: basename(file, ".svelte"), file: rel(
 const inScope = new Set(views.map((v) => v.file));
 
 describe("engine semantic classes (doc 03 section 1, ns = pano)", () => {
-  test("covers 57 engine files: the views, their parts and the registry components", () => {
-    expect(files.length).toBe(57);
+  test("covers 59 engine files: the views, their parts and the registry components", () => {
+    expect(files.length).toBe(59);
     for (const name of ["HomeView", "LoginView", "Post", "Navbar", "Footer", "RegisterForm", "Pagination", "Toast"]) {
       expect(views.some((v) => v.name === name)).toBe(true);
     }

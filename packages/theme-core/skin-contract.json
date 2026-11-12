@@ -398,7 +398,7 @@
   "TicketDetailView": {
    "contract": 1,
    "source": "src/lib/views/TicketDetailView.svelte",
-   "uses": ["Date", "TicketStatus"],
+   "uses": ["Date", "TicketFields", "TicketStatus"],
    "hooks": [],
    "slotProps": {},
    "props": {
@@ -423,7 +423,7 @@
   "CreateTicketView": {
    "contract": 1,
    "source": "src/lib/views/CreateTicketView.svelte",
-   "uses": [],
+   "uses": ["TicketFieldsForm"],
    "hooks": [],
    "slotProps": {},
    "props": {
@@ -691,6 +691,38 @@
    "locked": {
     "contract": 1,
     "props": ["status"]
+   }
+  },
+  "TicketFieldsForm": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/TicketFieldsForm.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "fields": "array — the visible custom field definitions of the chosen category, in order ({ key, label, type, required, placeholder, help, options: [{ value, label }], min, max }); the controller applies the conditions",
+    "values": "writable store — field key -> value; bind inputs to $values[field.key] (string; NUMBER number; MULTISELECT string array; CHECKBOX boolean)",
+    "errors": "object — field key -> error code (REQUIRED, INVALID, TOO_SHORT, TOO_LONG, OUT_OF_RANGE, UNKNOWN_OPTION)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["errors", "fields", "values"]
+   }
+  },
+  "TicketFields": {
+   "kind": "component",
+   "contract": 1,
+   "source": "src/lib/views/parts/TicketFields.svelte",
+   "uses": [],
+   "hooks": [],
+   "slotProps": {},
+   "props": {
+    "entries": "array — the ticket's custom fields that have a value, in order: { key, label, type, value, text, href } (text = readable value; href only for an http(s) URL or an e-mail)"
+   },
+   "locked": {
+    "contract": 1,
+    "props": ["entries"]
    }
   },
   "Toast": {
@@ -1187,6 +1219,8 @@
   "Tickets",
   "TicketRow",
   "TicketStatus",
+  "TicketFieldsForm",
+  "TicketFields",
   "Toast",
   "DefaultToast",
   "ToastContainer",

@@ -195,6 +195,17 @@
       "inputs": {
         "title": "Заголовок",
         "no-category": "Без категории"
+      },
+      "fields": {
+        "choose": "Выберите...",
+        "errors": {
+          "REQUIRED": "Это поле обязательно.",
+          "INVALID": "Недопустимое значение.",
+          "TOO_SHORT": "Введите не менее {min} символов.",
+          "TOO_LONG": "Введите не более {max} символов.",
+          "OUT_OF_RANGE": "Число вне допустимого диапазона.",
+          "UNKNOWN_OPTION": "Выберите один из вариантов списка."
+        }
       }
     },
     "player-profile": {
@@ -257,6 +268,10 @@
         "message": {
           "placeholder": "Ваше сообщение..."
         }
+      },
+      "fields": {
+        "yes": "Да",
+        "no": "Нет"
       }
     },
     "settings": {
@@ -469,6 +484,7 @@
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Нельзя сбросить пароль, подождите 5 минут.",
     "CATEGORY_NOT_EXISTS": "Эта категория не найдена!",
     "TICKET_CATEGORY_REQUIRED": "Выберите категорию, чтобы создать тикет.",
+    "INVALID_FIELDS": "Проверьте отмеченные поля.",
     "CURRENT_PASSWORD_NOT_CORRECT": "Текущий пароль неверен!",
     "INVALID_DATA": "Неверные данные!",
     "INVALID_EMAIL": "Неверный e-mail!",

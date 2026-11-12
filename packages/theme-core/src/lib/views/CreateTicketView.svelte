@@ -6,7 +6,7 @@
     error       writable store — submit error shown by ErrorAlert
     title       writable store — ticket title field value
     message     writable store — ticket message textarea value
-    categoryId  writable store — selected category id (-1 = no category)
+    categoryId  writable store — selected category id (-1 = no category); its custom fields render in <TicketFieldsForm>
     loading     writable store — request in-flight flag
     submit      function — (error, loading, title, message, categoryId) sends the create-ticket request
   Override from a theme:
@@ -27,6 +27,7 @@
   import { _ } from "svelte-i18n";
 
   import ErrorAlert from "$pano/lib/components/ErrorAlert.svelte";
+  import TicketFieldsForm from "$pano/lib/components/TicketFieldsForm.svelte";
 
   export let data;
   export let error;
@@ -37,6 +38,7 @@
   export let submit;
 
   $: isButtonDisabled = $title === "" || $message === "";
+  $: selectedCategory = (data.categories ?? []).find((category) => String(category.id) === String($categoryId)) ?? null;
 </script>
 
 <div class="pano-create-ticket-view vstack gap-3">
@@ -62,6 +64,9 @@
       {/each}
     </select>
   </div>
+
+  <!-- The chosen category's custom fields (nothing when it has none) -->
+  <TicketFieldsForm category={selectedCategory} />
 
   <!-- Ticket Editor -->
 
