@@ -1,7 +1,7 @@
 import { afterUpdate, onMount } from "svelte";
 import { get, writable } from "svelte/store";
 import { error } from "@sveltejs/kit";
-import { _ } from "svelte-i18n";
+import { _, locale } from "svelte-i18n";
 
 import { route } from "$pano/registry/routes.js";
 
@@ -15,6 +15,9 @@ import TicketCreateAndDetailSidebar, {
 import { setCallback as setCloseTicketConfirmCallback } from "$pano/lib/components/modals/CloseTicketConfirmModal.svelte";
 
 import { TicketStatuses } from "$pano/lib/components/TicketStatus.svelte";
+
+import { onTicketChanged } from "$pano/lib/siteRealtime.js";
+import { localized } from "$pano/lib/contentI18n.js";
 
 /**
  * @type {import("@sveltejs/kit").Load}
@@ -65,11 +68,14 @@ const escapeHtml = (text) =>
  * The page title of a ticket: its number and title, and under it the category it was opened in (a
  * link to that category's tickets). It is the only title on the page; the view draws none of its own.
  * Translated here because the title is taken verbatim (`raw`): the ticket's own title is not a key.
+ * The category title is taken in `code` (default: the current svelte-i18n locale) from its `i18n`.
  */
-export function ticketPageTitle(ticket) {
+export function ticketPageTitle(ticket, code = get(locale)) {
   const translate = get(_);
   const hasCategory = ticket.category && ticket.category !== "-";
-  const name = hasCategory ? ticket.category.title : translate("pages.ticket-detail.no-category");
+  const name = hasCategory
+    ? localized(ticket.category.title, ticket.category.i18n, code, "title")
+    : translate("pages.ticket-detail.no-category");
   const link = `<a href="${route("/tickets")}?category=${encodeURIComponent(
     hasCategory ? ticket.category.url : "-",
   )}" title="${escapeHtml(translate("pages.ticket-detail.filter"))}">${escapeHtml(name)}</a>`;
@@ -92,6 +98,35 @@ export function applyTicket(stores, ticket) {
   stores.sentMessageCount.set(0);
   stores.shouldScroll.set(true);
   updateSidebar(ticket);
+}
+
+/**
+ * The ticket changed on the server (a staff reply, closed in the panel): reads it again and puts the
+ * new messages after the ones on the page, keeping older ones the user loaded with "load more".
+ */
+export async function refreshTicket(stores, ticketId) {
+  const body = await getTicketDetail({ id: ticketId });
+
+  if (!body || body.error || !body.ticket) return;
+
+  const fresh = body.ticket;
+  const known = new Map(get(stores.messages).map((message) => [message.id, message]));
+  let added = false;
+
+  for (const message of fresh.messages ?? []) {
+    if (!known.has(message.id)) added = true;
+
+    known.set(message.id, message);
+  }
+
+  const merged = [...known.values()].sort((a, b) => a.id - b.id);
+
+  stores.ticket.set({ ...fresh, messages: merged });
+  stores.messages.set(merged);
+
+  if (added) stores.shouldScroll.set(true);
+
+  updateSidebar(get(stores.ticket));
 }
 
 export async function loadMore(loadMoreLoading, messages, data) {
@@ -170,6 +205,11 @@ export function init(data) {
 
   onMount(() => {
     shouldScroll.set(true);
+
+    // a staff reply or a status change shows up without a reload
+    return onTicketChanged(data.ticket.id, () => {
+      refreshTicket({ ticket, messages, shouldScroll }, get(ticket).id);
+    });
   });
 
   setCloseTicketConfirmCallback(() => {

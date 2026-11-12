@@ -1,5 +1,7 @@
 import { error } from "@sveltejs/kit";
-import { writable } from "svelte/store";
+import { onMount } from "svelte";
+import { get, writable } from "svelte/store";
+import { locale } from "svelte-i18n";
 
 import { goto } from "$app/navigation";
 
@@ -7,6 +9,8 @@ import { buildQueryParams } from "$pano/lib/api.util";
 import { executeLifecycle, executeViewLoad, panoApiServer } from "$pano/lib/PluginAPI";
 
 import { getTickets } from "$pano/lib/services/tickets";
+import { onTicketChanged } from "$pano/lib/siteRealtime.js";
+import { localized } from "$pano/lib/contentI18n.js";
 
 import { TicketStatuses } from "$pano/lib/components/TicketStatus.svelte";
 import ProfileSidebar, { load as loadSidebar } from "$pano/lib/components/sidebars/ProfileSidebar.svelte";
@@ -65,14 +69,28 @@ export async function processLoad(event) {
 
   await loadSidebar(event);
 
-  data.pageTitle = {
-    title: categoryUrl ? "pages.category-tickets.title" : "pages.tickets.title",
-    titleValues: categoryUrl ? {
-      categoryName: `"${data.category.title}"`
-    } : null
-  };
+  data.pageTitle = ticketsPageTitle(data, get(locale));
 
   return { ...data, sidebar: ProfileSidebar, sidebarProps: { showCreateTicket: true } };
+}
+
+/**
+ * The page title of the tickets list; a category filter names the category in the given locale.
+ *
+ * @param {{ categoryUrl?: string | null, category?: { title?: string, i18n?: object } | null }} data
+ * @param {string | null | undefined} code  svelte-i18n locale
+ */
+export function ticketsPageTitle(data, code) {
+  const categoryUrl = data.categoryUrl;
+
+  return {
+    title: categoryUrl ? "pages.category-tickets.title" : "pages.tickets.title",
+    titleValues: categoryUrl ? {
+      categoryName: `"${data.category?.title === "-"
+        ? data.category.title
+        : localized(data.category?.title, data.category?.i18n, code, "title")}"`
+    } : null
+  };
 }
 
 async function refreshData(data) {
@@ -104,8 +122,39 @@ export const onCloseTicketClick = (tickets, updatedTicket) => {
   showCloseTicketConfirmModal(updatedTicket);
 };
 
+/** A burst of changes (several tickets closed at once) is read once. */
+const LIVE_REFRESH_DELAY_MS = 300;
+
+/** Reads the open page of the list again (a ticket changed on the server) and keeps the selection. */
+export async function refreshTickets(tickets, data) {
+  const body = await getTickets({ page: data.page, pageType: data.pageType, categoryUrl: data.categoryUrl });
+
+  if (!body || body.error || !Array.isArray(body.tickets)) return;
+
+  tickets.update((current) => {
+    const selected = new Set(current.filter((ticket) => ticket.selected).map((ticket) => ticket.id));
+
+    return body.tickets.map((ticket) => ({ ...ticket, selected: selected.has(ticket.id) }));
+  });
+}
+
 export function init(data) {
   const tickets = writable(data.tickets);
+
+  onMount(() => {
+    let timer;
+
+    // a staff reply or a ticket closed in the panel updates the list without a reload
+    const stop = onTicketChanged(null, () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => refreshTickets(tickets, data), LIVE_REFRESH_DELAY_MS);
+    });
+
+    return () => {
+      clearTimeout(timer);
+      stop();
+    };
+  });
 
   setCloseTicketConfirmCallback((updatedTicket) => {
     tickets.update(tickets => {

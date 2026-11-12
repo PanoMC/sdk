@@ -1,4 +1,8 @@
 import { error } from "@sveltejs/kit";
+import { get } from "svelte/store";
+import { locale } from "svelte-i18n";
+
+import { localized } from "$pano/lib/contentI18n.js";
 
 import { getPostDetail } from "$pano/lib/services/posts";
 import { executeHookLoad, executeLifecycle } from "$pano/lib/PluginAPI.js";
@@ -52,7 +56,15 @@ export async function processLoad(event) {
     ...(await executeHookLoad("theme:post-detail:bottom", event)),
   };
 
-  data.pageTitle = data.post.title;
+  data.pageTitle = postPageTitle(data.post);
 
   return { ...data };
+}
+
+/**
+ * The page title of a post: its title in `code` (default: the current svelte-i18n locale), taken from
+ * its `i18n` (translated content) with the default title as the fallback.
+ */
+export function postPageTitle(post, code = get(locale)) {
+  return localized(post?.title, post?.i18n, code, "title");
 }

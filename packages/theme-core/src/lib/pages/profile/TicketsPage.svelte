@@ -1,6 +1,6 @@
 <svelte:component
   this={data.View}
-  {data}
+  data={viewData}
   {contentItems}
   {tickets}
   {PageTypes}
@@ -26,12 +26,15 @@
 
 <script>
   import { getContext, onMount } from "svelte";
+  import { locale } from "svelte-i18n";
   import {
     init,
     onCloseTicketClick,
     onPageClick,
     PageTypes,
+    ticketsPageTitle,
   } from "$pano/lib/ui-logics/page-logics/TicketsPageLogics";
+  import { localizeCategory } from "$pano/lib/contentI18n.js";
 
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
   import PageActions from "$pano/lib/components/PageActions.svelte";
@@ -46,4 +49,22 @@
   $: {
     tickets = init(data).tickets;
   }
+
+  // The filtered category's title in the site's current language (view and page title).
+  $: viewData = { ...data, category: localizeCategory(data.category, $locale) };
+
+  const pageTitle = getContext("pageTitle");
+
+  onMount(() => {
+    let first = true;
+
+    return locale.subscribe((code) => {
+      if (first) {
+        first = false;
+        return;
+      }
+
+      pageTitle?.set(ticketsPageTitle(data, code));
+    });
+  });
 </script>

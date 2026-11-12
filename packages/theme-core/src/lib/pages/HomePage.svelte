@@ -3,7 +3,7 @@
 {:else if data.homeKind === "path"}
   <Page {data} />
 {:else}
-  <svelte:component this={data.View} {data} {themeSettings} {onPageClick} />
+  <svelte:component this={data.View} data={feedData} {themeSettings} {onPageClick} />
 {/if}
 
 <script context="module">
@@ -47,6 +47,9 @@
 
 <script>
   import { getContext } from "svelte";
+  import { locale } from "svelte-i18n";
+
+  import { localizePostCategory, localizePosts } from "$pano/lib/contentI18n.js";
 
   import { onPageClick } from "$pano/lib/ui-logics/page-logics/HomePageLogics";
 
@@ -55,4 +58,12 @@
   export let data;
 
   const themeSettings = getContext("themeSettings");
+
+  // Posts and the browsed category in the site's current language (translated content, `i18n`), so an
+  // overriding HomeView gets them localized too.
+  $: feedData = {
+    ...data,
+    posts: localizePosts(data.posts, $locale),
+    category: localizePostCategory(data.category, $locale),
+  };
 </script>

@@ -1,4 +1,4 @@
-<svelte:component this={data.View} {data} />
+<svelte:component this={data.View} data={viewData} />
 
 <script context="module">
   import { error } from "@sveltejs/kit";
@@ -22,6 +22,7 @@
 
     const csrfToken = session.csrfToken;
     let registerAgreement;
+    let registerAgreementI18n;
     try {
       const body = await ApiUtil.get({
         path: "/register-agreement",
@@ -29,6 +30,7 @@
         csrfToken
       });
       registerAgreement = body.registerAgreement;
+      registerAgreementI18n = body.registerAgreementI18n;
     } catch (_e) {
       throw error(404);
     }
@@ -37,11 +39,22 @@
       ...parentData,
       pageTitle: "pages.rules.title",
       registerAgreement,
+      registerAgreementI18n,
       ...(await loadView(event, "RulesView", () => import("../views/RulesView.svelte")))
     };
   }
 </script>
 
 <script>
+  import { locale } from "svelte-i18n";
+
+  import { localizedString } from "$pano/lib/contentI18n.js";
+
   export let data;
+
+  // The agreement in the site's current language (`registerAgreementI18n`: locale code -> html).
+  $: viewData = {
+    ...data,
+    registerAgreement: localizedString(data.registerAgreement, data.registerAgreementI18n, $locale),
+  };
 </script>

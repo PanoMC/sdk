@@ -31,6 +31,10 @@
 </script>
 
 <script>
+  import { getContext, onMount } from "svelte";
+  import { get } from "svelte/store";
+  import { locale } from "svelte-i18n";
+
   import { avatarVersion } from "$pano/lib/Store";
 
   import {
@@ -38,6 +42,7 @@
     init,
     loadMore,
     sendMessage,
+    ticketPageTitle,
   } from "$pano/lib/ui-logics/page-logics/TicketDetailPageLogics";
 
   export let data;
@@ -62,4 +67,20 @@
 
     applyTicket({ ticket, messages, sentMessageCount, shouldScroll }, data.ticket);
   }
+
+  // Switching the site language re-reads the title: the category title is translated content.
+  const pageTitle = getContext("pageTitle");
+
+  onMount(() => {
+    let first = true;
+
+    return locale.subscribe((code) => {
+      if (first) {
+        first = false;
+        return;
+      }
+
+      pageTitle?.set(ticketPageTitle(get(ticket), code));
+    });
+  });
 </script>

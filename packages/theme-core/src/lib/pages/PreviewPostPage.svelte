@@ -1,7 +1,7 @@
 <svelte:component
   this={pageData.View}
-  data={pageData}
-  post={post ?? pageData.post}
+  data={viewData}
+  post={viewData.post}
   {themeSettings}
   {avatarVersion} />
 
@@ -24,7 +24,10 @@
 
 <script>
   import { getContext } from "svelte";
+  import { locale } from "svelte-i18n";
+
   import { avatarVersion } from "$pano/lib/Store";
+  import { localizePost } from "$pano/lib/contentI18n.js";
 
   import { page } from "@panomc/sdk/core/js/appStores.js";
 
@@ -35,6 +38,15 @@
   export let post = undefined;
 
   $: pageData = data ?? $page.data;
+
+  // The previewed post (title, HTML text, category) in the site's current language (translated
+  // content, `i18n`), so a preview can be looked at in every language.
+  $: viewData = {
+    ...pageData,
+    post: localizePost(post ?? pageData.post, $locale),
+    previousPost: localizePost(pageData.previousPost, $locale),
+    nextPost: localizePost(pageData.nextPost, $locale),
+  };
 
   const themeSettings = getContext("themeSettings");
 </script>

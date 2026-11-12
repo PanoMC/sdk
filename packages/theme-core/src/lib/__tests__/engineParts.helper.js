@@ -25,6 +25,7 @@ export function findSvelte() {
 
 const STUB_JS = {
   "svelte-i18n": `import { readable } from "svelte/store";
+export const locale = readable("en-US");
 export const _ = readable((key, options) => (options && options.values && Object.keys(options.values).length ? key + JSON.stringify(options.values) : key));`,
   "$app/env": `export const dev = false; export const browser = false;`,
   "@panomc/sdk/core/js/basePath.js": `export const base = "";`,
