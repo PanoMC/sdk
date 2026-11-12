@@ -2,6 +2,11 @@ import { base } from '@panomc/sdk/core/js/basePath.js';
 import ApiUtil from '$pano/lib/api.util';
 
 const listeners = new Set();
+/**
+ * Ticket watchers: `{ ticketId, fn }`, `ticketId` null for a ticket list (every ticket the user may see).
+ * @type {Set<{ ticketId: number | null, fn: (ticketId: number) => void }>}
+ */
+const ticketListeners = new Set();
 let ws;
 let shouldReconnect = false;
 let reconnectTimer;
@@ -99,13 +104,34 @@ function sendConfig() {
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     return;
   }
-  ws.send(JSON.stringify({ subscribeNotifications: true }));
+  const watched = [...ticketListeners];
+  const single = [...watched].reverse().find((entry) => entry.ticketId !== null);
+
+  ws.send(
+    JSON.stringify({
+      subscribeNotifications: true,
+      // a ticket list open, and the ticket page open (the newest one wins: one page at a time)
+      subscribeTickets: watched.some((entry) => entry.ticketId === null),
+      subscribeTicketId: single ? single.ticketId : null
+    })
+  );
 }
 
 function emitRefresh() {
   listeners.forEach((fn) => {
     try {
       fn();
+    } catch {
+      /* ignore */
+    }
+  });
+}
+
+function emitTicket(ticketId) {
+  ticketListeners.forEach((entry) => {
+    if (entry.ticketId !== null && entry.ticketId !== ticketId) return;
+    try {
+      entry.fn(ticketId);
     } catch {
       /* ignore */
     }
@@ -197,6 +223,10 @@ async function connect() {
     }
     if (msg.type === 'notificationRefresh' || msg.type === 'panelNotificationRefresh') {
       emitRefresh();
+      return;
+    }
+    if (msg.type === 'ticket' && msg.ticketId != null) {
+      emitTicket(Number(msg.ticketId));
     }
   };
   ws.onclose = () => {
@@ -288,4 +318,26 @@ export function setSiteNotificationsSubscription(active) {
 export function onNotificationRefresh(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
+}
+
+/**
+ * Calls `fn(ticketId)` whenever a ticket changes on the server (a new message, closed, created): the
+ * ticket page passes its ticket id, a ticket list passes `null` (every ticket of the user). The frame
+ * carries only the id; read the ticket again through the API. It rides on the socket the notification
+ * bell keeps open for a signed-in user, so nothing happens for a guest.
+ *
+ * @param {number | null} ticketId
+ * @param {(ticketId: number) => void} fn
+ * @returns {() => void} unsubscribe
+ */
+export function onTicketChanged(ticketId, fn) {
+  const entry = { ticketId: ticketId === null || ticketId === undefined ? null : Number(ticketId), fn };
+
+  ticketListeners.add(entry);
+  sendConfig();
+
+  return () => {
+    ticketListeners.delete(entry);
+    sendConfig();
+  };
 }
