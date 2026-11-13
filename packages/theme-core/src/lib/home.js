@@ -8,15 +8,20 @@
 //   { kind: "posts" }            the posts feed (today's page)
 //   { kind: "page", id }         a page of the theme (`home.options.<id>.page`)
 //   { kind: "path", path }       the plugin page registered at a concrete canonical path
+//   { kind: "redirect", path }   a page of the theme itself (`/rules`, `/support`, a `routes.add` page): `/`
+//                                sends the visitor there (302), the page is not rendered at `/`
 //
 // A choice that cannot be shown falls back to `home.default`, then to the posts feed, with one
 // console.warn each. The posts feed is always served at `/posts` as well.
 import { findMatch } from "@panomc/sdk/core/js/RouteMatcher.js";
 
 import { getThemeConfig, getThemeMeta } from "../registry/index.js";
-import { route } from "../registry/routes.js";
+import { resolveCanonical, route } from "../registry/routes.js";
 
-/** @typedef {{ kind: "posts" } | { kind: "page", id: string } | { kind: "path", path: string }} Home */
+/**
+ * @typedef {{ kind: "posts" } | { kind: "page", id: string } | { kind: "path", path: string }
+ *   | { kind: "redirect", path: string }} Home
+ */
 
 const POSTS_PATH = "/posts";
 const CUSTOM_PREFIX = "custom:";
@@ -32,13 +37,17 @@ const found = (home) => ({ home });
  * @param {string | null | undefined} homePage  `siteInfo.homePage`
  * @param {Record<string, any> | null | undefined} registeredPages  the plugin pages by path; `null` / `undefined`
  *   = not known here: a path is then taken as it is, without looking for the page
- * @param {{ homePages?: Record<string, unknown>, warn?: (message: string) => void }} [options]
+ * @param {{ homePages?: Record<string, unknown>, themeRoutes?: string[], warn?: (message: string) => void }} [options]
  *   `homePages` = the page options the build found (a `page` option without a file is refused);
+ *   `themeRoutes` = the canonical route patterns of the theme's own pages (`/rules`, `/player/[player]`): a path
+ *   that no plugin registered but that is one of them resolves to `{ kind: "redirect" }`;
  *   `warn` = how a fallback is reported (default `console.warn`)
  * @returns {Home}
  */
 export function resolveHome(themeConfig, homePage, registeredPages, options = {}) {
-  const { homePages, warn = console.warn } = options;
+  const { homePages, themeRoutes = [], warn = console.warn } = options;
+  /** @type {Record<string, {}>} */
+  const themePages = Object.fromEntries(themeRoutes.map((pattern) => [pattern, {}]));
   const home = themeConfig?.home && typeof themeConfig.home === "object" ? themeConfig.home : null;
   const configured = home !== null;
   const themeOptions = configured && home.options && typeof home.options === "object" ? home.options : {};
@@ -66,6 +75,14 @@ export function resolveHome(themeConfig, homePage, registeredPages, options = {}
     const page = findMatch(registeredPages, clean);
 
     if (!page) {
+      // Not a plugin page: a page of the theme itself is shown at its own address (the admin typed its public
+      // path; the theme's routes are canonical, so a renamed one is looked up by its canonical path).
+      const canonical = resolveCanonical(clean);
+
+      if (canonical && canonical !== "/" && canonical !== POSTS_PATH && findMatch(themePages, canonical)) {
+        return found({ kind: "redirect", path: clean });
+      }
+
       return problem(`no page is registered at "${clean}" (is its plugin installed and on?)`);
     }
 
@@ -162,9 +179,10 @@ export function isPostsRoute(event) {
  * Waits for the layout first: the plugin pages are registered by then.
  * @param {any} event  SvelteKit load event
  * @param {() => Record<string, any>} getRegisteredPages  the current plugin pages (the table is replaced on a rebuild)
+ * @param {string[]} [themeRoutes]  the theme's own page patterns (`getThemeRoutePatterns()`)
  * @returns {Promise<Home>}
  */
-export async function resolveHomeFor(event, getRegisteredPages) {
+export async function resolveHomeFor(event, getRegisteredPages, themeRoutes = []) {
   if (isPostsRoute(event)) {
     return { kind: "posts" };
   }
@@ -173,6 +191,7 @@ export async function resolveHomeFor(event, getRegisteredPages) {
 
   return resolveHome(getThemeConfig(), parentData?.session?.siteInfo?.homePage ?? null, getRegisteredPages(), {
     homePages: getThemeMeta()?.homePages,
+    themeRoutes,
   });
 }
 

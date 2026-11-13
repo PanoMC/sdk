@@ -11,17 +11,26 @@
   import { loadView } from "$pano/registry/index.js";
   import { registeredPages, findMatch } from "$pano/lib/PluginManager.js";
   import { hasPermission } from "$pano/lib/auth.util.js";
+  import { redirect } from "@sveltejs/kit";
+
   import { resolveHomeFor } from "$pano/lib/home.js";
+  import { getThemeRoutePatterns } from "$pano/lib/theme-routes.js";
   import { loadHomeTarget } from "$pano/routes/plugin-ui/load.js";
   import Page, { sidebarDeps } from "$pano/routes/plugin-ui/Page.svelte";
 
   /**
    * `/` shows what the admin picked as the home page (the posts feed unless a plugin page or a page of the
-   * theme was picked); `/posts` is the same controller and always shows the feed (doc 01 section 9).
+   * theme was picked; a core page such as `/rules` is a redirect to it); `/posts` is the same controller and
+   * always shows the feed (doc 01 section 9).
    * @type {import('@sveltejs/kit').PageLoad}
    */
   export async function load(event) {
-    const home = await resolveHomeFor(event, () => registeredPages);
+    const home = await resolveHomeFor(event, () => registeredPages, getThemeRoutePatterns());
+
+    // A page of the theme itself (`custom:/rules`): `/` sends the visitor to it.
+    if (home.kind === "redirect") {
+      throw redirect(302, home.path + event.url.search);
+    }
 
     if (home.kind === "page" || home.kind === "path") {
       const target = await loadHomeTarget(event, home, {

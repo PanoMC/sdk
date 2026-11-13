@@ -173,7 +173,8 @@ home: {
 
 With no `home` key the options are `posts`, every installed plugin page that has `view.home`, and `custom`. A choice that
 cannot be shown (plugin removed, unknown option) falls back to `default`, then to the posts feed, with one console
-warning. The posts feed is always at `/posts`. Rule C10 checks the block.
+warning. The posts feed is always at `/posts`. A custom path that is a page of the theme itself (`/rules`, `/support`, a
+`routes.add` page) is not rendered at `/`: `/` redirects (302) to it. Rule C10 checks the block.
 
 ## `provides`: Bootstrap and Font Awesome
 

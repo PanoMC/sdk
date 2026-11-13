@@ -120,6 +120,35 @@ describe("resolveHome", () => {
     expect(messages).toHaveLength(1);
   });
 
+  test("a page of the theme itself (no plugin page there) is a redirect to it", () => {
+    const { messages, warn } = warnings();
+    const themeRoutes = ["/support", "/player/[player]", "/tickets"];
+    const options = { warn, homePages: HOME_PAGES, themeRoutes };
+
+    expect(resolveHome({}, "custom:/support", PAGES, options)).toEqual({ kind: "redirect", path: "/support" });
+    expect(resolveHome(THEME, "custom:/player/ahmet?tab=1", PAGES, options)).toEqual({ kind: "redirect", path: "/player/ahmet" });
+    // a plugin page at the same path still wins, and a path the theme does not have still falls back
+    expect(resolveHome(THEME, "custom:/rules", PAGES, { ...options, themeRoutes: ["/rules"] })).toEqual({ kind: "path", path: "/rules" });
+    expect(resolveHome(THEME, "custom:/missing", PAGES, options)).toEqual({ kind: "page", id: "landing" });
+    expect(messages).toHaveLength(1);
+
+    // a renamed core page: the admin types the public path, the theme's routes are canonical
+    routes.setRouteConfig({ routes: { rename: { "/support": "/help" } } });
+    expect(resolveHome({}, "custom:/help", PAGES, options)).toEqual({ kind: "redirect", path: "/help" });
+  });
+
+  test("routePatternOf: canonical patterns of the theme's pages, without the catch-all and engine pages", async () => {
+    const { routePatternOf } = await import("../theme-routes.js");
+
+    expect(routePatternOf("/src/routes/(theme)/rules/+page.svelte")).toBe("/rules");
+    expect(routePatternOf("/src/routes/(theme)/player/[player]/+page.svelte")).toBe("/player/[player]");
+    expect(routePatternOf("/src/routes/(theme-settings)/theme-settings/+page.svelte")).toBe("/theme-settings");
+    expect(routePatternOf("/src/routes/(theme)/+page.svelte")).toBeNull();
+    expect(routePatternOf("/src/routes/(theme)/posts/+page.svelte")).toBeNull();
+    expect(routePatternOf("/src/routes/(theme)/__pano/views/+page.svelte")).toBeNull();
+    expect(routePatternOf("/src/routes/(plugin-ui)/[...path]/+page.svelte")).toBeNull();
+  });
+
   test("a pattern instead of a concrete path: the default, one warning (/store/vip is fine)", () => {
     const { messages, warn } = warnings();
 
