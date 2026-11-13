@@ -30,7 +30,7 @@
     </table>
   </div>
 {:else}
-  <NoContent />
+  <NoContent text="" />
 {/if}
 
 <!-- Tickets Card End -->

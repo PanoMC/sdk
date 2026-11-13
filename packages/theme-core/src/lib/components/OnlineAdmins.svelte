@@ -1,6 +1,6 @@
 <!-- Online Admins Card -->
 <div
-  class="card h-100 mb-3 mb-lg-0"
+  class="online-admins-card card mb-3 mb-lg-0"
   hidden={typeof themeSettings.sidebarCarts?.onlineAdmins === "undefined"
     ? false
     : !themeSettings.sidebarCarts.onlineAdmins}>
@@ -28,7 +28,7 @@
         {/each}
       </div>
     {:else}
-      <NoContent />
+      <NoContent text="" />
     {/if}
   </div>
 </div>
@@ -50,6 +50,12 @@
 
 <style>
 
+
+    @media (min-width: 992px) {
+        .online-admins-card {
+            aspect-ratio: 1 / 1;
+        }
+    }
 
     .online-admin-link {
         display: block;

@@ -27,7 +27,7 @@
     showPlayCardVersionInfo   boolean - show the game version
 -->
 <Sidebar side={side}>
-  <div class="vstack gap-3">
+  <div class="vstack gap-3 pano-sidebar-cards">
     {#each $items as item (item.id)}
       {#if item.id === "play-button"}
         {#if (themeSettings.playCardStyle || "style-2") === "style-2"}
@@ -330,5 +330,11 @@
       flex-direction: column;
       justify-content: center;
     }
+  }
+
+  /* Sidebar card headers (title and actions) are centered */
+  .pano-sidebar-cards :global(.card-header .row > div) {
+    text-align: center !important;
+    justify-content: center !important;
   }
 </style>

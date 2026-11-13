@@ -25,9 +25,14 @@
 
 <script>
   import { _ } from "svelte-i18n";
+  import { onMount } from "svelte";
 
   import ErrorAlert from "$pano/lib/components/ErrorAlert.svelte";
   import TicketFieldsForm from "$pano/lib/components/TicketFieldsForm.svelte";
+
+  let titleInput;
+
+  onMount(() => titleInput?.focus());
 
   export let data;
   export let error;
@@ -49,7 +54,8 @@
       type="text"
       class="pano-create-ticket-view__input form-control form-control-lg rounded-bottom-0"
       placeholder={$_("pages.create-ticket.inputs.title")}
-      bind:value={$title} />
+      bind:value={$title}
+      bind:this={titleInput} />
 
     <select
       class="pano-create-ticket-view__select form-select form-select-lg rounded-top-0"

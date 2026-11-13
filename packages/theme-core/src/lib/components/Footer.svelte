@@ -83,7 +83,7 @@
       <div class="col-lg-4 d-flex justify-content-center align-items-center">
         <button
           type="button"
-          class="pano-footer__badge badge fs-6 {ipBadgeClass} border-0"
+          class="pano-footer__badge badge fs-6 text-bg-secondary rounded-pill border-0"
           on:click={onCopyIpClick}
           aria-label={$session.siteInfo.ipAddress}
           use:tooltip={[
@@ -100,18 +100,12 @@
             href={PANO_WEBSITE_URL}
             target="_blank"
             rel="noreferrer"
-            class="d-inline-flex align-items-center justify-content-center bg-primary rounded-3 mb-2"
-            style="width: 32px; height: 32px;"
-            title="Pano">
-            <img src="/assets/img/logo.svg" width="20" height="20" alt="Pano" />
+            class="d-inline-flex align-items-center justify-content-center bg-primary rounded-3 focus-ring"
+            style="width: 40px; height: 40px; --bs-focus-ring-color: rgba(255, 255, 255, 0.5);"
+            title="Powered by Pano"
+            aria-label="Powered by Pano">
+            <img src="/assets/img/logo.svg" width="24" height="24" alt="Pano" />
           </a>
-          <small>
-            {@html sanitizeRichHtml($_("footer.been-created-with", {
-              values: {
-                pano: `<a href="${PANO_WEBSITE_URL}" class="rounded focus-ring" target="_blank" rel="noreferrer">Pano</a>`,
-              },
-            }))}
-          </small>
         </div>
       </div>
     </div>
@@ -145,17 +139,6 @@
       condition: !!$session.siteInfo?.hasRegisterAgreement
     },
   ];
-
-  $: ipBadgeClass =
-    themeSettings.themeColor === "emerald"
-      ? "text-bg-success"
-      : themeSettings.themeColor === "midnight"
-        ? "text-bg-purple"
-        : themeSettings.themeColor === "crimson"
-          ? "text-bg-danger"
-          : themeSettings.themeColor === "copper"
-            ? "text-bg-warning"
-            : "text-bg-secondary";
 
   $: displayLinks = (() => {
     // Check if footer links are globally disabled

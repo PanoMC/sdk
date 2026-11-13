@@ -10,7 +10,7 @@
     data   store of { onlineAdmins: string[] }
 -->
 <Sidebar side="{side}">
-  <div class="vstack gap-3">
+  <div class="vstack gap-3 pano-sidebar-cards">
     {#each $items as item (item.id)}
       {#if item.id === 'online-admins'}
         <!-- Online Admins Snippet -->
@@ -32,3 +32,11 @@
   export let items;
   export let data;
 </script>
+
+<style>
+  /* Sidebar card headers (title and actions) are centered */
+  .pano-sidebar-cards :global(.card-header .row > div) {
+    text-align: center !important;
+    justify-content: center !important;
+  }
+</style>

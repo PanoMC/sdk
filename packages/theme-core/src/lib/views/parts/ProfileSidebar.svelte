@@ -30,7 +30,7 @@
     {:else if showCreateTicket}
       <div class="order-last order-lg-first w-100">
         <a
-          class="pano-profile-sidebar__create-ticket btn btn-primary w-100"
+          class="pano-profile-sidebar__create-ticket btn btn-secondary w-100"
           role="button"
           href={route("/ticket/create")}>
           <i class="fas fa-plus me-2"></i>

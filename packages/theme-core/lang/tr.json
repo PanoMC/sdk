@@ -57,7 +57,7 @@
       "server-status": "Sunucu Durumu",
       "online": "Çevrimiçi",
       "offline": "Çevrimdışı",
-      "last-registrants": "Son Kayıt Olanlar",
+      "last-registrants": "Son Kaydolanlar",
       "game-client-version": "Oyun Versiyonu",
       "playing": "{playerCount}/{maxPlayerCount} oynuyor",
       "click-to-copy": "Kopyalamak için tıkla"
@@ -409,7 +409,7 @@
           "left": "Sol",
           "right": "Sağ"
         },
-        "last-registrants": "Son Kayıt Olanlar Kartı",
+        "last-registrants": "Son Kaydolanlar Kartı",
         "online-admins": "Çevrimiçi Yöneticiler Kartı (Destek)",
         "play-card-style": "Kart Stili",
         "play-card-styles": {

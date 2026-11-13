@@ -119,7 +119,8 @@
         <textarea
           placeholder={$_("pages.ticket-detail.inputs.message.placeholder")}
           class="pano-ticket-detail-view__input form-control"
-          bind:value={$message}></textarea>
+          bind:value={$message}
+          bind:this={replyInput}></textarea>
         <button
           class="pano-ticket-detail-view__send btn btn-secondary border-left-0"
           disabled={$messageSendLoading || isSendButtonDisabled}
@@ -144,6 +145,7 @@
 
 <script>
   import { _ } from "svelte-i18n";
+  import { onMount } from "svelte";
 
   import { route } from "$pano/registry/routes.js";
 
@@ -169,6 +171,13 @@
   export let avatarVersion;
   export let loadMore;
   export let sendMessage;
+
+  let replyInput;
+
+  // Focus the reply box on open, only when the ticket is still open.
+  onMount(() => {
+    if ($ticket.status !== TicketStatuses.CLOSED) replyInput?.focus();
+  });
 
   $: isSendButtonDisabled = $message === "";
 </script>
