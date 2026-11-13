@@ -106,12 +106,21 @@
 
   const session = getContext("session");
 
+  // The username the password step was opened for. A browser or password manager that autofills the form fires
+  // `input` on the username field with the same value: that must not close the password step again, or the
+  // manager refills, the field closes again, and the form flickers forever.
+  let passwordStepIdentifier = null;
+
   function onUsernameOrEmailFieldInput() {
     const c = stripIdentifierWhitespace($usernameOrEmail);
     if (c !== $usernameOrEmail) {
       $usernameOrEmail = c;
     }
+    if ($passwordVisible && passwordStepIdentifier !== null && c === passwordStepIdentifier) {
+      return;
+    }
     if (!$emailRequired && !($session?.siteInfo?.isDemo && $usernameOrEmail === "demo")) {
+      passwordStepIdentifier = null;
       $passwordVisible = false;
       $password = "";
     }
@@ -143,6 +152,7 @@
     $error = null;
     $autoVerifyDone = false;
     $linkCode = "";
+    passwordStepIdentifier = null;
     $passwordVisible = false;
     $emailRequired = false;
     $email = "";
@@ -333,6 +343,7 @@
           }
 
           if (errorCode === "LOGIN_IS_INVALID" && !$passwordVisible) {
+            passwordStepIdentifier = stripIdentifierWhitespace($usernameOrEmail);
             $passwordVisible = true;
             if ($session?.siteInfo?.isDemo && $usernameOrEmail === "demo") {
               $password = "123456";

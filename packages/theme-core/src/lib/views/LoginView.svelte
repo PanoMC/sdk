@@ -121,6 +121,7 @@
                   bind:value={$usernameOrEmail}
                   class="pano-login-view__input form-control {$passwordVisible ? 'rounded-bottom-0' : 'rounded'}"
                   id="usernameOrEmail"
+                  autocomplete="username"
                   on:input={onUsernameOrEmailFieldInput}
                   disabled={$loading || $emailRequired}
                   type="text" />
@@ -135,6 +136,7 @@
                     bind:value={$password}
                     class="pano-login-view__input-2 form-control rounded-0 {$emailRequired ? '' : 'rounded-bottom'}"
                     id="password"
+                    autocomplete="current-password"
                     on:input={() => {
                       $error = null;
                     }}
