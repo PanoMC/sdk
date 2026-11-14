@@ -27,8 +27,6 @@
           </div>
         {/each}
       </div>
-    {:else}
-      <NoContent />
     {/if}
   </div>
 </div>
@@ -40,7 +38,6 @@
   import { route } from "$pano/registry/routes.js";
   import tooltip from "$pano/lib/tooltip.util";
   import { getContext } from "svelte";
-  import NoContent from "./NoContent.svelte";
   import CardHeader from "./CardHeader.svelte";
 
   export let onlineAdmins;

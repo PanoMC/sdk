@@ -606,7 +606,7 @@
    "hooks": [],
    "slotProps": {},
    "props": {
-    "items": "array — the normalized trail [{ label, href?, icon?, html }]; label is already translated, the last item is the current page, an empty array renders nothing"
+    "items": "array — the normalized trail [{ label, href?, icon?, html, variant? }]; label is already translated, variant='bootstrap' uses plain Bootstrap 5 styling, the last item is the current page, an empty array renders nothing"
    },
    "locked": {
     "contract": 1,

@@ -144,6 +144,22 @@ describe.skipIf(!svelteDir)("engine parts: an override renders", () => {
     expect(html).toContain("row g-3");
   });
 
+  test("a Bootstrap breadcrumb variant uses the plain Bootstrap 5 markup", async () => {
+    registry.resetRegistryForTests();
+    registry.setThemeConfig({});
+    const html = await renderPart({
+      svelteDir,
+      entry: "$pano/lib/components/Breadcrumb.svelte",
+      context: new Map([
+        ["breadcrumbs", writable([{ label: "Store", href: "/store", variant: "bootstrap" }, { label: "Product" }])],
+      ]),
+    });
+
+    expect(html).toContain('class="breadcrumb"');
+    expect(html).not.toContain("justify-content-center");
+    expect(html).not.toContain("pano-breadcrumb__badge");
+  });
+
   test("an override of Main receives the resolved props and the slot", async () => {
     const html = await renderWithOverride(
       "Main",

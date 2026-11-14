@@ -2,12 +2,14 @@
   Default markup of the engine's <Breadcrumb> (registry name "Breadcrumb", contract 1).
 
   Props:
-    items  array - the normalized trail: { label, href?, icon?, html } (label already translated);
-           the last item is the current page; an empty array renders nothing
+    items  array - the normalized trail: { label, href?, icon?, html, variant? } (label already translated);
+           variant="bootstrap" uses the plain Bootstrap 5 style; the last item is the current page
 -->
 {#if items.length > 0}
-  <nav class="pano-breadcrumb" aria-label="breadcrumb">
-    <ol class="breadcrumb justify-content-center mb-0">
+  <nav
+    class={["pano-breadcrumb", bootstrapStyle && "pano-breadcrumb--bootstrap"]}
+    aria-label="breadcrumb">
+    <ol class={bootstrapStyle ? "breadcrumb" : "breadcrumb justify-content-center mb-0"}>
       {#each items as crumb, i}
         {@const isLast = i === items.length - 1}
         <li
@@ -23,7 +25,11 @@
               {crumb.label}
             {/if}
           {:else}
-            <a href={publicHref(crumb.href)} class="pano-breadcrumb__badge text-decoration-none badge text-bg-primary rounded-pill px-1">
+            <a
+              href={publicHref(crumb.href)}
+              class={bootstrapStyle
+                ? undefined
+                : "pano-breadcrumb__badge text-decoration-none badge text-bg-primary rounded-pill px-1"}>
               {#if crumb.icon}
                 <i class={crumb.icon}></i>
               {:else if crumb.html}
@@ -40,7 +46,7 @@
 {/if}
 
 <style>
-  .breadcrumb {
+  .pano-breadcrumb:not(.pano-breadcrumb--bootstrap) .breadcrumb {
     --bs-breadcrumb-divider: "•";
   }
 </style>
@@ -50,4 +56,5 @@
   import { publicHref } from "$pano/lib/views/parts/publicHref.js";
 
   export let items = [];
+  $: bootstrapStyle = items.some((item) => item.variant === "bootstrap");
 </script>

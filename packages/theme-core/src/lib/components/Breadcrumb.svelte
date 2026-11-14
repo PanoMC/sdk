@@ -24,6 +24,7 @@
    *         labelValues?: object,       // i18n interpolation values
    *         href?: string,              // makes the item a link
    *         icon?: string,              // e.g. "fas fa-home"
+   *         variant?: "bootstrap",      // use the plain Bootstrap 5 breadcrumb for this trail
    *         raw?: boolean,              // bypass i18n, use label as-is
    *         html?: boolean              // render label as HTML (raw implied)
    *       }
@@ -49,6 +50,7 @@
       label: resolveLabel(item),
       href: item?.href,
       icon: item?.icon,
+      variant: item?.variant,
       html: !!item?.html
     };
   }
