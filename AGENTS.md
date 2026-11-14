@@ -45,6 +45,24 @@ Do not run a bare `bun test` at the root: `mock.module` leaks between files that
 - Releases are made by semantic-release from one-line conventional commits; never bump a version by hand
   (`scripts/set-version.js` is for CI).
 
+## Changing a default view or engine component
+
+The markup in `packages/theme-core/src/lib/` (views, parts, components) is a contract: themes and plugins style it
+and override it. When you change it:
+
+- Keep every `pano-*` semantic class (the root class and the `__part` classes), every `<PluginSlot>`, `<Hook>` and
+  prop. Add Bootstrap classes next to them; never replace or drop one. `pano-plugin classes --fix` restores a missing
+  root class, and `engineStyles.test.js` fails on one.
+- Regenerate what is built from the markup, and commit it with the change:
+  `node packages/theme-core/bin/generate-contract.js` (skin-contract.json, engine-views.generated.js) and
+  `bun scripts/build-tokens.js` (the fallback CSS, when you use a Bootstrap class the engine did not use before).
+- Update the render snapshots (`src/lib/__tests__/fixtures/*.ssr.json`) only for the cases you changed on purpose,
+  and say in the commit that the look changed (see the `visual:` rule above).
+- A `<style>` block with `:global(...)` in a view is lint debt: prefer a class, or record it in `engineStyles.test.js`.
+- Run `bun scripts/test-each.js` before you push, and do not push on top of a red CI run on `dev`: fix it first.
+- Commit messages are one line in conventional form (`fix:`, `feat:`, `chore:` …), written for the person who updates
+  Pano: they become the changelog. Never "Refactor code structure" or an AI tool's default message.
+
 <!-- pano-agent-guide:start -->
 ## Agent guide
 
