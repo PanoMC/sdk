@@ -234,19 +234,29 @@ describe.skipIf(!svelteDir)("server render", () => {
       props: {
         entries: [
           { id: "profile", href: "/profile", text: "Profile", icon: "fas fa-user", badge: null, active: false },
-          { id: "orders", href: "/profile/orders", text: "Orders", icon: null, badge: "3", active: true },
+          { id: "orders", href: "/profile/orders", text: "Orders", icon: null, badge: "3", badgeVariant: "info", active: true },
         ],
       },
     });
 
-    expect(body).toContain('<div class="card"><div class="list-group list-group-flush list-group-horizontal-md">');
+    expect(body).toContain('<div class="card"><div class="list-group list-group-flush">');
     expect(body.match(/list-group-item list-group-item-action d-flex align-items-center justify-content-center text-center/g).length).toBe(2);
     expect(body).toMatch(/class="list-group-item list-group-item-action d-flex align-items-center justify-content-center text-center active"[^>]*href="\/profile\/orders"/);
     expect(body).toContain('aria-current="page"');
     expect(body.match(/aria-current/g).length).toBe(1);
-    expect(body).toContain('<span class="badge text-bg-primary ms-auto">3</span>');
-    // the horizontal nav shows text only: an entry's icon is not rendered
+    expect(body).toContain('<span class="badge ms-2 text-bg-info">3</span>');
+    // The nav shows text only: an entry's icon is not rendered.
     expect(body).not.toContain("fas fa-user");
+  });
+
+  test("ProfileNavCard keeps the default badge color for other entries", async () => {
+    const { body } = await renderSvelte({
+      svelteDir,
+      components: { "#card": join(sidebars, "ProfileNavCard.svelte") },
+      props: { entries: [{ id: "x", href: "/x", text: "X", badge: "1" }] },
+    });
+
+    expect(body).toContain('<span class="badge ms-2 text-bg-primary">1</span>');
   });
 
   test("ProfileNavCard escapes text coming from a plugin", async () => {

@@ -1,8 +1,15 @@
 // Pure helper for the `pageTitle` a load() may return (spec 15 section 4.4).
 //
 // Forms: a string (i18n key), or an object { title, titleValues, subtitle, subtitleValues, html,
-// subtitleHtml, raw, hidden }. `raw` uses title / subtitle verbatim (no translation); `hidden`
+// subtitleHtml, raw, hidden, backgroundImage }. `raw` uses title / subtitle verbatim (no translation); `hidden`
 // keeps the value for the document <title> only (no visible <PageTitle>).
+// `backgroundImage` is an optional same-origin path used by the default Main view.
+
+/** Only same-origin absolute paths can be used as decorative backgrounds. */
+export function safeBackgroundImage(pt) {
+  const url = pt && typeof pt === "object" ? pt.backgroundImage : null;
+  return typeof url === "string" && /^\/(?!\/)[A-Za-z0-9/_\-.]+$/.test(url) ? url : "";
+}
 
 /**
  * @param {unknown} pt the pageTitle value (null, a string or an object)

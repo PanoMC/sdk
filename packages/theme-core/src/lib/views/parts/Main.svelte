@@ -20,7 +20,12 @@
 </svelte:head>
 
 <!-- Main Container -->
-<main class="pano-main container">
+<main class="pano-main container" class:has-background={backgroundImage}>
+  {#if backgroundImage}
+    <div class="pano-main__background" aria-hidden="true">
+      <img src={backgroundImage} alt="" />
+    </div>
+  {/if}
 
   {#if $pageTitle && !resolvedTitle.hidden}
     {@const isString = typeof $pageTitle === "string"}
@@ -56,6 +61,7 @@
 <!-- Main Container End -->
 <script>
   import PageTitle from "$pano/lib/components/PageTitle.svelte";
+  import { safeBackgroundImage } from "$pano/lib/pageTitle.util.js";
 
   export let dev = false;
   export let devUi = false;
@@ -66,6 +72,36 @@
   export let sidebarEnabled = true;
   export let sidebarPosition = "RIGHT";
 
+  $: backgroundImage = safeBackgroundImage($pageTitle);
+
   // The theme's compiled stylesheet, served by the dev server only (a static asset, not a route).
   const stylesheet = "/style.css";
 </script>
+
+<style>
+  .pano-main.has-background {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .pano-main__background {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: min(460px, 70vh);
+    transform: translateX(-50%);
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  }
+
+  .pano-main__background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.32;
+  }
+</style>

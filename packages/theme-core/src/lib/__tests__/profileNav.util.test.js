@@ -95,7 +95,7 @@ describe("isProfileNavActive", () => {
 describe("buildProfileNavEntries", () => {
   const items = [
     { id: "a", priority: 100, props: { href: "/profile", text: "buttons.profile", icon: "fas fa-user" } },
-    { id: "b", priority: 90, props: { href: "/profile/orders", text: "Orders", startsWith: true, badge: 3 } },
+    { id: "b", priority: 90, props: { href: "/profile/orders", text: "Orders", startsWith: true, badge: 3, badgeVariant: "info" } },
     { id: "bad", priority: 80, props: { href: "https://evil.com", text: "Evil" } },
     { id: "noprops", priority: 70 },
     { id: "empty-badge", priority: 60, props: { href: "/x", text: "X", badge: "" } },
@@ -105,9 +105,9 @@ describe("buildProfileNavEntries", () => {
     const entries = buildProfileNavEntries(items, { pathname: "/app/profile/orders/7", base: "/app", translate });
 
     expect(entries).toEqual([
-      { id: "a", href: "/app/profile", text: "T(buttons.profile)", icon: "fas fa-user", badge: null, active: false },
-      { id: "b", href: "/app/profile/orders", text: "Orders", icon: null, badge: "3", active: true },
-      { id: "empty-badge", href: "/app/x", text: "X", icon: null, badge: null, active: false },
+      { id: "a", href: "/app/profile", text: "T(buttons.profile)", icon: "fas fa-user", badge: null, badgeVariant: null, active: false },
+      { id: "b", href: "/app/profile/orders", text: "Orders", icon: null, badge: "3", badgeVariant: "info", active: true },
+      { id: "empty-badge", href: "/app/x", text: "X", icon: null, badge: null, badgeVariant: null, active: false },
     ]);
   });
 

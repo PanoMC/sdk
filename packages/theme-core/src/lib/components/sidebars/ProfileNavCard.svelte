@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="list-group list-group-flush list-group-horizontal-md">
+  <div class="list-group list-group-flush">
     {#each entries as entry (entry.id)}
       <a
         class="list-group-item list-group-item-action d-flex align-items-center justify-content-center text-center"
@@ -8,7 +8,10 @@
         href={entry.href}>
         {entry.text}
         {#if entry.badge}
-          <span class="badge text-bg-primary ms-auto">{entry.badge}</span>
+          <span
+            class="badge ms-2"
+            class:text-bg-info={entry.badgeVariant === "info"}
+            class:text-bg-primary={entry.badgeVariant !== "info"}>{entry.badge}</span>
         {/if}
       </a>
     {/each}

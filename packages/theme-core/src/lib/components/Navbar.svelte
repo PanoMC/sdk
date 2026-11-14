@@ -119,7 +119,7 @@
                     $_("nav-links.panel"),
                     { placement: "bottom" },
                   ]}>
-                  <i class="fa-solid fa-columns"></i>
+                  <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
                 </a>
                 {#if showPanelBubble}
                   <div class="demo-bubble">

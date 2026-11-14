@@ -1,5 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import { resolvePageTitle } from "../pageTitle.util.js";
+import { resolvePageTitle, safeBackgroundImage } from "../pageTitle.util.js";
+
+test("background images must be safe same-origin paths", () => {
+  expect(safeBackgroundImage({ backgroundImage: "/api/plugins/market/image.png" })).toBe("/api/plugins/market/image.png");
+  for (const url of ["//evil.test/image.png", "/\\evil.test/image.png", "https://evil.test/image.png", "/image.png?x=1", ""]) {
+    expect(safeBackgroundImage({ backgroundImage: url })).toBe("");
+  }
+  expect(safeBackgroundImage("title")).toBe("");
+});
 
 const dict = { "page.home": "Home", "page.hello": "Hello {name}", "page.sub": "Subtitle" };
 // Mimics svelte-i18n: unknown keys come back as the key itself, {name} is interpolated.

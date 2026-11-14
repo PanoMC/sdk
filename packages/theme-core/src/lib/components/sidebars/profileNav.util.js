@@ -1,7 +1,7 @@
 /**
  * Pure helpers for the profile sidebar navigation (market plugin spec 15 section 4.6).
  *
- * The `profile-nav` view slot holds `{ id, priority, hidden?, props: { href, text, icon?, startsWith?, badge? } }`
+ * The `profile-nav` view slot holds `{ id, priority, hidden?, props: { href, text, icon?, startsWith?, badge?, badgeVariant? } }`
  * items. The built-ins below are registered by the profile sidebar's `load`; plugins add their own
  * through `pano.ui.profile.nav.edit`.
  */
@@ -79,7 +79,7 @@ export function isProfileNavActive(pathname, base, props) {
  *
  * @param {Array<object>} items  visible items of the `profile-nav` slot
  * @param {{ pathname: string, base?: string, translate: (key: string) => string }} context
- * @returns {Array<{ id: string, href: string, text: string, icon: string | null, badge: string | null, active: boolean }>}
+ * @returns {Array<{ id: string, href: string, text: string, icon: string | null, badge: string | null, badgeVariant: string | null, active: boolean }>}
  */
 export function buildProfileNavEntries(items, { pathname, base = "", translate }) {
   const entries = [];
@@ -97,6 +97,7 @@ export function buildProfileNavEntries(items, { pathname, base = "", translate }
       text: text.includes(".") ? translate(text) : text,
       icon: typeof props.icon === "string" && props.icon ? props.icon : null,
       badge: props.badge === undefined || props.badge === null || props.badge === "" ? null : String(props.badge),
+      badgeVariant: props.badgeVariant === "info" ? "info" : null,
       active: isProfileNavActive(pathname, base, props),
     });
   }
