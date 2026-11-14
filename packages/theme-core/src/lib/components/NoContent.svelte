@@ -1,5 +1,5 @@
-<div class="border-0 opacity-25 bg-transparent">
-  <div class="vstack gap-3 text-center py-2">
+<div class="pano-no-content border-0 opacity-25 bg-transparent">
+  <div class="pano-no-content__body vstack gap-3 text-center py-2">
     <span class={icon}></span>
     {#if text}
       <p class="mb-0">{text}</p>

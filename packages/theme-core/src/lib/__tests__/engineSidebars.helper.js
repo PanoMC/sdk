@@ -130,8 +130,8 @@ export async function openSession({ svelteDir, root = pkgDir, extraJs = {}, extr
     let sourceDir = pkgDir;
     if (loc.kind === "svelte") {
       const source = loc.source ?? readFileSync(loc.file, "utf-8");
-      if (!loc.file.includes(":")) sourceDir = dirname(loc.file);
-      code = compiler.compile(source, { generate: "server", filename: loc.file.includes(":") ? "Part.svelte" : loc.file.split("/").pop() }).js.code;
+      if (!loc.file.startsWith("stub:")) sourceDir = dirname(loc.file);
+      code = compiler.compile(source, { generate: "server", filename: loc.file.startsWith("stub:") ? "Part.svelte" : loc.file.split(/[\\/]/).pop() }).js.code;
     } else {
       code = loc.source;
     }

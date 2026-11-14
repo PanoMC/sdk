@@ -227,7 +227,7 @@ describe.skipIf(!svelteDir)("server render", () => {
       String(text).replace(/\\{(\\w+)\\}/g, (m, k) => (options.values && k in options.values ? options.values[k] : m)));
   `;
 
-  test("ProfileNavCard renders list-group links, the active one, icon and badge", async () => {
+  test("ProfileNavCard renders list-group links, the active one and badge (no icons)", async () => {
     const { body } = await renderSvelte({
       svelteDir,
       components: { "#card": join(sidebars, "ProfileNavCard.svelte") },
@@ -239,13 +239,14 @@ describe.skipIf(!svelteDir)("server render", () => {
       },
     });
 
-    expect(body).toContain('<div class="card"><div class="list-group list-group-flush">');
-    expect(body.match(/list-group-item list-group-item-action d-flex align-items-center/g).length).toBe(2);
-    expect(body).toMatch(/class="list-group-item list-group-item-action d-flex align-items-center active"[^>]*href="\/profile\/orders"/);
+    expect(body).toContain('<div class="card"><div class="list-group list-group-flush list-group-horizontal-md">');
+    expect(body.match(/list-group-item list-group-item-action d-flex align-items-center justify-content-center text-center/g).length).toBe(2);
+    expect(body).toMatch(/class="list-group-item list-group-item-action d-flex align-items-center justify-content-center text-center active"[^>]*href="\/profile\/orders"/);
     expect(body).toContain('aria-current="page"');
     expect(body.match(/aria-current/g).length).toBe(1);
     expect(body).toContain('<span class="badge text-bg-primary ms-auto">3</span>');
-    expect(body).toContain("fas fa-user");
+    // the horizontal nav shows text only: an entry's icon is not rendered
+    expect(body).not.toContain("fas fa-user");
   });
 
   test("ProfileNavCard escapes text coming from a plugin", async () => {

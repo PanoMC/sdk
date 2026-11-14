@@ -2149,6 +2149,30 @@
       color: var(--bs-list-group-action-active-color);
       background-color: var(--bs-list-group-action-active-bg);
     }
+    @media (min-width: 768px) {
+      .list-group-horizontal-md {
+        flex-direction: row;
+      }
+      .list-group-horizontal-md > .list-group-item:first-child:not(:last-child) {
+        border-bottom-left-radius: var(--bs-list-group-border-radius);
+        border-top-right-radius: 0;
+      }
+      .list-group-horizontal-md > .list-group-item:last-child:not(:first-child) {
+        border-top-right-radius: var(--bs-list-group-border-radius);
+        border-bottom-left-radius: 0;
+      }
+      .list-group-horizontal-md > .list-group-item.active {
+        margin-top: 0;
+      }
+      .list-group-horizontal-md > .list-group-item + .list-group-item {
+        border-top-width: var(--bs-list-group-border-width);
+        border-left-width: 0;
+      }
+      .list-group-horizontal-md > .list-group-item + .list-group-item.active {
+        margin-left: calc(-1 * var(--bs-list-group-border-width));
+        border-left-width: var(--bs-list-group-border-width);
+      }
+    }
     .list-group-flush {
       border-radius: 0;
     }
@@ -2697,10 +2721,6 @@
       color: #fff;
       background-color: color-mix(in srgb, var(--bs-warning) calc(var(--bs-bg-opacity, 1) * 100%), transparent);
     }
-    .text-bg-purple {
-      color: #fff;
-      background-color: RGBA(var(--bs-purple-rgb), var(--bs-bg-opacity, 1));
-    }
     .link-primary {
       color: color-mix(in srgb, var(--bs-primary) calc(var(--bs-link-opacity, 1) * 100%), transparent);
       text-decoration-color: color-mix(in srgb, var(--bs-primary) calc(var(--bs-link-underline-opacity, 1) * 100%), transparent);
@@ -2749,6 +2769,9 @@
     }
     .object-fit-cover {
       object-fit: cover;
+    }
+    .opacity-25 {
+      opacity: 0.25;
     }
     .opacity-50 {
       opacity: 0.5;
@@ -2961,9 +2984,6 @@
     }
     .mb-1 {
       margin-bottom: 0.25rem;
-    }
-    .mb-2 {
-      margin-bottom: 0.5rem;
     }
     .mb-3 {
       margin-bottom: 1rem;

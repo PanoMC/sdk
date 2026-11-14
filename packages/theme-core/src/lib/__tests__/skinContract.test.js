@@ -135,7 +135,7 @@ describe("skin-contract.json (TC-32)", () => {
     }
     expect(engineViews.ToastContainer.uses).toEqual(["DefaultToast"]);
     expect(engineViews.DefaultToast.uses).toEqual(["Toast"]);
-    expect(engineViews.Posts.uses).toEqual(["NoContent", "Post"]);
+    expect(engineViews.Posts.uses).toEqual(["Post"]);
   });
 
   test("the table registers with the registry", () => {

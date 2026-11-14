@@ -101,8 +101,8 @@ export async function renderPart({ svelteDir, root = pkgDir, extraSvelte = {}, e
     let sourceDir = pkgDir;
     if (loc.kind === "svelte") {
       const source = loc.source ?? readFileSync(loc.file, "utf-8");
-      if (loc.file && !loc.file.includes(":")) sourceDir = dirname(loc.file);
-      code = compiler.compile(source, { generate: "server", filename: loc.file.includes(":") ? "Part.svelte" : loc.file.slice(pkgDir.length + 1) }).js.code;
+      if (loc.file && !/^(stub|extra):/.test(loc.file)) sourceDir = dirname(loc.file);
+      code = compiler.compile(source, { generate: "server", filename: /^(stub|extra):/.test(loc.file) ? "Part.svelte" : loc.file.slice(pkgDir.length + 1).replaceAll("\\", "/") }).js.code;
     } else {
       code = loc.source;
     }

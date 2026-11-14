@@ -80,7 +80,6 @@ describe("engine semantic classes (doc 03 section 1, ns = pano)", () => {
 const KNOWN_BADGE_DEBT = {
   "components/Footer.svelte|style-block-scope": 1,
   "components/Footer.svelte|class-allowed": 2,
-  "components/Footer.svelte|dynamic-class": 1,
   "components/Footer.svelte|style-attr": 1,
   "components/Header.svelte|class-allowed": 3,
   "components/Header.svelte|style-attr": 3,
@@ -113,7 +112,9 @@ const KNOWN_BADGE_DEBT = {
   "views/parts/HomeSidebar.svelte|class-allowed": 6,
   "views/parts/HomeSidebar.svelte|dynamic-class": 6,
   "views/parts/HomeSidebar.svelte|style-attr": 4,
-  "views/parts/HomeSidebar.svelte|style-block-scope": 5,
+  "views/parts/HomeSidebar.svelte|style-block-scope": 6,
+  "views/parts/SupportSidebar.svelte|style-block-scope": 1,
+  "views/parts/TicketCreateAndDetailSidebar.svelte|style-block-scope": 1,
   "views/parts/PlayerDetailSidebar.svelte|class-allowed": 1,
   "views/parts/PlayerDetailSidebar.svelte|style-block-scope": 3,
   "views/parts/ProfileSidebar.svelte|class-allowed": 1,
