@@ -7,7 +7,6 @@
 import {
   existsSync,
   mkdirSync,
-  rmSync,
   writeFileSync,
   readFileSync,
   readdirSync,
@@ -18,6 +17,8 @@ import {
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
+
+import { removeDir } from "./remove-dir.js";
 
 const libRootDir = "./static/lib";
 const tempBundleDir = "./.lib-bundle-output";
@@ -54,7 +55,7 @@ function hashDirectory(dir) {
 }
 
 if (existsSync(tempBundleDir))
-  rmSync(tempBundleDir, { recursive: true, force: true });
+  removeDir(tempBundleDir);
 mkdirSync(join(tempBundleDir, "bootstrap"), { recursive: true });
 
 // Resolved from the theme's package.json, not from ./node_modules: inside a Bun workspace the
@@ -87,7 +88,7 @@ mkdirSync(libRootDir, { recursive: true });
 const targetDir = join(libRootDir, internalLibsHash);
 if (existsSync(targetDir)) {
   // Same content already staged (e.g. repeated install) — nothing to move.
-  rmSync(tempBundleDir, { recursive: true, force: true });
+  removeDir(tempBundleDir);
 } else {
   renameSync(tempBundleDir, targetDir);
 }
@@ -102,7 +103,7 @@ const staleDirs = readdirSync(libRootDir)
 
 for (const dir of staleDirs) {
   console.log(`Pruning old lib dir ${dir}`);
-  rmSync(dir, { recursive: true, force: true });
+  removeDir(dir);
 }
 
 mkdirSync("./src/lib", { recursive: true });

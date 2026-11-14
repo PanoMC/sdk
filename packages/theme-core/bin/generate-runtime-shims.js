@@ -23,7 +23,6 @@
  */
 import {
   mkdirSync,
-  rmSync,
   writeFileSync,
   readdirSync,
   readFileSync,
@@ -32,6 +31,7 @@ import {
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { SVELTE_SPECIFIERS, SDK_SPECIFIERS } from "../src/kit/specifiers.js";
+import { removeDir } from "./remove-dir.js";
 
 const outputRootDir = "./static/runtime";
 const tempEntryDir = "./.runtime-shims-temp";
@@ -167,8 +167,8 @@ function hashDirectory(dir) {
   return hasher.digest("hex").slice(0, 16);
 }
 
-rmSync(outputRootDir, { recursive: true, force: true });
-rmSync(tempEntryDir, { recursive: true, force: true });
+removeDir(outputRootDir);
+removeDir(tempEntryDir);
 mkdirSync(join(outputRootDir, "svelte"), { recursive: true });
 mkdirSync(join(outputRootDir, "sdk"), { recursive: true });
 mkdirSync(tempEntryDir, { recursive: true });
@@ -191,7 +191,7 @@ writeFileSync(
     `export const runtimeShimsHash = ${JSON.stringify(runtimeShimsHash)};\n`,
 );
 
-rmSync(tempEntryDir, { recursive: true, force: true });
+removeDir(tempEntryDir);
 
 console.log(
   `Runtime shims generated into ${outputRootDir} (hash ${runtimeShimsHash})`,
