@@ -28,7 +28,7 @@
         {/each}
       </div>
     {:else}
-      <NoContent text="" />
+      <NoContent />
     {/if}
   </div>
 </div>

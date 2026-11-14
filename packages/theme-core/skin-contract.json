@@ -635,7 +635,7 @@
    "kind": "component",
    "contract": 1,
    "source": "src/lib/views/parts/Posts.svelte",
-   "uses": ["Post"],
+   "uses": ["NoContent", "Post"],
    "hooks": [],
    "slotProps": {},
    "props": {

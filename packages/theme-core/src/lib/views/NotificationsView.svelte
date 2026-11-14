@@ -85,7 +85,7 @@
       </div>
 
       {#if $notifications.length === 0}
-        <NoContent text="" />
+        <NoContent />
       {/if}
 
       {#if $notifications.length < $count}
