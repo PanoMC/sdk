@@ -22,7 +22,7 @@
     margin-bottom: 0;
   }
 
-  .answer :global(p:last-child) {
+  .answer :global(p) {
     margin-bottom: 0;
   }
 </style>

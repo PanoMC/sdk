@@ -1,14 +1,15 @@
 <!-- Online Admins Card -->
 <div
   class="online-admins-card card mb-3 mb-lg-0"
+  class:online-admins-card--empty={!onlineAdmins?.length}
   hidden={typeof themeSettings.sidebarCarts?.onlineAdmins === "undefined"
     ? false
     : !themeSettings.sidebarCarts.onlineAdmins}>
-  <CardHeader headerClasses="bg-transparent">
+  <CardHeader headerClasses="bg-transparent {onlineAdmins?.length ? '' : 'border-bottom-0'}">
     <div slot="left">{$_("components.online-admins.online-admins")}</div>
   </CardHeader>
+  {#if onlineAdmins && onlineAdmins.length > 0}
   <div class="card-body pt-3 d-flex flex-column justify-content-start">
-    {#if onlineAdmins && onlineAdmins.length > 0}
       <div class="row g-3 justify-content-evenly align-items-start align-content-start">
         {#each onlineAdmins as onlineAdmin, index (onlineAdmin)}
           <div class="col-auto">
@@ -27,8 +28,8 @@
           </div>
         {/each}
       </div>
-    {/if}
   </div>
+  {/if}
 </div>
 
 <!-- Online Admins Card End -->
@@ -49,7 +50,7 @@
 
 
     @media (min-width: 992px) {
-        .online-admins-card {
+        .online-admins-card:not(.online-admins-card--empty) {
             aspect-ratio: 1 / 1;
         }
     }
