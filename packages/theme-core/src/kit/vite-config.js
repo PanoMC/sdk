@@ -386,7 +386,11 @@ export function createViteConfig(opts = {}) {
           // recreates plugins/<id>/client and server under a running dev server, the watchers on
           // the old directories start firing endless "rename" events, and every vite process
           // rescans the tree at ~2 CPU cores until it is restarted.
-          ignored: [path.resolve(process.cwd(), "plugins").replace(/\\/g, "/") + "/**"],
+          // agent-guide/ (docs for coding agents, never imported) has the same problem: the
+          // theme-core sync script replaces the whole folder with rmSync + cpSync.
+          ignored: ["plugins", "agent-guide"].map(
+            (dir) => path.resolve(process.cwd(), dir).replace(/\\/g, "/") + "/**",
+          ),
         },
         hmr: {
           path: base ? `${base}/` : "/",
