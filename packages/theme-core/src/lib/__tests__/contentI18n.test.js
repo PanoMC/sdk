@@ -214,3 +214,23 @@ describe("localizePosts", () => {
     expect(localizePosts(undefined, "en-US")).toEqual([]);
   });
 });
+
+describe("localizeCategory form placeholders", () => {
+  test("the placeholders of the category's form follow the locale", () => {
+    const category = {
+      id: 1,
+      title: "Bugs",
+      description: "",
+      form: { titleEnabled: true, titlePlaceholder: "Kısa özet", messageEnabled: true, messagePlaceholder: "" },
+      i18n: { "en-US": { titlePlaceholder: "Short summary", messagePlaceholder: "What happened?" } }
+    };
+
+    expect(localizeCategory(category, "en-US").form).toEqual({
+      titleEnabled: true,
+      titlePlaceholder: "Short summary",
+      messageEnabled: true,
+      messagePlaceholder: "What happened?"
+    });
+    expect(localizeCategory(category, "tr").form.titlePlaceholder).toBe("Kısa özet");
+  });
+});

@@ -194,7 +194,8 @@
       "title": "Destek Talebi Oluştur",
       "inputs": {
         "title": "Başlık",
-        "no-category": "Kategorisiz"
+        "no-category": "Kategorisiz",
+        "description": "Sorununuzu ayrıntılı olarak anlatın..."
       },
       "fields": {
         "choose": "Seçin...",

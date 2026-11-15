@@ -168,6 +168,14 @@ export function localizeCategory(category, locale) {
   if ("title" in source && source.title !== "-") copy.title = localized(source.title, source.i18n, locale, "title");
   if ("description" in source) copy.description = localized(source.description, source.i18n, locale, "description");
   if (Array.isArray(source.fields)) copy.fields = source.fields.map((field) => localizeField(field, locale));
+  // the placeholders of the create-ticket form in this category
+  if (source.form && typeof source.form === "object") {
+    copy.form = {
+      ...source.form,
+      titlePlaceholder: localized(source.form.titlePlaceholder, source.i18n, locale, "titlePlaceholder"),
+      messagePlaceholder: localized(source.form.messagePlaceholder, source.i18n, locale, "messagePlaceholder")
+    };
+  }
 
   return remember(copy, source);
 }

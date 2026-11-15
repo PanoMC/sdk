@@ -46,8 +46,11 @@
   let title = writable("");
   let message = writable("");
   // Where a ticket must have a category the form starts on the first one, not on "no category".
+  // Without a category choice (`categoryEnabled: false`) every ticket goes without one.
   let categoryId = writable(
-    data.allowNoCategory === false && data.categories?.length ? data.categories[0].id : -1,
+    data.categoryEnabled !== false && data.allowNoCategory === false && data.categories?.length
+      ? data.categories[0].id
+      : -1,
   );
   let loading = writable(false);
 

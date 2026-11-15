@@ -194,7 +194,8 @@
       "title": "Create Support Ticket",
       "inputs": {
         "title": "Title",
-        "no-category": "No Category"
+        "no-category": "No Category",
+        "description": "Describe your issue in detail..."
       },
       "fields": {
         "choose": "Choose...",

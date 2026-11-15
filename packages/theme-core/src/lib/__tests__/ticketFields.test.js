@@ -8,6 +8,8 @@ import {
   isEmpty,
   isValidDate,
   prepareFieldValues,
+  ticketFormOf,
+  DEFAULT_TICKET_FORM,
   validateValue,
   visibleFields,
 } from "../ticketFields.js";
@@ -254,5 +256,19 @@ describe("server errors and display", () => {
     expect(displayValue({ type: "SELECT", value: "appeal", display: "Ban appeal" }).text).toBe("Ban appeal");
     expect(hasValue({ type: "TEXT", value: null })).toBe(false);
     expect(hasValue({ type: "CHECKBOX", value: false })).toBe(false);
+  });
+});
+
+describe("ticketFormOf", () => {
+  test("an older website that sends no form shows everything", () => {
+    expect(ticketFormOf({}, null)).toEqual(DEFAULT_TICKET_FORM);
+    expect(ticketFormOf(undefined, { id: 1 })).toEqual(DEFAULT_TICKET_FORM);
+  });
+
+  test("the chosen category's form wins, without one the no-category form", () => {
+    const data = { noCategoryForm: { messageEnabled: false } };
+
+    expect(ticketFormOf(data, null).messageEnabled).toBe(false);
+    expect(ticketFormOf(data, { form: { titleEnabled: false } })).toEqual({ ...DEFAULT_TICKET_FORM, titleEnabled: false });
   });
 });

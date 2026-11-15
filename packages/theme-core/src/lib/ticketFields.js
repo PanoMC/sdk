@@ -31,6 +31,34 @@
  */
 export const TICKET_FIELDS_CONTEXT = "pano:ticket-fields";
 
+/**
+ * @typedef {object} TicketForm
+ * @property {boolean} titleEnabled        the form asks for a title (off: the site names the ticket)
+ * @property {string} titlePlaceholder     empty: the theme's own placeholder
+ * @property {boolean} messageEnabled      the form asks for a description (off: no first message)
+ * @property {string} messagePlaceholder   empty: the theme's own placeholder
+ */
+
+/** What the create-ticket form shows when the website says nothing (older Pano): everything. */
+export const DEFAULT_TICKET_FORM = Object.freeze({
+  titleEnabled: true,
+  titlePlaceholder: "",
+  messageEnabled: true,
+  messagePlaceholder: ""
+});
+
+/**
+ * The form of the chosen category, or of a ticket without one (`data.noCategoryForm` of the
+ * categories answer), over the defaults.
+ *
+ * @param {{ noCategoryForm?: Partial<TicketForm> } | null | undefined} data
+ * @param {{ form?: Partial<TicketForm> } | null | undefined} category
+ * @returns {TicketForm}
+ */
+export function ticketFormOf(data, category) {
+  return { ...DEFAULT_TICKET_FORM, ...((category ? category.form : data?.noCategoryForm) ?? {}) };
+}
+
 /** The error codes the create call answers per field (`error.fields["fields.<key>"]`). */
 export const FIELD_ERROR_CODES = ["REQUIRED", "INVALID", "TOO_SHORT", "TOO_LONG", "OUT_OF_RANGE", "UNKNOWN_OPTION"];
 
