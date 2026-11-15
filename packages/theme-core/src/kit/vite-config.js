@@ -379,6 +379,15 @@ export function createViteConfig(opts = {}) {
             : {}),
         },
         allowedHosts: true,
+        watch: {
+          // plugins/ holds the installed plugin bundles. They are read from disk per request
+          // (routes/plugins-*-file.js), never through vite's module graph, so the watcher has
+          // nothing to do there. Watching it is harmful on Windows: a plugin reinstall deletes and
+          // recreates plugins/<id>/client and server under a running dev server, the watchers on
+          // the old directories start firing endless "rename" events, and every vite process
+          // rescans the tree at ~2 CPU cores until it is restarted.
+          ignored: [path.resolve(process.cwd(), "plugins").replace(/\\/g, "/") + "/**"],
+        },
         hmr: {
           path: base ? `${base}/` : "/",
         },
