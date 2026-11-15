@@ -155,7 +155,7 @@ describe.skipIf(!svelteDir)("engine parts: an override renders", () => {
       ]),
     });
 
-    expect(html).toContain('class="breadcrumb"');
+    expect(html).toMatch(/<ol class="breadcrumb[ "]/);
     expect(html).not.toContain("justify-content-center");
     expect(html).not.toContain("pano-breadcrumb__badge");
   });

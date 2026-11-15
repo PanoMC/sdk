@@ -20,7 +20,7 @@
 </svelte:head>
 
 <!-- Main Container -->
-<main class="pano-main container" class:has-background={backgroundImage}>
+<main class="pano-main container {backgroundImage ? 'has-background' : ''}">
   {#if backgroundImage}
     <div class="pano-main__background" aria-hidden="true">
       <img src={backgroundImage} alt="" />
