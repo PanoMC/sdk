@@ -14,7 +14,7 @@
     {#each $items as item (item.id)}
       {#if item.id === 'online-admins'}
         <!-- Online Admins Snippet -->
-        <OnlineAdmins onlineAdmins="{$data.onlineAdmins}" />
+        <OnlineAdmins onlineAdmins={$data.onlineAdmins} />
       {:else}
         <!-- External Component -->
         <ViewComponent component={item.component} data={$data} {...item.props} />

@@ -9,7 +9,7 @@
     <div slot="left">{$_("components.online-admins.online-admins")}</div>
   </CardHeader>
   {#if onlineAdmins && onlineAdmins.length > 0}
-  <div class="card-body pt-3 d-flex flex-column justify-content-start">
+    <div class="card-body pt-3 d-flex flex-column justify-content-start">
       <div class="row g-3 justify-content-evenly align-items-start align-content-start">
         {#each onlineAdmins as onlineAdmin, index (onlineAdmin)}
           <div class="col-auto">
@@ -28,7 +28,11 @@
           </div>
         {/each}
       </div>
-  </div>
+    </div>
+  {:else}
+    <div class="online-admins-card__empty-body card-body d-flex flex-column align-items-center justify-content-center">
+      <NoContent text="" />
+    </div>
   {/if}
 </div>
 
@@ -40,6 +44,7 @@
   import tooltip from "$pano/lib/tooltip.util";
   import { getContext } from "svelte";
   import CardHeader from "./CardHeader.svelte";
+  import NoContent from "./NoContent.svelte";
 
   export let onlineAdmins;
 
@@ -53,6 +58,11 @@
         .online-admins-card:not(.online-admins-card--empty) {
             aspect-ratio: 1 / 1;
         }
+    }
+
+    .online-admins-card--empty .online-admins-card__empty-body {
+        flex: 0 0 auto;
+        padding-top: 0;
     }
 
     .online-admin-link {
