@@ -388,7 +388,10 @@ export function createViteConfig(opts = {}) {
           // rescans the tree at ~2 CPU cores until it is restarted.
           // agent-guide/ (docs for coding agents, never imported) has the same problem: the
           // theme-core sync script replaces the whole folder with rmSync + cpSync.
-          ignored: ["plugins", "agent-guide"].map(
+          // build/ (the adapter output) and .svelte-kit/output (the build's intermediate output)
+          // too: `vite build` empties and recreates them next to a running dev server, with the
+          // same endless "rename" storm (seen 2026-11-17).
+          ignored: ["plugins", "agent-guide", "build", ".svelte-kit/output"].map(
             (dir) => path.resolve(process.cwd(), dir).replace(/\\/g, "/") + "/**",
           ),
         },
