@@ -48,6 +48,15 @@ const defaultExportSpecs = new Set([
 // (and a warning) so the generator keeps working; it fills in on the next run.
 const pendingSpecs = new Set(["@panomc/sdk/controllers"]);
 
+// Exports that are live `let` bindings in their module and get their value only after the
+// shim has run: `svelte/internal/client` sets `window` / `document` in `init_operations()` on
+// the first mount. A `const` copy would stay `undefined` forever (compiled `<svelte:window>` /
+// `<svelte:document>` read them, so such a plugin page failed to mount). Once set they are the
+// browser's own globals, so the shim falls back to those.
+const liveGlobalFallbacks = {
+  "svelte/internal/client": { window: "globalThis.window", document: "globalThis.document" },
+};
+
 const identifierRe = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 // Names that parse as IdentifierName but cannot be declared with `const` — they must
@@ -133,6 +142,8 @@ function renderShim(spec, exportNames) {
   for (const name of exportNames) {
     if (name === "default") {
       lines.push(`export default m.default;`);
+    } else if (liveGlobalFallbacks[spec]?.[name]) {
+      lines.push(`export const ${name} = m.${name} ?? ${liveGlobalFallbacks[spec][name]};`);
     } else if (identifierRe.test(name) && !reservedWords.has(name)) {
       lines.push(`export const ${name} = m.${name};`);
     } else {
