@@ -3084,6 +3084,12 @@
       word-wrap: break-word;
       word-break: break-word;
     }
+    .pe-none {
+      pointer-events: none;
+    }
+    .pe-auto {
+      pointer-events: auto;
+    }
     .rounded {
       border-radius: var(--bs-border-radius);
     }

@@ -11,12 +11,12 @@
     style="background-position: center; height: {themeSettings.headerHeight || '256'}px;">
     <a href="/">
       <div
-        class="position-absolute {logoPositionClasses} px-3"
+        class="position-absolute {logoPositionClasses} px-3 pe-none"
         style="padding-top: 80px; padding-bottom: 40px;"
         class:d-none={themeSettings.logoVisibility === false}>
         <img
           alt={$_("components.header.alt")}
-          class={logoAnimationClass}
+          class="pano-header__image pe-auto {logoAnimationClass}"
           src="/api/v1/website-logo?hash={$session.siteInfo.websiteLogoHash}"
           style="object-fit: contain; width: {themeSettings.logoWidth || '256'}px; height: {themeSettings.logoHeight ? themeSettings.logoHeight + 'px' : 'auto'}; max-width: 100%;"
           title={$session.siteInfo.websiteName} />
