@@ -14,6 +14,7 @@
 #       uses: PanoMC/sdk/.github/workflows/theme-release.yml@<commit sha>   # a SHA, not a branch
 #       with:
 #         theme-id: my-theme
+#         runner: '["self-hosted", "pano-build"]'   # private PanoMC themes only; default ubuntu-latest
 #       secrets:
 #         TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
 #
@@ -28,6 +29,11 @@ on:
       theme-id:
         required: true
         type: string
+      # JSON for `runs-on`: private themes pass '["self-hosted", "pano-build"]' (PanoMC's build runner, private repos only).
+      runner:
+        required: false
+        type: string
+        default: '"ubuntu-latest"'
     secrets:
       TOKEN_GITHUB:
         required: true
@@ -42,7 +48,7 @@ permissions:
 
 jobs:
   get-next-version:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runner) }}
     permissions:
       contents: write
       issues: write
@@ -68,7 +74,7 @@ jobs:
       new_tag_version: ${{ steps.get-next-version.outputs.new_tag_version }}
 
   build-and-release:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(inputs.runner) }}
     needs: get-next-version
     if: ${{ needs.get-next-version.outputs.new_tag_version != '' }}
     permissions:
