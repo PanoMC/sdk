@@ -386,12 +386,12 @@ export function createViteConfig(opts = {}) {
           // recreates plugins/<id>/client and server under a running dev server, the watchers on
           // the old directories start firing endless "rename" events, and every vite process
           // rescans the tree at ~2 CPU cores until it is restarted.
-          // agent-guide/ (docs for coding agents, never imported) has the same problem: the
-          // theme-core sync script replaces the whole folder with rmSync + cpSync.
+          // docs/ (the PanoMC/docs submodule: rules for coding agents, never imported) is not
+          // part of the app either; a docs build inside it would recreate .vitepress/dist.
           // build/ (the adapter output) and .svelte-kit/output (the build's intermediate output)
           // too: `vite build` empties and recreates them next to a running dev server, with the
           // same endless "rename" storm (seen 2026-11-17).
-          ignored: ["plugins", "agent-guide", "build", ".svelte-kit/output"].map(
+          ignored: ["plugins", "docs", "build", ".svelte-kit/output"].map(
             (dir) => path.resolve(process.cwd(), dir).replace(/\\/g, "/") + "/**",
           ),
         },

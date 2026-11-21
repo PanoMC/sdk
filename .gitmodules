@@ -1,0 +1,4 @@
+[submodule "pano-docs"]
+	path = pano-docs
+	url = https://github.com/PanoMC/docs.git
+	branch = dev

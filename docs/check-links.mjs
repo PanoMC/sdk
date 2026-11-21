@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 // Checks that what the author docs quote exists in this repo. Run from anywhere: `bun docs/check-links.mjs`.
 //
-// For each of the docs below, and every file of agent-guide/, it checks
+// For each of the docs below, and every file of the agent guide (pano-docs/guidelines/agent-guide/, the docs
+// submodule; skipped with a note when it is not checked out), it checks
 //   - markdown links to local files,
 //   - repo paths in the text (packages/..., docs/..., test-fixtures/..., scripts/...),
 //   - the command word after `theme-core`, `pano-plugin` and `pano-client` in code (inline or fenced),
@@ -13,14 +14,18 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const AGENT_GUIDE = 'pano-docs/guidelines/agent-guide';
 const DOCS = [
   ...['THEME-AUTHOR-GUIDE.md', 'MIGRATION.md', 'PLUGIN-VIEWS.md', 'CONTROLLERS.md'].map((name) => `docs/${name}`),
-  // the agent guide (agent-guide/README.md is its index): same checks, links resolved from its own folder
-  ...readdirSync(join(root, 'agent-guide'))
-    .filter((name) => name.endsWith('.md'))
-    .sort()
-    .map((name) => `agent-guide/${name}`),
+  // the agent guide (its README.md is the index): same checks, links resolved from its own folder
+  ...(existsSync(join(root, AGENT_GUIDE))
+    ? readdirSync(join(root, AGENT_GUIDE))
+        .filter((name) => name.endsWith('.md'))
+        .sort()
+        .map((name) => `${AGENT_GUIDE}/${name}`)
+    : []),
 ];
+if (!existsSync(join(root, AGENT_GUIDE))) console.log(`${AGENT_GUIDE} is not checked out (git submodule update --init pano-docs): skipped.`);
 
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
