@@ -25,6 +25,12 @@ function postReady() {
   window.parent.postMessage({ type: "theme-settings-ready" }, panelOrigin());
 }
 
+// The panel's stylesheets could not be loaded: the panel shows its error with a retry button. A panel build that
+// predates this message ignores it and runs into its own timeout.
+function postError() {
+  window.parent.postMessage({ type: "theme-settings-error" }, panelOrigin());
+}
+
 // The theme settings UI runs inside an iframe in the panel, so its toasts are posted to
 // the parent instead of rendered here. `variant` ('success' | 'danger') rides along so the
 // panel can colour the toast — without it the panel has no way to tell an outcome from a
@@ -163,37 +169,48 @@ export function init() {
         document.head.appendChild(style);
       }
 
-      // 2. Inject CSS Links
-      if (links && Array.isArray(links) && links.length > 0) {
-        let loadedCount = 0;
-        const totalLinks = links.length;
+      // 2. Inject CSS Links. The theme's own styles are gone now, so the page is shown only when every panel
+      // stylesheet loaded. A link that fails is tried once more; if it fails again the panel is told, and it shows
+      // its error instead of an unstyled page.
+      if (links.length > 0) {
+        let pending = links.length;
+        let failed = false;
 
-        links.forEach((href) => {
+        const onComplete = (ok) => {
+          if (!ok) failed = true;
+          pending--;
+          if (pending > 0) return;
+          if (failed) {
+            postError();
+            return;
+          }
+          hidden.set(false);
+          setTimeout(() => {
+            postHeight();
+            postReady();
+          }, 150);
+        };
+
+        const addLink = (href, retried = false) => {
           const link = document.createElement("link");
           link.rel = "stylesheet";
           link.href = href;
           link.setAttribute("data-panel-injected", "true");
-
-          const onComplete = () => {
-            loadedCount++;
-            if (loadedCount === totalLinks) {
-              console.log("All CSS links loaded successfully");
-              hidden.set(false);
-              setTimeout(() => {
-                postHeight();
-                postReady();
-              }, 150);
-            }
-          };
-
-          link.onload = onComplete;
+          link.onload = () => onComplete(true);
           link.onerror = () => {
+            link.remove();
+            if (!retried) {
+              console.warn("Failed to load CSS link, retrying:", href);
+              setTimeout(() => addLink(href, true), 1000);
+              return;
+            }
             console.warn("Failed to load CSS link:", href);
-            onComplete();
+            onComplete(false);
           };
-
           document.head.appendChild(link);
-        });
+        };
+
+        links.forEach((href) => addLink(href));
       } else {
         // No links to load, ready now
         hidden.set(false);
