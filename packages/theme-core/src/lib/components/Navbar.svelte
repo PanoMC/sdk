@@ -1,4 +1,11 @@
 <style>
+  /* The navbar (and its dropdowns) stays above sticky page parts such as the store and checkout sidebars of
+     plugins (Bootstrap .sticky-*-top = 1020) and below offcanvas and modals (1045 and up). */
+  .pano-navbar {
+    position: relative;
+    z-index: 1030;
+  }
+
   .demo-bubble {
     position: absolute;
     bottom: calc(100% + 15px);
