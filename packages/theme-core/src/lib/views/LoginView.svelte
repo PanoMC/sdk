@@ -178,7 +178,7 @@
                   <span
                     class="spinner-border spinner-border-sm me-2"
                     role="status"
-                    aria-label="Loading"></span>
+                    aria-label={$_("labels.loading")}></span>
                   <span>{$_("buttons.login")}...</span>
                 {:else}
                   {$_("buttons.login")}
@@ -266,7 +266,7 @@
                 <span
                   class="spinner-border spinner-border-sm me-2"
                   role="status"
-                  aria-label="Loading"></span>
+                  aria-label={$_("labels.loading")}></span>
                 <span>{$_("components.modals.login.link-code.verify")}...</span>
               {:else}
                 {$_("components.modals.login.link-code.verify")}
@@ -336,7 +336,7 @@
                 <span
                   class="spinner-border spinner-border-sm me-2"
                   role="status"
-                  aria-label="Loading"></span>
+                  aria-label={$_("labels.loading")}></span>
                 <span>{$_("buttons.save")}...</span>
               {:else}
                 {$_("buttons.save")}

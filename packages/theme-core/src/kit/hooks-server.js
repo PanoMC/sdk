@@ -80,22 +80,57 @@ function escapeHtml(s) {
   );
 }
 
-function renderLicenseBlocked(reason, message) {
+// The visitor reads this page in their browser's language; the engine's i18n is not loaded here.
+const LICENSE_BLOCKED_TEXT = {
+  en: {
+    title: "License required",
+    heading: "This premium theme is not licensed on this server.",
+    body: "The Pano host did not provide a valid license token.",
+    reason: "Reason",
+    fix: "Open the Pano panel and reconnect your panomc.com account, then re-activate this theme.",
+  },
+  tr: {
+    title: "Lisans gerekli",
+    heading: "Bu premium tema bu sunucuda lisanslı değil.",
+    body: "Pano sunucusu geçerli bir lisans anahtarı sağlamadı.",
+    reason: "Sebep",
+    fix: "Pano panelini açıp panomc.com hesabınızı yeniden bağlayın, ardından bu temayı tekrar etkinleştirin.",
+  },
+  ru: {
+    title: "Требуется лицензия",
+    heading: "Эта премиум-тема не лицензирована на этом сервере.",
+    body: "Сервер Pano не предоставил действительный лицензионный токен.",
+    reason: "Причина",
+    fix: "Откройте панель Pano, заново подключите аккаунт panomc.com и снова активируйте эту тему.",
+  },
+};
+
+function licenseBlockedLanguage(acceptLanguage) {
+  for (const part of String(acceptLanguage || "").split(",")) {
+    const code = part.trim().slice(0, 2).toLowerCase();
+    if (LICENSE_BLOCKED_TEXT[code]) return code;
+  }
+  return "en";
+}
+
+function renderLicenseBlocked(reason, message, acceptLanguage) {
   // Minimal HTML page; deliberately self-contained so the broken theme can't accidentally
   // serve its own (now-unlicensed) UI. The Pano host's renewal sweep will fall back to the
   // bundled vanilla theme on next sweep, but until then we surface the cause.
+  const lang = licenseBlockedLanguage(acceptLanguage);
+  const text = LICENSE_BLOCKED_TEXT[lang];
   const body =
-    '<!doctype html><html lang="en"><head>' +
-    '<meta charset="utf-8"><title>License required</title>' +
+    `<!doctype html><html lang="${lang}"><head>` +
+    `<meta charset="utf-8"><title>${text.title}</title>` +
     '<meta name="robots" content="noindex">' +
     "<style>html,body{height:100%;margin:0;font-family:system-ui,sans-serif;color:#222;background:#f7f7f9}" +
     "main{display:flex;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center}" +
     "section{max-width:540px}h1{margin:.2em 0 .6em}code{background:#eee;padding:.1em .3em;border-radius:.2em}" +
     ".reason{color:#a00;font-weight:600}</style></head><body><main><section>" +
-    "<h1>This premium theme is not licensed on this server.</h1>" +
-    "<p>The Pano host did not provide a valid license token.</p>" +
-    `<p>Reason: <span class="reason">${escapeHtml(reason)}</span>${message ? ` — ${escapeHtml(message)}` : ""}</p>` +
-    "<p>Open the Pano panel and reconnect your panomc.com account, then re-activate this theme.</p>" +
+    `<h1>${text.heading}</h1>` +
+    `<p>${text.body}</p>` +
+    `<p>${text.reason}: <span class="reason">${escapeHtml(reason)}</span>${message ? ` — ${escapeHtml(message)}` : ""}</p>` +
+    `<p>${text.fix}</p>` +
     "</section></main></body></html>";
   return new Response(body, {
     status: 503,
@@ -244,6 +279,7 @@ ${importMapEntries}
         return renderLicenseBlocked(
           bootLicenseError.reason ?? "unknown",
           bootLicenseError.message,
+          event.request.headers.get("accept-language"),
         );
       }
       try {
@@ -251,7 +287,11 @@ ${importMapEntries}
       } catch (e) {
         const reason =
           e instanceof license.LicenseError ? e.reason : "unknown";
-        return renderLicenseBlocked(reason, e?.message);
+        return renderLicenseBlocked(
+          reason,
+          e?.message,
+          event.request.headers.get("accept-language"),
+        );
       }
     }
 

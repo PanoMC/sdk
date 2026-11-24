@@ -80,7 +80,7 @@
       <span
         class="spinner-border spinner-border-sm me-2"
         role="status"
-        aria-label="Loading"></span>
+        aria-label={$_("labels.loading")}></span>
       <span>{submitLabel || $_("buttons.login")}...</span>
     {:else}
       {submitLabel || $_("buttons.login")}

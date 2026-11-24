@@ -102,8 +102,8 @@
             rel="noreferrer"
             class="d-inline-flex align-items-center justify-content-center bg-primary rounded-3 focus-ring"
             style="width: 40px; height: 40px; --bs-focus-ring-color: rgba(255, 255, 255, 0.5);"
-            title="Powered by Pano"
-            aria-label="Powered by Pano">
+            title={$_("labels.powered-by-pano")}
+            aria-label={$_("labels.powered-by-pano")}>
             <img src="/assets/img/logo.svg" width="24" height="24" alt="Pano" />
           </a>
         </div>

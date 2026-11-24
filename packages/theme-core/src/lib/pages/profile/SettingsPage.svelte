@@ -55,7 +55,8 @@
   import { getContext } from "svelte";
   import { derived, writable } from "svelte/store";
   import { invalidateAll } from "$app/navigation";
-  import { parseUserAgent } from "$pano/lib/string.util";
+  import { _ } from "svelte-i18n";
+  import { parseUserAgent as parseUserAgentRaw } from "$pano/lib/string.util";
 
   import { show as showToast } from "$pano/lib/components/ToastContainer.svelte";
 
@@ -155,4 +156,7 @@
     ([locale, language, dirtyPlugins, saving]) =>
       (locale === language.code && dirtyPlugins === 0) || saving,
   );
+
+  // The sessions table names unknown browsers / systems in the visitor's language.
+  $: parseUserAgent = (userAgent) => parseUserAgentRaw(userAgent, $_);
 </script>

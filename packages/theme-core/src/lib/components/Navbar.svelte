@@ -137,7 +137,7 @@
                       type="button"
                       class="demo-bubble-close"
                       on:click={() => (showPanelBubble = false)}
-                      aria-label="Close">
+                      aria-label={$_("buttons.close")}>
                       <i class="fa fa-times"></i>
                     </button>
                   </div>
@@ -260,7 +260,7 @@
                       type="button"
                       class="demo-bubble-close"
                       on:click={() => (showLoginBubble = false)}
-                      aria-label="Close">
+                      aria-label={$_("buttons.close")}>
                       <i class="fa fa-times"></i>
                     </button>
                   </div>

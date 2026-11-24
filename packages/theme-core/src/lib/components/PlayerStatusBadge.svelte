@@ -7,11 +7,9 @@
   <div
     class="badge rounded-pill text-bg-success"
     use:tooltip={[
-      (inGame
-        ? $_("components.player-status-badge.in-game")
-        : $_("components.player-status-badge.in-website")) +
-        " " +
-        $_("components.player-status-badge.online"),
+      inGame
+        ? $_("components.player-head.in-game")
+        : $_("components.player-head.in-website"),
       { placement: "bottom" },
     ]}>
     <span>
@@ -27,7 +25,7 @@
   <div
     class="badge rounded-pill text-bg-primary"
     use:tooltip={[
-      getOfflineRelativeDateText(checkTime),
+      getOfflineRelativeDateText(checkTime, $currentLanguage),
       { placement: "bottom" },
     ]}>
     <span>{$_("components.player-status-badge.offline")}</span>
@@ -42,9 +40,11 @@
 
 <script>
   import { formatRelative } from "date-fns";
+  import * as locales from "date-fns/locale";
 
   import tooltip from "$pano/lib/tooltip.util.js";
   import { _ } from "svelte-i18n";
+  import { currentLanguage } from "$pano/lib/language.util.js";
 
   export let banned = false;
   export let lastActivityTime = 0;
@@ -53,11 +53,12 @@
 
   $: isOnline = lastActivityTime > Date.now() - 5 * 60 * 1000 || inGame;
 
-  function getOfflineRelativeDateText(checkTime) {
+  function getOfflineRelativeDateText(checkTime, language) {
     if (!lastActivityTime) return $_("components.player-status-badge.offline");
     return formatRelative(
       new Date(parseInt(lastActivityTime)),
       new Date(),
+      { locale: locales[language?.dateFnsCode] },
     ).capitalize();
   }
 </script>

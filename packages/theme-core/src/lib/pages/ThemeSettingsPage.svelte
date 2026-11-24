@@ -477,7 +477,7 @@
     originalThemeSettings.set(structuredClone($themeSettings));
 
     showSuccessToast(
-      $_("messages.settings-save-success") || "Ayarlar başarıyla kaydedildi!"
+      $_("messages.settings-save-success")
     );
     $saving = false;
   }
@@ -514,8 +514,7 @@
       originalThemeSettings.set(structuredClone($themeSettings));
 
       showSuccessToast(
-        $_("messages.settings-reset-tab-success") ||
-        "Sekme ayarları sıfırlandı!"
+        $_("messages.settings-reset-tab-success")
       );
       $resetting = false;
     });

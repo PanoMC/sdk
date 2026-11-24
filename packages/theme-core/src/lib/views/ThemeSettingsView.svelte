@@ -743,7 +743,7 @@
               {/each}
             </ul>
             <div class="form-text mt-2">
-              {$_("pages.theme-settings.navbar.drag-drop-hint") || "Linkleri sürükleyip bırakarak sıralayabilirsiniz."}
+              {$_("pages.theme-settings.navbar.drag-drop-hint")}
             </div>
           </div>
         </div>
@@ -1055,14 +1055,14 @@
               value={$themeSettings.playCardIpColor || "default"}>
               <option value="default"
                 >{$_("pages.theme-settings.sidebar.default")}</option>
-              <option value="primary">Primary</option>
-              <option value="secondary">Secondary</option>
-              <option value="success">Success</option>
-              <option value="danger">Danger</option>
-              <option value="warning">Warning</option>
-              <option value="info">Info</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
+              <option value="primary">{$_("pages.theme-settings.colors.primary")}</option>
+              <option value="secondary">{$_("pages.theme-settings.colors.secondary")}</option>
+              <option value="success">{$_("pages.theme-settings.colors.success")}</option>
+              <option value="danger">{$_("pages.theme-settings.colors.danger")}</option>
+              <option value="warning">{$_("pages.theme-settings.colors.warning")}</option>
+              <option value="info">{$_("pages.theme-settings.colors.info")}</option>
+              <option value="light">{$_("pages.theme-settings.colors.light")}</option>
+              <option value="dark">{$_("pages.theme-settings.colors.dark")}</option>
             </select>
           </div>
         </div>
@@ -1081,14 +1081,14 @@
               value={$themeSettings.playCardBorderColor || "default"}>
               <option value="default"
                 >{$_("pages.theme-settings.sidebar.default")}</option>
-              <option value="border-primary">Primary</option>
-              <option value="border-secondary">Secondary</option>
-              <option value="border-success">Success</option>
-              <option value="border-danger">Danger</option>
-              <option value="border-warning">Warning</option>
-              <option value="border-info">Info</option>
-              <option value="border-light">Light</option>
-              <option value="border-dark">Dark</option>
+              <option value="border-primary">{$_("pages.theme-settings.colors.primary")}</option>
+              <option value="border-secondary">{$_("pages.theme-settings.colors.secondary")}</option>
+              <option value="border-success">{$_("pages.theme-settings.colors.success")}</option>
+              <option value="border-danger">{$_("pages.theme-settings.colors.danger")}</option>
+              <option value="border-warning">{$_("pages.theme-settings.colors.warning")}</option>
+              <option value="border-info">{$_("pages.theme-settings.colors.info")}</option>
+              <option value="border-light">{$_("pages.theme-settings.colors.light")}</option>
+              <option value="border-dark">{$_("pages.theme-settings.colors.dark")}</option>
             </select>
           </div>
         </div>
@@ -1400,7 +1400,7 @@
               {/each}
             </ul>
             <div class="form-text mt-2">
-              {$_("pages.theme-settings.navbar.drag-drop-hint") || "Linkleri sürükleyip bırakarak sıralayabilirsiniz."}
+              {$_("pages.theme-settings.navbar.drag-drop-hint")}
             </div>
           </div>
         </div>

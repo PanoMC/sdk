@@ -2,7 +2,7 @@
   "buttons": {
     "view": "View",
     "show-all": "Show All",
-    "login": "Login",
+    "login": "Log in",
     "forgot-password": "Forgot your password?",
     "register": "Register",
     "create-ticket": "Create Ticket",
@@ -12,7 +12,7 @@
     "yes": "Yes",
     "cancel": "Cancel",
     "send": "Send",
-    "already-registered": "Login if you are already registered",
+    "already-registered": "Log in if you are already registered",
     "close-ticket": "Close Ticket",
     "reset-password": "Send Reset Email",
     "filter": "Filter",
@@ -23,7 +23,7 @@
     "profile": "Profile",
     "tickets": "Tickets",
     "settings": "Settings",
-    "logout": "Logout",
+    "logout": "Log out",
     "save": "Save",
     "reset-tab": "Reset Tab",
     "reset-all": "Reset All",
@@ -32,7 +32,11 @@
   "labels": {
     "plugin": "Plugin",
     "demo-panel-hint": "You can explore the management panel from here!",
-    "demo-login-hint": "You can log in from here!"
+    "demo-login-hint": "You can log in from here!",
+    "loading": "Loading",
+    "breadcrumb": "Breadcrumb",
+    "error": "Error",
+    "powered-by-pano": "Powered by Pano"
   },
   "messages": {
     "confirm-reset-all": "Are you sure you want to reset all theme settings to default? This action cannot be undone.",
@@ -72,8 +76,8 @@
       "demo-mode-restricted": "This action is disabled in demo mode."
     },
     "player-head": {
-      "in-game": "Online In Game",
-      "in-website": "Online In Website"
+      "in-game": "Online in game",
+      "in-website": "Online on the website"
     },
     "notification-container": {
       "notification": "Notification"
@@ -91,7 +95,7 @@
     "player-status-badge": {
       "banned": "Banned",
       "in-game": "In Game",
-      "in-website": "In Website",
+      "in-website": "On Website",
       "online": "Online",
       "offline": "Offline"
     },
@@ -121,7 +125,7 @@
           "email": "E-Mail",
           "password": "Password",
           "password-repeat": "Password Repeat",
-          "server-rules": "Server Rules",
+          "server-rules": "the server rules",
           "agreement-text": "I have read and accept {link}."
         }
       },
@@ -132,14 +136,14 @@
         "title": "Are you sure you want to close this ticket?"
       },
       "logout-session-confirm": {
-        "title": "Are you sure you want to logout from your current session?"
+        "title": "Are you sure you want to log out of your current session?"
       }
     },
     "header": {
       "alt": "Server Logo"
     },
     "no-content": {
-      "text": "Here is empty."
+      "text": "Nothing here yet."
     },
     "ticket-row": {
       "show-ticket": "View Ticket",
@@ -153,6 +157,10 @@
         "category": "Category",
         "last-reply": "Last Reply"
       }
+    },
+    "pagination": {
+      "first-page": "First page",
+      "last-page": "Last page"
     }
   },
   "pages": {
@@ -182,7 +190,7 @@
       "options": {
         "create-ticket": {
           "title": "Support Ticket",
-          "description": "Contact the authorities as a player."
+          "description": "Contact the staff as a player."
         },
         "send-email": {
           "title": "E-Mail",
@@ -230,7 +238,7 @@
       "title": "Verify New E-Mail"
     },
     "category-posts": {
-      "title": "Category: {categoryTitle} ({postCount} Posts)",
+      "title": "Category: {categoryTitle} ({postCount, plural, one {# Post} other {# Posts}})",
       "posts": "Posts"
     },
     "preview-post": {
@@ -303,7 +311,10 @@
           "last-entrance": "Last Activity",
           "expire-date": "Expire Date",
           "current-session": "Current Session",
-          "max-sessions-warning": "You can have a maximum of 5 active sessions. The oldest session will be automatically deleted upon new login."
+          "max-sessions-warning": "You can have a maximum of 5 active sessions. The oldest session will be automatically deleted upon new login.",
+          "unknown": "Unknown",
+          "unknown-browser": "Unknown browser",
+          "unknown-os": "Unknown OS"
         }
       }
     },
@@ -456,12 +467,22 @@
       },
       "advanced": {
         "custom-css": "Custom CSS"
+      },
+      "colors": {
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "success": "Success (green)",
+        "danger": "Danger (red)",
+        "warning": "Warning (yellow)",
+        "info": "Info (blue)",
+        "light": "Light",
+        "dark": "Dark"
       }
     }
   },
   "page-errors": {
+    "404": "Page not found!",
     "title": "Error: {status}",
-    "404": "The page is not found!",
     "404-description": "The page you're looking for doesn't exist or has been moved.",
     "assets-failed": "Some of the page's files could not be loaded. Please refresh the page; if it keeps happening, contact support.",
     "need-help": "If you believe this is an error, please contact support."
@@ -480,8 +501,8 @@
     "NETWORK_ERROR": "Network error, please check your connection!",
     "INTERNAL_SERVER_ERROR": "An error occurred, please report it.",
     "DISABLED_FOR_DEMO": "This action is disabled in demo mode.",
-    "LOGIN_IS_INVALID": "Can't login, check your information!",
-    "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Can't change email, wait 15 minutes.",
+    "LOGIN_IS_INVALID": "Can't log in, check your information!",
+    "CANT_CHANGE_EMAIL_WAIT_15_MINUTES": "Can't change e-mail, wait 15 minutes.",
     "CANT_RESET_PASSWORD_WAIT5MINUTES": "Can't reset password, wait 5 minutes.",
     "CATEGORY_NOT_EXISTS": "This category is not found!",
     "TICKET_CATEGORY_REQUIRED": "Pick a category to open a ticket.",
@@ -495,15 +516,15 @@
     "LOGIN_USER_IS_BANNED_PERMANENTLY": "You are permanently banned!",
     "LOGIN_USER_IS_BANNED_PERMANENTLY_WITH_REASON": "You are permanently banned! Reason: {reason}",
     "LOGIN_USER_IS_BANNED_TEMPORARY": "You are temporarily banned! Until: {untilTime}",
-    "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON": "You are temporarily banned!, Reason: {reason}, Until: {untilTime}",
+    "LOGIN_USER_IS_BANNED_TEMPORARY_WITH_REASON": "You are temporarily banned! Reason: {reason}, Until: {untilTime}",
     "MESSAGE_CANT_BE_EMPTY": "Message can't be empty!",
     "NEW_EMAIL_EXISTS": "This e-mail is not available!",
     "NEW_PASSWORD_EMPTY": "New Password is empty!",
     "NEW_PASSWORD_REPEAT_DOESNT_MATCH": "New Password Repeat does not match!",
     "NEW_PASSWORD_TOO_LONG": "New Password is too long!",
     "NEW_PASSWORD_TOO_SHORT": "New Password is too short!",
-    "NO_PERMISSION": "No permission to this action!",
-    "NOT_EXISTS": "Not exists!",
+    "NO_PERMISSION": "You don't have permission to do this.",
+    "NOT_EXISTS": "Does not exist!",
     "NOT_FOUND": "Not found!",
     "NOT_LOGGED_IN": "Not logged in!",
     "PAGE_NOT_FOUND": "Page not found!",
@@ -530,7 +551,7 @@
   },
   "successes": {
     "REGISTER_SUCCESSFUL": "Successfully registered! An e-mail was sent to verify your e-mail address.",
-    "VALIDATION_SUCCESSFUL": "Successfully activated e-mail! Now you can login.",
+    "VALIDATION_SUCCESSFUL": "Successfully activated e-mail! Now you can log in.",
     "RENEW_PASSWORD_SUCCESSFUL": "Password changed successfully!",
     "RESET_PASSWORD_SUCCESSFUL": "Sent an e-mail to reset your password.",
     "LOGIN_SUCCESSFUL": "Login successful!"

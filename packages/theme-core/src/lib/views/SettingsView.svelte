@@ -312,7 +312,7 @@
         {#if !sessions}
           <div class="text-center p-3">
             <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">{$_("labels.loading")}</span>
             </div>
           </div>
         {:else if sessions.length === 0}

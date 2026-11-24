@@ -43,7 +43,7 @@
               <span
                 class="spinner-border spinner-border-sm me-2"
                 role="status"
-                aria-label="Loading"></span>
+                aria-label={$_("labels.loading")}></span>
               <span>{$_("buttons.activate-email")}...</span>
             {:else}
               {$_("buttons.activate-email")}

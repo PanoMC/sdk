@@ -4,7 +4,7 @@
       <button
         type="button"
         class="page-link"
-        title={$_("components.pagination.previous-page")}
+        title={$_("components.pagination.first-page")}
         onclick={onFirstPageClick}
         aria-hidden={parseInt(page) === 1}>
         <i class="fa-solid fa-caret-left"></i>
@@ -30,7 +30,7 @@
       <button
         type="button"
         class="page-link"
-        title={$_("components.pagination.next-page")}
+        title={$_("components.pagination.last-page")}
         onclick={onLastPageClick}
         aria-hidden={parseInt(page) === totalPages}>
         <i class="fa-solid fa-caret-right"></i>

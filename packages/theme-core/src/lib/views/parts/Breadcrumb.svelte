@@ -8,7 +8,7 @@
 {#if items.length > 0}
   <nav
     class={["pano-breadcrumb", bootstrapStyle && "pano-breadcrumb--bootstrap"]}
-    aria-label="breadcrumb">
+    aria-label={$_("labels.breadcrumb")}>
     <ol class={bootstrapStyle ? "breadcrumb" : "breadcrumb justify-content-center mb-0"}>
       {#each items as crumb, i}
         {@const isLast = i === items.length - 1}
@@ -52,6 +52,8 @@
 </style>
 
 <script>
+  import { _ } from "svelte-i18n";
+
   // A site path in a trail is a canonical path: the link shows the theme's public one.
   import { publicHref } from "$pano/lib/views/parts/publicHref.js";
 
