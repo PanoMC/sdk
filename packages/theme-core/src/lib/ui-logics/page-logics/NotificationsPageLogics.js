@@ -8,7 +8,7 @@ import { browser } from "$app/env";
 
 import ApiUtil from "$pano/lib/api.util.js";
 import { onNotificationRefresh } from "$pano/lib/siteRealtime.js";
-import { requireLogin } from "$pano/lib/Store.js";
+import { notificationsCount, requireLogin } from "$pano/lib/Store.js";
 
 import ProfileSidebar, { load as loadSidebar } from "$pano/lib/components/sidebars/ProfileSidebar.svelte";
 
@@ -28,6 +28,18 @@ Array.prototype.remove = function(index) {
 
   return this;
 };
+
+/**
+ * Opening the page, loading more and deleting change the unread count on the server, and nothing tells the navbar:
+ * ask the server for the count again, so the badge drops without a reload.
+ */
+function syncUnreadCount() {
+  if (!browser) return;
+
+  ApiUtil.get({ path: "/notifications/quick" }).then((body) => {
+    if (body && !body.error) notificationsCount.set(body.notificationCount);
+  });
+}
 
 /**
  * Same as the panel: a brief "unread" highlight on the row, then locally marked READ after 3s (API is separate).
@@ -146,6 +158,7 @@ function getNotifications(notifications, notificationProcessID, count, id) {
       if (get(notifications).length <= data.items.length) count.set(countByCursor(data.page, get(notifications).length));
       else count.set(Math.max(parseInt(data.page.totalItems) || 0, get(count)));
       scheduleMarkReadVisualEffects(notifications, data.items, null);
+      syncUnreadCount();
     }
   });
 }
@@ -172,6 +185,7 @@ export function loadMore(notifications, loadMoreLoading) {
       const count = countOf.get(notifications);
 
       if (count) count.set(countByCursor({ ...body.page, totalItems: body.page?.totalItems ?? get(count) }, get(notifications).length));
+      syncUnreadCount();
     }
 
     loadMoreLoading.set(false);
@@ -183,6 +197,7 @@ export function onDeleteNotificationClick(notifications, count, id) {
     path: `/notifications/${id}`
   }).then((body) => {
     if (!body.error) {
+      syncUnreadCount();
 
       get(notifications).forEach((notification) => {
         if (notification.id === id) {
@@ -252,6 +267,7 @@ export function init(data) {
 
   onMount(() => {
     scheduleMarkReadVisualEffects(notifications, get(notifications), 5);
+    syncUnreadCount();
     interval.set(setInterval(() => {
       checkTime.update(checkTime => {
         checkTime += 1;

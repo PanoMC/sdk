@@ -213,9 +213,12 @@
   const navigate = (path) =>
     $page.url.pathname === base + path ? invalidateAll() : goto(base + path);
 
+  // Then read the unread count again: the server sends no refresh for a read, so the navbar badge would keep it.
   function markRead(id) {
     ApiUtil.post({
       path: `/notifications/${id}/read`,
+    }).then(() => {
+      if (get(session).user) startQuickNotificationsCountDown();
     });
   }
 
