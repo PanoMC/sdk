@@ -27,7 +27,7 @@ export const NETWORK_ERROR = "NETWORK_ERROR";
 export default { get: async ({ path }) => { s.calls.push(path); return s.answers[path] ?? { error: true }; }, delete: async () => ({}) };`,
   "$pano/lib/api.util": `export { default, NETWORK_ERROR } from "$pano/lib/api.util.js";`,
   "$pano/lib/siteRealtime.js": `export const onNotificationRefresh = () => () => {};`,
-  "$pano/lib/Store.js": `export const requireLogin = () => {};`,
+  "$pano/lib/Store.js": `export const requireLogin = () => {}; export const notificationsCount = { set: () => {} };`,
   "$pano/lib/components/sidebars/ProfileSidebar.svelte": `export default {}; export const load = async () => ({});`,
   "$pano/lib/components/modals/ConfirmRemoveAllNotificationsModal.svelte": `export const setCallback = () => {}; export const show = () => {};`,
   "$pano/lib/services/profile": `export const sendChangeEmail = async () => ({}); export const sendResetPassword = async () => ({}); export const sendUpdateProfile = async () => ({});`,
